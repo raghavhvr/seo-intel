@@ -32,6 +32,9 @@ jobs:
           # Optional — create a free Reddit script app for reliable access
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          # Optional — TryProfound Enterprise API key (GEO visibility for adcb.com)
+          PROFOUND_API_KEY: ${{ secrets.PROFOUND_API_KEY }}
+          # PROFOUND_CATEGORY_ID: ${{ secrets.PROFOUND_CATEGORY_ID }}  # pin to skip auto-discovery
         run: python -m trendpulse run-daily --config config.yaml
 
       - name: Commit fresh data, models and reports

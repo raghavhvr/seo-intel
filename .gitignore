@@ -7,3 +7,4 @@ dist/
 .venv/
 config.local.yaml
 trendpulse.egg-info/
+data_imports/

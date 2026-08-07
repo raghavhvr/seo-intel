@@ -207,6 +207,29 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
             lines.append(f"- {kw} (discovery score {s:.0f})")
         lines.append("")
 
+    # --- Brand share-of-voice: AI answers (Profound) + community chatter ---
+    visibility = store.entity_visibility(days=7)
+    if visibility:
+        lines.append("## Brand share of voice (last 7 days)")
+        lines.append("")
+        lines.append("AI-answer mentions (TryProfound) plus community chatter "
+                     "(Reddit / news / HN discoveries mentioning the entities).")
+        lines.append("")
+        lines.append("| Entity | Type | Mentions | Share of voice |")
+        lines.append("|--------|------|----------|----------------|")
+        for entity, kind, count, sov in visibility:
+            lines.append(f"| {entity} | {kind} | {count:.0f} | {sov:.1f}% |")
+        lines.append("")
+        for entity, kind, _c, _s in visibility:
+            if kind != "brand":
+                continue
+            contexts = store.entity_contexts(entity, days=30, limit=3)
+            if contexts:
+                lines.append(f"Where **{entity}** shows up:")
+                for d, source, context in contexts:
+                    lines.append(f"- {d} · {source}: {context}")
+                lines.append("")
+
     lines.append("---")
     lines.append("Horizons: week = 7 days, month = 30 days, quarter = 90 days. "
                  "Scores are percentile-ranked within this run; predicted momentum is the "

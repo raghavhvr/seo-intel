@@ -160,6 +160,22 @@ sources:
   google_news: true
   arxiv: true
   huggingface: true
+  profound: true           # needs PROFOUND_API_KEY (Enterprise); skipped silently otherwise
+
+# TryProfound — adcb.com is set up as a project, category "Banking & Finance".
+# Set the API key as a secret env var; category/asset are auto-discovered but
+# can be pinned here (or via PROFOUND_CATEGORY_ID / PROFOUND_ASSET).
+profound:
+  category_name: "banking and finance"
+  asset: "adcb.com"
+  # category_id: ""       # pin to skip auto-discovery (GET /v1/org/categories)
+
+# Offline data dumps — drop exports here and run `python -m trendpulse import`
+# (also runs first in `run-daily`). This directory is git-ignored: it contains
+# private first-party data.
+imports:
+  gsc_dir: "data_imports/gsc"   # GSC → Performance → Search results → Queries/Pages export (CSV/Excel, dated or aggregate)
+  ga4_dir: "data_imports/ga4"   # GA4 → Landing pages (organic) export (CSV/Excel)
 
 reddit:
   subreddits: ["dubai", "abudhabi", "UAE", "saudiarabia", "qatar",

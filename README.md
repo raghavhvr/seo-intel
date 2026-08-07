@@ -53,12 +53,12 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 | arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Research chatter → AI answers weeks later |
 | Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Shows which AI capabilities/jargon are gaining traction |
 
-**Recommended next integrations (also free, but need setup):**
+**First-party and GEO data (already wired in):**
 
-- **Google Search Console API** — official and free; your own impressions/clicks per query. This is the ground-truth layer for demand you already capture.
-- **YouTube Data API** — free API key (10k units/day); video velocity per topic.
-- **GEO share-of-voice probe** — ask a fixed battery of questions to AI assistants and check whether your brand is cited. Doable on free tiers (Gemini, Groq) or fully open-source with a local model via Ollama.
-- Common Crawl (open, monthly) for web-scale corpus shifts.
+- **GSC / GA4 data dumps** — drop exports into `data_imports/gsc/` and `data_imports/ga4/` (CSV or Excel; dated rows or aggregate exports — the importer detects columns and attributes aggregate rows to the export window in the filename). GSC impressions/clicks = ground-truth demand; GA4 organic sessions per landing page = satisfied demand (slugs become topic keywords). `python -m trendpulse import`, or automatic as the first step of `run-daily`. The directory is git-ignored — it's private first-party data.
+- **TryProfound (GEO ground truth)** — with `PROFOUND_API_KEY` set (Enterprise plan), the collector pulls the *Banking & Finance* category daily: per-asset **AI share-of-voice / visibility** (ADCB vs Emirates NBD, FAB, …), **raw prompt answers** (the actual questions AI engines field, with mentions per model — premium AEO/GEO targeting material), and **cited URLs** (which pages LLMs cite, so you can model the format that earns citations). The report gains a **Brand share of voice** section; community chatter mentions (Reddit/news/HN) are merged in with alias-aware matching (FAB ≠ "fabulous").
+
+**Still free, still optional later:** YouTube Data API (free key) for video velocity; Common Crawl (open, monthly) for corpus shifts; a self-hosted LLM probe (Ollama) as a Profound complement.
 
 Paid-only gaps to be aware of: true SERP rank/People-Also-Ask at scale (SerpAPI, DataForSEO) and keyword search-volume tooling (Ahrefs/Semrush). The tool is designed to work without them; they plug in as extra collectors if you later want them.
 
@@ -92,12 +92,12 @@ Why blended z-scores: pageviews (thousands), Trends interest (0–100) and menti
 
 ```bash
 pip install -r requirements.txt
-cp config.example.yaml config.yaml   # then edit seeds for your site
+cp config.example.yaml config.yaml   # shipped ready for the ADCB profile — edit as needed
 python -m trendpulse demo            # offline end-to-end run on synthetic data
-python -m trendpulse run-daily       # real ingest + train + report
+python -m trendpulse run-daily       # import dumps + live ingest + train + report
 ```
 
-Individual stages: `python -m trendpulse ingest` / `train` / `report`. Add `-v` for debug logs.
+Individual stages: `python -m trendpulse import` (GSC/GA4 dumps) / `ingest` / `train` / `report`. Add `-v` for debug logs. Repo secrets for CI: `PROFOUND_API_KEY` (GEO visibility), optionally `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`.
 
 ## Continuous training
 
