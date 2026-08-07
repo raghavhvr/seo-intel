@@ -1,86 +1,186 @@
-# TrendPulse configuration — copy to config.yaml and edit for your site/vertical.
-project: "Acme SaaS"
-region: "US"            # 2-letter geo for Google Trends / News
+# TrendPulse configuration — UAE-first GCC & Levant focus for a regional bank
+# (client profile: ADCB / Abu Dhabi Commercial Bank).
+project: "ADCB — Abu Dhabi Commercial Bank"
+market: "UAE-first · GCC & Levant"
+region: "AE"              # legacy fallback
 language: "en-US"
-timezone: "UTC"
+regions: ["AE", "SA", "QA", "KW", "BH", "OM", "JO", "LB"]   # UAE first = primary
+languages: ["en", "ar"]   # English + Arabic are both essential in the Gulf
+timezone: "Asia/Dubai"
 
 # ---------------------------------------------------------------------------
-# Seed topics. These are the starting universe the tool tracks every day.
-# Discovered rising queries get added automatically over time.
+# Seed topics — bilingual. Arabic seeds unlock Arabic autocomplete,
+# Arabic Google News and ar.wikipedia pageviews.
 # ---------------------------------------------------------------------------
 seeds:
-  # Classic search-demand topics (informational + commercial keywords)
   seo:
-    - "project management software"
-    - "crm software"
-    - "marketing automation"
-    - "email marketing software"
-    - "keyword research"
-    - "link building"
-  # Question-style topics people ask answer engines / voice assistants
+    # English — core retail banking demand
+    - "credit card uae"
+    - "personal loan uae"
+    - "mortgage rates uae"
+    - "best savings account uae"
+    - "open bank account online uae"
+    - "business bank account uae"
+    - "car loan uae"
+    - "fixed deposit uae"
+    - "remittance uae to india"
+    - "islamic banking uae"
+    - "wealth management uae"
+    - "adcb"
+    # Arabic — نفس الموضوعات بالعربية
+    - "قرض شخصي الإمارات"
+    - "بطاقة ائتمان الإمارات"
+    - "فتح حساب بنكي في الإمارات"
+    - "أفضل بنك في الإمارات"
+    - "حساب توفير الإمارات"
+    - "تحويل أموال من الإمارات"
+    - "قرض سيارة الإمارات"
+    - "التمويل العقاري الإمارات"
   aeo:
-    - "how to choose a crm"
-    - "what is marketing automation"
-    - "how much does seo cost"
-    - "what is aeo marketing"
-  # Topics people increasingly ask AI assistants about (ChatGPT/Perplexity/Gemini)
+    - "how to open a bank account in uae"
+    - "what is the minimum salary for a credit card in uae"
+    - "how to check credit score in uae"
+    - "how to send money from uae to india"
+    - "what is an iban number"
+    - "which bank is best for salary account in uae"
+    - "how does islamic home finance work"
+    - "كيف أفتح حساب بنكي في الإمارات"
+    - "ما هو الحد الأدنى للراتب للحصول على قرض شخصي"
+    - "كيف أحول أموال من الإمارات إلى الهند"
   geo:
-    - "ai agents for marketing"
-    - "llm seo"
-    - "ai search optimization"
-    - "generative engine optimization"
+    - "digital banks uae"
+    - "neobank uae"
+    - "ai in banking"
+    - "open banking uae"
+    - "digital dirham"
+    - "bnpl uae"
+    - "fintech uae"
+    - "embedded finance mena"
+    - "البنوك الرقمية الإمارات"
+    - "الدرهم الرقمي"
 
-# Brand / competitor entities tracked for share-of-voice in AI-adjacent chatter
+# Share-of-voice entities: brand + the UAE competitive set
 entities:
-  brand: ["Acme"]
-  competitors: ["CompetitorOne", "CompetitorTwo"]
+  brand: ["ADCB", "Abu Dhabi Commercial Bank", "بنك أبوظبي التجاري"]
+  competitors:
+    - "Emirates NBD"
+    - "First Abu Dhabi Bank"
+    - "FAB"
+    - "Dubai Islamic Bank"
+    - "Mashreq"
+    - "RAKBANK"
+    - "Commercial Bank of Dubai"
+    - "HSBC UAE"
+    - "Wio"
+    - "Liv"
 
-# Extra terms that mark a keyword as GEO-relevant when they appear in it
+# Terms that mark a keyword as GEO-relevant (AI-assistant territory)
 geo_terms:
   - "ai"
   - "llm"
   - "chatgpt"
-  - "claude"
   - "gemini"
-  - "perplexity"
   - "copilot"
-  - "agent"
-  - "generative"
-  - "prompt"
+  - "neobank"
+  - "digital bank"
+  - "digital dirham"
+  - "cbdc"
+  - "open banking"
+  - "fintech"
+  - "bnpl"
+  - "embedded finance"
 
-# Which collectors run (all free / open-source APIs — see README)
+# ---------------------------------------------------------------------------
+# GCC & Levant seasonal calendar. Hijri dates shift yearly — those are marked
+# expected: true. prep_weeks controls when keyword angles enter the universe.
+# ---------------------------------------------------------------------------
+seasonal_events:
+  - name: "Back to school (UAE)"
+    start: 2026-08-24
+    prep_weeks: 4
+    regions: [AE]
+    keywords: ["school fee payment plan uae", "education savings account uae", "kids bank account uae"]
+    action: "Publish school-fee financing + education savings content; parents research 2–4 weeks before term."
+  - name: "Saudi National Day"
+    start: 2026-09-23
+    prep_weeks: 3
+    regions: [SA]
+    keywords: ["saudi national day offers", "saudi national day bank promotions"]
+    action: "Coordinate cross-border offers content for KSA portfolio."
+  - name: "GITEX Global Dubai"
+    start: 2026-10-12
+    end: 2026-10-16
+    prep_weeks: 5
+    regions: [AE]
+    keywords: ["fintech uae", "digital banking innovation", "ai banking uae"]
+    action: "GEO play: publish AI-in-banking POV pieces before GITEX so AI engines cite them during event coverage."
+  - name: "UAE National Day (Eid Al Etihad)"
+    start: 2026-12-02
+    prep_weeks: 4
+    regions: [AE]
+    keywords: ["uae national day offers", "national day credit card offers uae"]
+    action: "Offers landing pages should be live and indexed by mid-November."
+  - name: "Dubai Shopping Festival"
+    start: 2026-12-05
+    end: 2027-01-15
+    prep_weeks: 6
+    regions: [AE]
+    keywords: ["dubai shopping festival credit card offers", "dsf cashback", "best credit card for shopping uae"]
+    action: "Peak card-spend season — refresh cashback/offers pages and comparison content in November."
+  - name: "Ramadan"
+    start: 2027-02-07
+    end: 2027-03-08
+    prep_weeks: 6
+    expected: true
+    regions: [AE, SA, QA, KW, BH, OM, JO, LB]
+    keywords: ["ramadan bank offers uae", "ramadan personal loan offers", "charity donation zakat uae", "ramadan working hours banks"]
+    action: "Publish Ramadan offers, zakat calculators and branch-hours content by early January; AEO questions spike ('are banks open during ramadan')."
+  - name: "Eid Al Fitr"
+    start: 2027-03-09
+    prep_weeks: 4
+    expected: true
+    regions: [AE, SA, QA, KW, BH, OM, JO, LB]
+    keywords: ["eid al fitr offers uae", "eid travel deals credit card", "eidiya kids account"]
+    action: "Travel + gifting spend spikes; push card and remittance content."
+  - name: "Eid Al Adha"
+    start: 2027-05-16
+    prep_weeks: 4
+    expected: true
+    regions: [AE, SA, QA, KW, BH, OM, JO, LB]
+    keywords: ["eid al adha travel offers", "hajj savings plan", "livestock payment uae"]
+    action: "Hajj savings and travel-finance angles for KSA/UAE."
+
 sources:
-  google_trends: true    # needs `pip install pytrends` (unofficial, rate-limited)
-  autocomplete: true     # Google autocomplete suggestions (free endpoint)
-  wikipedia: true        # Wikimedia Pageviews API (official, open)
-  hackernews: true       # Algolia HN Search API (official, open)
-  reddit: true           # public JSON / free OAuth tier (set env vars for reliability)
-  stackexchange: true    # official Stack Exchange API (free)
-  google_news: true      # Google News RSS (free)
-  arxiv: true            # arXiv API (official, open) — GEO research signal
-  huggingface: true      # Hugging Face Hub API (official, open) — GEO signal
+  google_trends: true
+  autocomplete: true
+  wikipedia: true
+  hackernews: true
+  reddit: true
+  stackexchange: true
+  google_news: true
+  arxiv: true
+  huggingface: true
 
 reddit:
-  subreddits: ["seo", "bigseo", "marketing", "digital_marketing", "ChatGPT", "artificial"]
-  # Optional but recommended: create a free "script" app at https://www.reddit.com/prefs/apps
-  # and export REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET for reliable access.
+  subreddits: ["dubai", "abudhabi", "UAE", "saudiarabia", "qatar",
+               "personalfinance", "banking", "fintech", "CredCards"]
 
 stackexchange:
-  sites: ["webmasters", "stackoverflow"]
+  sites: ["money", "webmasters"]
 
 model:
-  min_samples: 200       # ML model activates once this many labeled samples exist
-  horizons:              # forecast targets (days ahead)
+  min_samples: 200
+  horizons:
     week: 7
     month: 30
     quarter: 90
 
 keywords:
-  max_universe: 400      # cap on tracked keywords (seeds + discoveries)
-  max_new_per_day: 40    # cap on auto-discovered keywords added per run
+  max_universe: 500
+  max_new_per_day: 40
 
 reports:
-  top_n: 20              # rows per channel per horizon
+  top_n: 20
   output_dir: "reports"
 
 data_dir: "data"

@@ -14,8 +14,8 @@ def test_roundtrip(tmp_path):
     ])
 
     series = store.series("crm")
-    assert series[("s1", "m1")] == {"2026-08-01": 1.0, "2026-08-02": 2.0}
-    assert ("s2", "m2") in series
+    assert series[("s1", "m1", "", "")] == {"2026-08-01": 1.0, "2026-08-02": 2.0}
+    assert ("s2", "m2", "", "") in series
     assert store.dates() == ["2026-08-01", "2026-08-02"]
     assert "crm" in store.observed_keywords()
     assert store.discovered_keywords()[0][0] == "crm pricing"
@@ -24,7 +24,7 @@ def test_roundtrip(tmp_path):
     store.upsert_observations([
         Observation(date="2026-08-02", keyword="crm", source="s1", metric="m1", value=3.0),
     ])
-    assert store.series("crm")[("s1", "m1")]["2026-08-02"] == 3.0
+    assert store.series("crm")[("s1", "m1", "", "")]["2026-08-02"] == 3.0
 
     store.save_score("2026-08-02", "crm", "week", "seo", 88.0, 0.4, 1.2)
     top = store.latest_scores("2026-08-02", "week", "seo")

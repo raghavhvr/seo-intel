@@ -1,12 +1,25 @@
 # TrendPulse
 
-**Trend spotting for SEO, AEO and GEO teams.** TrendPulse pulls fresh data every day from free, open APIs, continuously trains a trend model on your accumulated history, and outputs a ranked list of **queries and keywords to focus on this week, this month and this quarter** — split by channel:
+**Trend spotting for SEO, AEO and GEO teams — configured for a UAE-first GCC & Levant banking client (ADCB profile).** TrendPulse pulls fresh data every day from free, open APIs, continuously trains a trend model on your accumulated history, and outputs a ranked list of **queries and keywords to focus on this week, this month and this quarter** — split by channel:
 
 | Channel | What it optimizes for | Signal flavour |
 |---------|----------------------|----------------|
 | **SEO** | Classic search demand (Google/Bing) | Rising search interest, news velocity, commercial modifiers |
 | **AEO** | Answer engines, featured snippets, voice | Question-format queries ("how to…", "what is…", "cost of…") from autocomplete, Stack Exchange, Reddit |
 | **GEO** | Generative engines (ChatGPT, Perplexity, Gemini, AI Overviews) citing your brand | AI-topic momentum on Hacker News, arXiv, Hugging Face, Reddit AI communities |
+
+## Regional focus: UAE, GCC & Levant (banking client)
+
+The shipped `config.yaml` is tuned for a UAE bank (ADCB profile) — retarget by editing one file:
+
+- **Countries**: `regions: [AE, SA, QA, KW, BH, OM, JO, LB]` (UAE first = primary). Google Trends interest, autocomplete suggestions and Google News velocity are collected **per country** and stored with a region tag, so a query breaking out in KSA but flat in the UAE is visible as such (cross-country confirmation feeds the breadth feature).
+- **Bilingual EN + AR**: `languages: [en, ar]`. Arabic seeds are included out of the box (e.g. قرض شخصي الإمارات, التمويل العقاري الإمارات); normalization handles Arabic script and strips tashkeel, Arabic question words (كيف، هل، ما، …) feed the AEO channel, and Wikipedia pageviews are pulled from both `en.wikipedia` and `ar.wikipedia`.
+- **Banking universe**: retail-banking seeds (cards, personal/auto loans, mortgages, savings, remittances, Islamic banking, business banking), AEO money questions, and GEO topics (digital banks, Digital Dirham/CBDC, open banking, BNPL, fintech) — plus a competitor entity set (Emirates NBD, FAB, DIB, Mashreq, RAKBANK, CBD, HSBC UAE, Wio, Liv) for share-of-voice tracking.
+- **GCC seasonal calendar** (`seasonal_events`): Ramadan, Eid Al Fitr, Eid Al Adha (expected dates — Hijri shifts; verify before publishing), Dubai Shopping Festival, UAE/Saudi National Days, GITEX, back-to-school. Each event carries prep lead-time and keyword angles; the report shows an **"Upcoming regional moments"** section and the pipeline auto-injects event keywords into the tracked universe when the prep window opens — banking content must rank *before* the moment, not during it.
+- **Relevance gate**: broad global feeds (HN front page, HF trending) are only folded into the tracked universe when they share vocabulary with it, are question-shaped, or are GEO-relevant — regional noise stays out of a banking client's focus list.
+- Regional community signals come from r/dubai, r/abudhabi, r/UAE, r/saudiarabia, r/qatar plus global money subs, and `money.stackexchange.com` for AEO questions.
+
+Known limits: Wikipedia pageviews are per-edition, not per-country (the API has no geo filter); Reddit/StackExchange/HN are global English-heavy communities — the UAE-specificity there comes from the subreddit/keyword mix.
 
 ---
 
@@ -30,13 +43,13 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 
 | Source | Provides | Channel(s) | Cadence | Auth | Notes |
 |--------|----------|-----------|---------|------|-------|
-| Google Trends (`pytrends`) | Search interest 0–100 + **rising related queries**, 90-day daily backfill | SEO | Daily | None | Unofficial API; rate-limited (collector backs off gracefully) |
-| Google Autocomplete | Real query suggestions incl. question modifiers | SEO, AEO | Real-time | None | Unofficial endpoint (`suggestqueries.google.com`) |
-| Wikimedia Pageviews | Official, open API; daily article views, 60-day backfill | SEO, GEO | Daily | None | Most reliable source here |
+| Google Trends (`pytrends`) | Search interest 0–100 **per country** + rising related queries, 90-day daily backfill | SEO | Daily | None | Unofficial API; rate-limited (collector backs off gracefully) |
+| Google Autocomplete | Real query suggestions **per country × language** (EN + AR modifiers) | SEO, AEO | Real-time | None | Unofficial endpoint (`suggestqueries.google.com`) |
+| Wikimedia Pageviews | Official, open API; daily article views per language edition (en + ar), 60-day backfill | SEO, GEO | Daily | None | Most reliable source here; no per-country filter |
 | Hacker News (Algolia API) | Official search API; story counts + front page | GEO | Real-time | None | Best early-warning for AI/dev topics |
-| Stack Exchange API | Official; question volume + hot questions (Webmasters, Stack Overflow, …) | AEO | Real-time | None (optional key raises quota) | Literally the questions people want answered |
-| Reddit | Rising threads & questions in SEO/marketing/AI subreddits | AEO, GEO | Real-time | Optional free OAuth (`REDDIT_CLIENT_ID/SECRET`) — public JSON otherwise | Set the env vars for reliability |
-| Google News RSS | Article velocity per keyword + headlines | SEO | Real-time | None | News velocity often leads search demand |
+| Stack Exchange API | Official; question volume + hot questions (`money`, `webmasters`) | AEO | Real-time | None (optional key raises quota) | Literally the questions people want answered |
+| Reddit | Rising threads & questions in UAE/GCC + money/AI subreddits | AEO, GEO | Real-time | Optional free OAuth (`REDDIT_CLIENT_ID/SECRET`) — public JSON otherwise | Set the env vars for reliability |
+| Google News RSS | Article velocity per keyword **per country × language** (AE:en, AE:ar, …) | SEO | Real-time | None | News velocity often leads search demand |
 | arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Research chatter → AI answers weeks later |
 | Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Shows which AI capabilities/jargon are gaining traction |
 
