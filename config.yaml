@@ -1,0 +1,86 @@
+# TrendPulse configuration — copy to config.yaml and edit for your site/vertical.
+project: "Acme SaaS"
+region: "US"            # 2-letter geo for Google Trends / News
+language: "en-US"
+timezone: "UTC"
+
+# ---------------------------------------------------------------------------
+# Seed topics. These are the starting universe the tool tracks every day.
+# Discovered rising queries get added automatically over time.
+# ---------------------------------------------------------------------------
+seeds:
+  # Classic search-demand topics (informational + commercial keywords)
+  seo:
+    - "project management software"
+    - "crm software"
+    - "marketing automation"
+    - "email marketing software"
+    - "keyword research"
+    - "link building"
+  # Question-style topics people ask answer engines / voice assistants
+  aeo:
+    - "how to choose a crm"
+    - "what is marketing automation"
+    - "how much does seo cost"
+    - "what is aeo marketing"
+  # Topics people increasingly ask AI assistants about (ChatGPT/Perplexity/Gemini)
+  geo:
+    - "ai agents for marketing"
+    - "llm seo"
+    - "ai search optimization"
+    - "generative engine optimization"
+
+# Brand / competitor entities tracked for share-of-voice in AI-adjacent chatter
+entities:
+  brand: ["Acme"]
+  competitors: ["CompetitorOne", "CompetitorTwo"]
+
+# Extra terms that mark a keyword as GEO-relevant when they appear in it
+geo_terms:
+  - "ai"
+  - "llm"
+  - "chatgpt"
+  - "claude"
+  - "gemini"
+  - "perplexity"
+  - "copilot"
+  - "agent"
+  - "generative"
+  - "prompt"
+
+# Which collectors run (all free / open-source APIs — see README)
+sources:
+  google_trends: true    # needs `pip install pytrends` (unofficial, rate-limited)
+  autocomplete: true     # Google autocomplete suggestions (free endpoint)
+  wikipedia: true        # Wikimedia Pageviews API (official, open)
+  hackernews: true       # Algolia HN Search API (official, open)
+  reddit: true           # public JSON / free OAuth tier (set env vars for reliability)
+  stackexchange: true    # official Stack Exchange API (free)
+  google_news: true      # Google News RSS (free)
+  arxiv: true            # arXiv API (official, open) — GEO research signal
+  huggingface: true      # Hugging Face Hub API (official, open) — GEO signal
+
+reddit:
+  subreddits: ["seo", "bigseo", "marketing", "digital_marketing", "ChatGPT", "artificial"]
+  # Optional but recommended: create a free "script" app at https://www.reddit.com/prefs/apps
+  # and export REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET for reliable access.
+
+stackexchange:
+  sites: ["webmasters", "stackoverflow"]
+
+model:
+  min_samples: 200       # ML model activates once this many labeled samples exist
+  horizons:              # forecast targets (days ahead)
+    week: 7
+    month: 30
+    quarter: 90
+
+keywords:
+  max_universe: 400      # cap on tracked keywords (seeds + discoveries)
+  max_new_per_day: 40    # cap on auto-discovered keywords added per run
+
+reports:
+  top_n: 20              # rows per channel per horizon
+  output_dir: "reports"
+
+data_dir: "data"
