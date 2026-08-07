@@ -16,9 +16,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("ingest", help="Pull today's data from all enabled sources")
+    sub.add_parser("import", help="Import offline GSC/GA4 dumps from data_imports/")
     sub.add_parser("train", help="Retrain the trend models on all collected history")
     sub.add_parser("report", help="Regenerate weekly/monthly/quarterly focus reports")
-    sub.add_parser("run-daily", help="ingest + train + report (the scheduled daily job)")
+    sub.add_parser("run-daily", help="import + ingest + train + report (the scheduled daily job)")
     demo = sub.add_parser("demo", help="Offline end-to-end run on synthetic data")
     demo.add_argument("--days", type=int, default=150,
                       help="Days of synthetic history to generate (default: 150)")
@@ -41,6 +42,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "ingest":
         obs, discs = pipeline.run_ingest(cfg)
         print(f"Ingested {obs} observations and {discs} discoveries.")
+    elif args.command == "import":
+        results = pipeline.run_import(cfg)
+        print("Imported: " + ", ".join(f"{k}={v} observations" for k, v in results.items()))
     elif args.command == "train":
         models = pipeline.run_train(cfg)
         active = ", ".join(models) if models else "none (need more history)"

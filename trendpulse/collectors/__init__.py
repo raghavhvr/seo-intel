@@ -9,6 +9,7 @@ from trendpulse.collectors.google_news import GoogleNewsCollector
 from trendpulse.collectors.google_trends import GoogleTrendsCollector
 from trendpulse.collectors.hackernews import HackerNewsCollector
 from trendpulse.collectors.huggingface import HuggingFaceCollector
+from trendpulse.collectors.profound import ProfoundCollector
 from trendpulse.collectors.reddit import RedditCollector
 from trendpulse.collectors.stackexchange import StackExchangeCollector
 from trendpulse.collectors.wikipedia import WikipediaCollector
@@ -25,6 +26,7 @@ REGISTRY: dict[str, type[Collector]] = {
     "google_news": GoogleNewsCollector,
     "arxiv": ArxivCollector,
     "huggingface": HuggingFaceCollector,
+    "profound": ProfoundCollector,
 }
 
 
@@ -39,5 +41,7 @@ def enabled_collectors(cfg: dict) -> list[Collector]:
             except ImportError:
                 log.warning("google_trends enabled but pytrends not installed — skipping")
                 continue
+        if name == "profound" and not ProfoundCollector(cfg).available():
+            continue  # silent unless PROFOUND_API_KEY is set
         collectors.append(cls(cfg))
     return collectors

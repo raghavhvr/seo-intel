@@ -26,10 +26,18 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
     total_obs = total_disc = 0
     new_discoveries: list[Discovery] = []
     for collector in enabled_collectors(cfg):
-        obs, discs = collector.safe_fetch(keywords)
+        result = collector.safe_fetch(keywords)
+        obs, discs = result[0], result[1]
+        if len(result) > 2:  # Profound also returns entity mentions
+            store.upsert_entity_mentions(result[2])
         total_obs += store.upsert_observations(obs)
         total_disc += store.upsert_discoveries(discs)
         new_discoveries.extend(discs)
+
+    # Community share-of-voice: brand/competitor sightings in today's threads,
+    # headlines and stories.
+    from trendpulse.entities import scan_discoveries
+    scan_discoveries(cfg, store, new_discoveries)
 
     # Fold the best new discoveries into the tracked universe by recording a
     # small observation for them — they become first-class keywords tomorrow.
@@ -83,6 +91,16 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
     return total_obs, total_disc
 
 
+def run_import(cfg: dict) -> dict[str, int]:
+    """Import offline data dumps (GSC / GA4 exports) from data_imports/."""
+    from trendpulse.importers import import_ga4, import_gsc
+
+    store = Store(db_path(cfg))
+    results = {"gsc": import_gsc(store, cfg), "ga4": import_ga4(store, cfg)}
+    store.close()
+    return results
+
+
 def run_train(cfg: dict) -> dict[str, HorizonModel]:
     """Retrain every horizon model on all history collected to date."""
     store = Store(db_path(cfg))
@@ -103,7 +121,8 @@ def run_report(cfg: dict, models: dict[str, HorizonModel] | None = None) -> Path
 
 
 def run_daily(cfg: dict) -> Path:
-    """The full daily loop: pull fresh data -> retrain -> regenerate reports."""
+    """The full daily loop: offline dumps + fresh data -> retrain -> reports."""
+    run_import(cfg)
     run_ingest(cfg)
     models = run_train(cfg)
     return run_report(cfg, models)
