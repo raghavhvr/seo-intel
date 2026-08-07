@@ -7,9 +7,13 @@ import yaml
 
 DEFAULTS: dict = {
     "project": "TrendPulse",
-    "region": "US",
+    "market": "",
+    "regions": ["US"],          # tracked countries (2-letter codes), first = primary
+    "languages": ["en"],        # tracked content languages (2-letter codes)
+    "region": "US",             # legacy single-region fallback
     "language": "en-US",
     "seeds": {"seo": [], "aeo": [], "geo": []},
+    "seasonal_events": [],
     "entities": {"brand": [], "competitors": []},
     "geo_terms": [],
     "sources": {

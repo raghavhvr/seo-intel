@@ -8,13 +8,15 @@ from trendpulse.types import Discovery, Observation
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS observations (
-    date    TEXT NOT NULL,
-    keyword TEXT NOT NULL,
-    source  TEXT NOT NULL,
-    metric  TEXT NOT NULL,
-    value   REAL NOT NULL,
-    raw     TEXT,
-    PRIMARY KEY (date, keyword, source, metric)
+    date     TEXT NOT NULL,
+    keyword  TEXT NOT NULL,
+    source   TEXT NOT NULL,
+    metric   TEXT NOT NULL,
+    region   TEXT NOT NULL DEFAULT '',
+    language TEXT NOT NULL DEFAULT '',
+    value    REAL NOT NULL,
+    raw      TEXT,
+    PRIMARY KEY (date, keyword, source, metric, region, language)
 );
 CREATE TABLE IF NOT EXISTS discoveries (
     date    TEXT NOT NULL,
@@ -53,7 +55,28 @@ class Store:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(str(self.path))
         self.conn.execute("PRAGMA journal_mode=WAL")
+        self._ensure_schema()
         self.conn.executescript(SCHEMA)
+        self.conn.commit()
+
+    def _ensure_schema(self) -> None:
+        """Rebuild if an older observations table lacks region/language.
+
+        The DB is a cache that daily ingestion (plus Trends/Wikipedia
+        backfill) repopulates, so rebuilding is safe and cheap."""
+        cur = self.conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='observations'")
+        if not cur.fetchone():
+            return
+        cols = {row[1] for row in self.conn.execute("PRAGMA table_info(observations)")}
+        if {"region", "language"} <= cols:
+            return
+        import logging
+        logging.getLogger(__name__).warning(
+            "old schema detected — rebuilding %s (data is re-ingestible)", self.path)
+        self.conn.executescript(
+            "DROP TABLE IF EXISTS observations; DROP TABLE IF EXISTS discoveries;"
+            " DROP TABLE IF EXISTS scores; DROP TABLE IF EXISTS model_runs;")
         self.conn.commit()
 
     def close(self) -> None:
@@ -62,13 +85,14 @@ class Store:
     # -- writes -------------------------------------------------------------
     def upsert_observations(self, obs: list[Observation]) -> int:
         rows = [
-            (o.date, o.keyword, o.source, o.metric, float(o.value),
-             json.dumps(o.raw) if o.raw else None)
+            (o.date, o.keyword, o.source, o.metric, o.region, o.language,
+             float(o.value), json.dumps(o.raw) if o.raw else None)
             for o in obs
         ]
         self.conn.executemany(
-            "INSERT OR REPLACE INTO observations (date, keyword, source, metric, value, raw)"
-            " VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT OR REPLACE INTO observations"
+            " (date, keyword, source, metric, region, language, value, raw)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             rows,
         )
         self.conn.commit()
@@ -118,16 +142,17 @@ class Store:
         )
         return [(r[0], r[1]) for r in cur.fetchall()]
 
-    def series(self, keyword: str) -> dict[tuple[str, str], dict[str, float]]:
-        """All metric series for one keyword: {(source, metric): {date: value}}."""
+    def series(self, keyword: str) -> dict[tuple[str, str, str, str], dict[str, float]]:
+        """All metric series for one keyword:
+        {(source, metric, region, language): {date: value}}."""
         cur = self.conn.execute(
-            "SELECT source, metric, date, value FROM observations WHERE keyword = ?"
-            " ORDER BY date",
+            "SELECT source, metric, region, language, date, value FROM observations"
+            " WHERE keyword = ? ORDER BY date",
             (keyword,),
         )
-        out: dict[tuple[str, str], dict[str, float]] = {}
-        for source, metric, date, value in cur.fetchall():
-            out.setdefault((source, metric), {})[date] = value
+        out: dict[tuple[str, str, str, str], dict[str, float]] = {}
+        for source, metric, region, language, date, value in cur.fetchall():
+            out.setdefault((source, metric, region, language), {})[date] = value
         return out
 
     def recent_discoveries(self, keyword: str, days: int = 30,

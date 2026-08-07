@@ -7,8 +7,12 @@ from trendpulse.storage import Store
 CHANNELS = ("seo", "aeo", "geo")
 
 QUESTION_PREFIXES = (
+    # English
     "how ", "what ", "why ", "when ", "where ", "which ", "who ",
     "can ", "is ", "are ", "does ", "do ", "should ",
+    # Arabic — كيف/ما/ماذا/لماذا/هل/متى/أين/كم/من
+    "كيف ", "ما ", "ماذا ", "لماذا ", "هل ", "متى ", "أين ", "اين ",
+    "كم ", "من ",
 )
 
 DEFAULT_GEO_TERMS = {
@@ -17,12 +21,16 @@ DEFAULT_GEO_TERMS = {
     "language model", "ai search", "ai overview",
 }
 
-_CLEAN_RE = re.compile(r"[^a-z0-9 +\-/&']+")
+# Latin + Arabic (main block, supplement, extended-A) + digits; strips
+# everything else, including Arabic diacritics (tashkeel).
+_ARABIC = r"؀-ۿݐ-ݿࢠ-ࣿ"
+_TASHKEEL_RE = re.compile(r"[ً-ْٰ]")  # Arabic diacritics + superscript alef
+_CLEAN_RE = re.compile(r"[^a-z0-9" + _ARABIC + r" +\-/&']+")
 _TRAILING_RE = re.compile(r"[\s\-/&]+$")
 
 
 def normalize(text: str) -> str:
-    text = text.strip().lower()
+    text = _TASHKEEL_RE.sub("", text.strip().lower())
     text = _CLEAN_RE.sub("", text)
     text = re.sub(r"\s+", " ", text).strip()
     return _TRAILING_RE.sub("", text)
@@ -71,6 +79,31 @@ def valid_candidate(keyword: str) -> bool:
     if keyword.count(" ") > 8:
         return False
     return True
+
+
+STOPWORDS = {
+    "the", "a", "an", "in", "on", "of", "for", "to", "and", "or", "vs",
+    "how", "what", "why", "when", "is", "are", "do", "does", "can", "best",
+    "في", "من", "ما", "هل", "كيف", "أفضل", "الى", "على", "أين", "متى",
+}
+
+
+def universe_tokens(keywords) -> set[str]:
+    tokens: set[str] = set()
+    for kw in keywords:
+        tokens.update(t for t in normalize(kw).split() if t not in STOPWORDS)
+    return tokens
+
+
+def is_relevant(keyword: str, tokens: set[str], cfg: dict) -> bool:
+    """Gate for folding discoveries into the tracked universe: keeps
+    question-shaped and GEO-relevant finds plus anything sharing vocabulary
+    with the existing universe (e.g. 'uae', 'credit', 'card'). Global
+    front-page noise fails all three checks."""
+    if is_question(keyword) or is_geo_relevant(keyword, cfg.get("geo_terms")):
+        return True
+    toks = {t for t in keyword.split() if t not in STOPWORDS}
+    return bool(toks & tokens)
 
 
 def keyword_universe(cfg: dict, store: Store) -> dict[str, str | None]:

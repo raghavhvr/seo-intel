@@ -12,6 +12,8 @@ class Observation:
     source: str  # e.g. "google_trends"
     metric: str  # e.g. "interest", "pageviews", "mentions"
     value: float
+    region: str = ""  # 2-letter country code, "" for global sources
+    language: str = ""  # 2-letter language code, "" when not applicable
     raw: dict | None = field(default=None)
 
 

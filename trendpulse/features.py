@@ -20,17 +20,18 @@ def _calendar(dates: list[str]) -> pd.DatetimeIndex:
     return pd.to_datetime(pd.Series(sorted(set(dates)))).dt.normalize()
 
 
-def blended_attention(series_map: dict[tuple[str, str], dict[str, float]],
+def blended_attention(series_map: dict[tuple, dict[str, float]],
                       index: pd.DatetimeIndex) -> tuple[pd.Series, pd.Series]:
-    """Blend all source metrics into one daily 'attention' series per keyword.
+    """Blend all source series into one daily 'attention' series per keyword.
 
-    Each source series is z-scored over its own history first, so sources with
-    wildly different scales (pageviews vs. 0-100 Trends interest) contribute
-    comparably. Returns (attention, breadth) where breadth is the count of
-    sources with above-baseline activity that day.
+    Each series (source × metric × region × language) is z-scored over its own
+    history first, so sources with wildly different scales (pageviews vs.
+    0-100 Trends interest) and different countries contribute comparably.
+    Returns (attention, breadth) where breadth is the count of series with
+    above-baseline activity that day.
     """
     cols, breadth = [], pd.Series(0.0, index=index)
-    for (_source, _metric), values in series_map.items():
+    for _key, values in series_map.items():
         ser = pd.Series(values, dtype=float)
         ser.index = pd.to_datetime(ser.index)
         ser = ser.groupby(level=0).sum().reindex(index)

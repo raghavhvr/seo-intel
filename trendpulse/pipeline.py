@@ -5,7 +5,8 @@ from pathlib import Path
 
 from trendpulse.collectors import enabled_collectors
 from trendpulse.config import db_path
-from trendpulse.keywords import keyword_universe, normalize, valid_candidate
+from trendpulse.keywords import (is_relevant, keyword_universe, normalize,
+                                 universe_tokens, valid_candidate)
 from trendpulse.model import HorizonModel, load_models, train_all
 from trendpulse.report import generate_report
 from trendpulse.storage import Store
@@ -32,9 +33,14 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
 
     # Fold the best new discoveries into the tracked universe by recording a
     # small observation for them — they become first-class keywords tomorrow.
+    from datetime import date as _date
+
     from trendpulse.collectors.base import today
+    from trendpulse.seasonality import prep_keywords
+
     cap = int(cfg["keywords"]["max_new_per_day"])
     known = set(universe) | set(store.observed_keywords())
+    tokens = universe_tokens(known)
     added = 0
     for disc in sorted(new_discoveries, key=lambda d: d.score, reverse=True):
         if added >= cap:
@@ -42,14 +48,37 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
         kw = normalize(disc.keyword)
         if not valid_candidate(kw) or kw in known:
             continue
+        if not is_relevant(kw, tokens, cfg):
+            continue
         known.add(kw)
         store.upsert_observations([
             Observation(date=today(), keyword=kw, source="discovery",
                         metric="seed", value=float(disc.score))
         ])
         added += 1
-    log.info("ingest complete: %d observations, %d discoveries, %d new keywords",
-             total_obs, total_disc, added)
+
+    # Seasonal prep: inject keyword angles for regional moments that are
+    # active now or inside their prep window (e.g. Ramadan offers content
+    # needs to rank *before* the month starts).
+    seasonal = 0
+    for kw, event_name in prep_keywords(cfg, _date.today()):
+        norm = normalize(kw)
+        if not valid_candidate(norm):
+            continue
+        store.upsert_discoveries([Discovery(
+            date=today(), keyword=norm, source="seasonal",
+            context=f"upcoming regional moment: {event_name}", score=50.0,
+        )])
+        if norm not in known and added < cap:
+            known.add(norm)
+            store.upsert_observations([
+                Observation(date=today(), keyword=norm, source="seasonal",
+                            metric="seed", value=50.0)
+            ])
+            added += 1
+            seasonal += 1
+    log.info("ingest complete: %d observations, %d discoveries, %d new keywords"
+             " (%d seasonal)", total_obs, total_disc, added, seasonal)
     store.close()
     return total_obs, total_disc
 
