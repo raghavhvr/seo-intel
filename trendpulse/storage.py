@@ -4,7 +4,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from trendpulse.types import Discovery, Observation
+from trendpulse.types import Discovery, EntityMention, Observation
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS observations (
@@ -44,8 +44,19 @@ CREATE TABLE IF NOT EXISTS model_runs (
     mae        REAL,
     notes      TEXT
 );
+CREATE TABLE IF NOT EXISTS entities (
+    date    TEXT NOT NULL,
+    entity  TEXT NOT NULL,
+    kind    TEXT NOT NULL,
+    source  TEXT NOT NULL,
+    context TEXT NOT NULL DEFAULT '',
+    metric  TEXT NOT NULL DEFAULT 'mention',
+    value   REAL NOT NULL DEFAULT 1,
+    PRIMARY KEY (date, entity, source, context, metric)
+);
 CREATE INDEX IF NOT EXISTS idx_obs_kw ON observations (keyword, date);
 CREATE INDEX IF NOT EXISTS idx_disc_kw ON discoveries (keyword, date);
+CREATE INDEX IF NOT EXISTS idx_entities ON entities (entity, date);
 """
 
 
@@ -107,6 +118,40 @@ class Store:
         )
         self.conn.commit()
         return len(rows)
+
+    def upsert_entity_mentions(self, mentions: list[EntityMention]) -> int:
+        rows = [(m.date, m.entity, m.kind, m.source, m.context, m.metric,
+                 float(m.value)) for m in mentions]
+        self.conn.executemany(
+            "INSERT OR REPLACE INTO entities"
+            " (date, entity, kind, source, context, metric, value)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?)",
+            rows,
+        )
+        self.conn.commit()
+        return len(rows)
+
+    def entity_visibility(self, days: int = 7) -> list[tuple[str, str, float, float]]:
+        """(entity, kind, mentions, share_of_voice) over the trailing window."""
+        cur = self.conn.execute(
+            "SELECT entity, kind, SUM(value) FROM entities"
+            " WHERE metric = 'mention' AND date >= date('now', ?)"
+            " GROUP BY entity, kind ORDER BY 3 DESC",
+            (f"-{days} days",),
+        )
+        rows = cur.fetchall()
+        total = sum(r[2] for r in rows) or 1.0
+        return [(e, k, v, 100.0 * v / total) for e, k, v in rows]
+
+    def entity_contexts(self, entity: str, days: int = 30,
+                        limit: int = 5) -> list[tuple[str, str, str]]:
+        cur = self.conn.execute(
+            "SELECT date, source, context FROM entities"
+            " WHERE entity = ? AND context != '' AND date >= date('now', ?)"
+            " ORDER BY date DESC LIMIT ?",
+            (entity, f"-{days} days", limit),
+        )
+        return cur.fetchall()
 
     def save_score(self, date: str, keyword: str, horizon: str, channel: str,
                    trend_score: float, predicted_delta: float, velocity_z: float) -> None:

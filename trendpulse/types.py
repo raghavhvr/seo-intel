@@ -26,3 +26,16 @@ class Discovery:
     source: str
     context: str = ""  # headline, question title, URL, ...
     score: float = 0.0
+
+
+@dataclass
+class EntityMention:
+    """One brand/competitor sighting in AI answers or community chatter."""
+
+    date: str
+    entity: str  # canonical name, e.g. "ADCB"
+    kind: str  # "brand" | "competitor"
+    source: str  # e.g. "profound:ChatGPT", "reddit", "google_news"
+    context: str = ""
+    metric: str = "mention"
+    value: float = 1.0
