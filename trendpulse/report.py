@@ -103,9 +103,37 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
     lines: list[str] = []
     lines.append(f"# Trend report — {cfg.get('project', 'TrendPulse')}")
     lines.append("")
-    lines.append(f"Generated {date} (UTC) · keywords tracked: {len(scored)} · "
+    market = cfg.get("market")
+    regions = ", ".join(cfg.get("regions") or [cfg.get("region", "US")])
+    lines.append(f"Generated {date} (UTC)"
+                 + (f" · market: {market}" if market else "")
+                 + f" · regions: {regions} · keywords tracked: {len(scored)} · "
                  f"scoring: {'ML model' if any(using_ml.values()) else 'statistical (ML activates after ~6–8 weeks of daily data)'}")
     lines.append("")
+
+    from datetime import date as _date
+
+    from trendpulse.seasonality import upcoming_events
+
+    events = upcoming_events(cfg, _date.today(), within_days=90)
+    if events:
+        lines.append("## Upcoming regional moments (next 90 days)")
+        lines.append("")
+        for event in events:
+            if event.is_active(_date.today()):
+                status = "ACTIVE NOW"
+            elif event.in_prep_window(_date.today()):
+                status = f"starts in {event.days_until(_date.today())}d — prep window is NOW"
+            else:
+                status = f"starts in {event.days_until(_date.today())}d"
+            approx = " (expected date — verify)" if event.expected else ""
+            lines.append(f"- **{event.name}**{approx} — {status}"
+                         + (f" [{', '.join(event.regions)}]" if event.regions else ""))
+            if event.action:
+                lines.append(f"  - {event.action}")
+            if event.keywords:
+                lines.append(f"  - Keyword angles: {', '.join(event.keywords)}")
+        lines.append("")
 
     for horizon in horizons:
         lines.append(f"## {HORIZON_TITLES.get(horizon, horizon)}")
@@ -164,12 +192,16 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
                 lines.append(f"  - Evidence: {evidence}")
         lines.append("")
 
-    new_this_week = sorted(
-        ((kw, s) for kw, s in store.discovered_keywords(limit=400)),
-        key=lambda kv: kv[1], reverse=True,
-    )[:15]
+    from trendpulse.keywords import is_relevant, universe_tokens
+
+    tokens = universe_tokens(universe)
+    new_this_week = [
+        (kw, s) for kw, s in sorted(store.discovered_keywords(limit=400),
+                                    key=lambda kv: kv[1], reverse=True)
+        if is_relevant(kw, tokens, cfg)
+    ][:15]
     if new_this_week:
-        lines.append("## Newly discovered queries & topics")
+        lines.append("## Newly discovered queries & topics (related to your universe)")
         lines.append("")
         for kw, s in new_this_week:
             lines.append(f"- {kw} (discovery score {s:.0f})")
