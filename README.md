@@ -48,7 +48,7 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 | Wikimedia Pageviews | Official, open API; daily article views per language edition (en + ar), 60-day backfill | SEO, GEO | Daily | None | Most reliable source here; no per-country filter |
 | Hacker News (Algolia API) | Official search API; story counts + front page | GEO | Real-time | None | Global tech community — auto-gated to GEO-relevant keywords only |
 | Stack Exchange API | Official; question volume (30d, core terms) + hot questions (`money`, `webmasters`) | AEO | Real-time | None (optional key raises quota) | Post-2024 cadence is low — weekly counts are sparse; hot-question mining is the real value |
-| Reddit | Rising threads & questions in UAE/GCC + money/AI subreddits | AEO, GEO | Real-time | Optional free OAuth (`REDDIT_CLIENT_ID/SECRET`) | Public JSON is 403-blocked from datacenters → built-in **RSS fallback** (no scores); OAuth restores vote counts |
+| Reddit via [Arctic Shift](https://arctic-shift.photon-reddit.com) | Mention counts + threads in UAE/GCC + money subreddits | AEO, GEO | Daily archive | None | No Reddit API access needed. One bulk pull per subreddit + local keyword/entity matching (word-boundary safe); paced for its rate limits |
 | Google News RSS | Article velocity per keyword **per country × language** (AE:en, AE:ar, …) | SEO | Real-time | None | News velocity often leads search demand |
 | arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Auto-gated to GEO-relevant keywords |
 | Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Auto-gated to GEO-relevant keywords |
@@ -105,7 +105,22 @@ python -m trendpulse demo            # offline end-to-end run on synthetic data
 python -m trendpulse run-daily       # import dumps + live ingest + train + report
 ```
 
-Individual stages: `python -m trendpulse import` (GSC/GA4 dumps) / `ingest` / `train` / `report`. Add `-v` for debug logs. Repo secrets for CI: `PROFOUND_API_KEY` (GEO visibility), optionally `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`.
+Individual stages: `python -m trendpulse import` (GSC/GA4 dumps) / `ingest` / `train` / `report` / `notify`. Add `-v` for debug logs.
+
+### Secrets (never in the workflow file)
+
+The workflow YAML contains **no key material** — only `${{ secrets.NAME }}` references that GitHub resolves at runtime. Values are encrypted at rest and masked in logs. Add them under **Settings → Environments → `trendpulse` → Environment secrets** (the workflow job is bound to that environment), or as repo-level Actions secrets — both resolve through the same `secrets.` context. Do **not** use the "Variables" tab for keys: variables are stored in plain text.
+
+Needed: `PROFOUND_API_KEY` (GEO visibility), `SLACK_WEBHOOK_URL` and/or `TEAMS_WEBHOOK_URL` (briefing). Reddit needs nothing — Arctic Shift is a public archive API.
+
+### Where do GSC/GA4 dumps go?
+
+Short version: **dumps stay on your machine; only the extracted numbers travel.**
+
+1. Drop exports into `data_imports/gsc/` and `data_imports/ga4/` locally. The directory is **git-ignored** — raw dumps are never uploaded to GitHub.
+2. Run `python -m trendpulse import`. Each row is parsed into compact observations inside `data/trendpulse.db` (SQLite). This database **is the cache**: imports are idempotent upserts, so re-running or overlapping exports never duplicates data.
+3. Commit the updated `data/trendpulse.db` (a few MB) — the daily workflow commits `data/` anyway, so history persists across CI runs.
+4. Delete the dumps if you like; they're no longer needed. Refresh with a new export whenever convenient (monthly/quarterly is fine — rows carry their own dates).
 
 ## Continuous training
 
@@ -133,8 +148,10 @@ After merging to your default branch the cron runs automatically. New keywords d
 
 ## Caveats
 
-- `pytrends` and the autocomplete endpoint are unofficial Google APIs — respect rate limits and expect occasional 429s (handled, with gaps in that source only).
-- Reddit's public JSON endpoints rate-limit aggressively; set `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` (free "script" app) as repo secrets for reliable runs.
+- `pytrends` and the autocomplete endpoint are unofficial Google APIs — expect 429s. Trends runs the primary region daily and rotates the rest (`google_trends.regions_per_run`), so full regional coverage accrues over the week rather than one throttled run.
+- Reddit data comes from the Arctic Shift archive API (no official Reddit API needed). It rate-limits politely ("slow down" responses) — the collector paces requests and retries; scores reflect archive-time values, not live votes.
+- Stack Exchange question volume is genuinely low post-2024 — treat it as an AEO question-mining source, not a velocity gauge.
+- HN/arXiv/Hugging Face are global tech sources; they only track GEO-relevant keywords (banking terms there are noise by design).
 - Scores are directional decision-support, not traffic forecasts. Validate big bets against Search Console before committing serious resources.
 - Check each source's terms of service for your usage volume.
 

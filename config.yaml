@@ -198,9 +198,11 @@ alerts:
   max_items: 8
   report_url: "https://github.com/raghavhvr/seo-intel/blob/main/reports/latest.md"
 
+# Reddit data comes from the Arctic Shift archive API (public, no Reddit API
+# credentials needed): https://arctic-shift.photon-reddit.com
 reddit:
   subreddits: ["dubai", "abudhabi", "UAE", "saudiarabia", "qatar",
-               "personalfinance", "banking", "fintech", "CredCards"]
+               "personalfinance", "banking", "fintech", "CreditCards"]
 
 stackexchange:
   sites: ["money", "webmasters"]
