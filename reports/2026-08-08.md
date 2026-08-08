@@ -1,6 +1,6 @@
 # Trend report — ADCB — Abu Dhabi Commercial Bank
 
-Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, SA, QA, KW, BH, OM, JO, LB · keywords tracked: 448 · scoring: ML model
+Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, SA, QA, KW, BH, OM, JO, LB · keywords tracked: 496 · scoring: ML model
 
 ## Upcoming regional moments (next 90 days)
 
@@ -20,87 +20,85 @@ Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, 
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | flux1 schnell | 100 | steady (-0.07) | +243059.87 | — |
-| 2 | gpt oss 120b | 91 | cooling (-0.22) | +243059.87 | — |
-| 3 | adcb bank near me | 83 | steady (-0.08) | +2.02 | — |
-| 4 | open banking uae | 63 | cooling (-0.18) | +1.54 | ai-topic |
-| 5 | kimi ai | 59 | steady (+0.05) | +1.11 | ai-topic |
-| 6 | adcb | 56 | rising (+0.38) | +0.12 | — |
-| 7 | wealth management uae | 46 | steady (-0.02) | +0.90 | — |
-| 8 | grok | 46 | rising (+0.40) | +0.17 | — |
-| 9 | digital banks uae | 40 | steady (+0.07) | +0.50 | ai-topic |
-| 10 | kimi k3 | 38 | steady (+0.06) | +0.37 | — |
-| 11 | how to send money from uae to india | 33 | cooling (-0.23) | +1.02 | question |
-| 12 | islamic banking uae | 30 | steady (-0.12) | +0.35 | — |
-| 13 | fixed deposit uae | 26 | cooling (-0.86) | +1.33 | — |
-| 14 | bloom | 24 | cooling (-0.76) | +1.42 | — |
-| 15 | credit card uae | 24 | steady (-0.01) | +0.06 | — |
-| 16 | claude | 23 | steady (+0.01) | +0.10 | ai-topic |
-| 17 | how to open a bank account in uae | 21 | cooling (-0.31) | +0.40 | question |
-| 18 | remittance uae to india | 21 | rising (+0.29) | -0.31 | — |
-| 19 | adcb com | 20 | steady (+0.03) | +0.19 | — |
-| 20 | how to check credit score in uae | 19 | steady (-0.13) | +0.12 | question |
+| 1 | adcb bank near me | 100 | cooling (-0.16) | +1.93 | — |
+| 2 | adcb | 79 | rising (+0.29) | +0.29 | — |
+| 3 | islamic banking uae | 65 | rising (+0.20) | +0.35 | — |
+| 4 | wealth management uae | 56 | steady (-0.09) | +0.90 | — |
+| 5 | fixed deposit uae | 56 | cooling (-0.59) | +1.33 | — |
+| 6 | open banking uae | 41 | cooling (-0.28) | +0.72 | ai-topic |
+| 7 | car loan uae | 39 | cooling (-0.66) | +1.15 | — |
+| 8 | remittance uae to india | 37 | rising (+0.43) | -0.31 | — |
+| 9 | how to open a bank account in uae | 36 | cooling (-0.19) | +0.40 | question |
+| 10 | what is an iban number | 32 | steady (-0.07) | +0.43 | question |
+| 11 | credit card uae | 30 | steady (-0.02) | +0.06 | — |
+| 12 | how to check credit score in uae | 29 | steady (-0.06) | +0.12 | question |
+| 13 | how to send money from uae to india | 27 | cooling (-0.19) | +0.52 | question |
+| 14 | ai in banking | 26 | rising (+0.16) | -0.05 | ai-topic |
+| 15 | evaluate adcb on fees and charges | 24 | steady (+0.11) | +0.00 | — |
+| 16 | digital banks uae | 23 | steady (-0.14) | +0.12 | ai-topic |
+| 17 | adcb banking issues | 23 | steady (+0.10) | +0.00 | — |
+| 18 | business bank account uae | 22 | cooling (-0.18) | +0.03 | — |
+| 19 | mortgage rates uae | 22 | cooling (-0.38) | +0.22 | — |
+| 20 | digital dirham | 20 | steady (+0.06) | +0.00 | ai-topic |
 
 ### AEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | how to send money from uae to india | 33 | cooling (-0.23) | +1.02 | question |
-| 2 | how to open a bank account in uae | 21 | cooling (-0.31) | +0.40 | question |
-| 3 | how to check credit score in uae | 19 | steady (-0.13) | +0.12 | question |
-| 4 | what is an iban number | 17 | cooling (-0.21) | +0.43 | question |
-| 5 | كيف أحول أموال من الإمارات إلى الهند | 13 | steady (+0.01) | +0.00 | question |
-| 6 | هل grok مجاني | 13 | steady (+0.00) | +0.00 | question |
-| 7 | what is bloom | 13 | steady (+0.00) | +0.00 | question |
-| 8 | what is claude | 13 | steady (+0.00) | +0.00 | question, ai-topic |
-| 9 | what is kimi ai | 13 | steady (+0.00) | +0.00 | question, ai-topic |
-| 10 | what is grok | 13 | steady (+0.00) | +0.00 | question |
-| 11 | why bloom coffee | 13 | steady (+0.00) | +0.00 | question |
-| 12 | boa is awful | 13 | steady (+0.00) | +0.00 | question |
-| 13 | grok كيف استخدم | 13 | steady (+0.00) | +0.00 | question |
-| 14 | how to bloom gelatin | 13 | steady (+0.00) | +0.00 | question |
-| 15 | which bank is best for salary account in uae | 13 | steady (+0.00) | +0.00 | question |
-| 16 | is capitalone savor one available on paze | 13 | steady (+0.00) | +0.00 | question |
-| 17 | is capitalone savor student available on paze | 13 | steady (+0.00) | +0.00 | question |
-| 18 | تحويل أموال من الإمارات | 13 | steady (+0.00) | +0.00 | question |
-| 19 | how is tide hyderabad fintech | 13 | steady (+0.00) | +0.00 | question, ai-topic |
-| 20 | what is the 30 rule in ai and finance | 13 | steady (+0.00) | +0.00 | question, ai-topic |
+| 1 | how to open a bank account in uae | 36 | cooling (-0.19) | +0.40 | question |
+| 2 | what is an iban number | 32 | steady (-0.07) | +0.43 | question |
+| 3 | how to check credit score in uae | 29 | steady (-0.06) | +0.12 | question |
+| 4 | how to send money from uae to india | 27 | cooling (-0.19) | +0.52 | question |
+| 5 | كيف أحول أموال من الإمارات إلى الهند | 15 | steady (+0.00) | +0.00 | question |
+| 6 | تحويل أموال من الإمارات | 15 | steady (+0.00) | +0.00 | question |
+| 7 | which bank is best for salary account in uae | 15 | steady (+0.00) | +0.00 | question |
+| 8 | is this savor card bucketed | 15 | steady (+0.00) | +0.00 | question |
+| 9 | how is tide hyderabad fintech | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 10 | recommendations/suggestions on credit card i should apply for next | 15 | steady (+0.00) | +0.00 | question |
+| 11 | ambani took my money and i can't do anything | 15 | steady (+0.00) | +0.00 | question |
+| 12 | what credit card to get next for the bonus/benefits | 15 | steady (+0.00) | +0.00 | question |
+| 13 | what is the 30 rule in ai and finance | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 14 | should i sell my car | 15 | steady (+0.00) | +0.00 | question |
+| 15 | should i open my own independent account | 15 | steady (+0.00) | +0.00 | question |
+| 16 | how do i get my deposit | 15 | steady (+0.00) | +0.00 | question |
+| 17 | 20 years old what credit card to get | 15 | steady (+0.00) | +0.00 | question |
+| 18 | which bank is best for salary transfer in uae | 15 | steady (+0.00) | +0.00 | question |
+| 19 | why adcb app is not working today | 15 | steady (+0.00) | +0.00 | question |
+| 20 | why adcb bank is not working | 15 | steady (+0.00) | +0.00 | question |
 
 ### GEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | open banking uae | 63 | cooling (-0.18) | +1.54 | ai-topic |
-| 2 | kimi ai | 59 | steady (+0.05) | +1.11 | ai-topic |
-| 3 | digital banks uae | 40 | steady (+0.07) | +0.50 | ai-topic |
-| 4 | claude | 23 | steady (+0.01) | +0.10 | ai-topic |
-| 5 | kimi k3 ai | 16 | steady (+0.06) | -0.00 | ai-topic |
-| 6 | digital dirham | 15 | steady (+0.04) | +0.00 | ai-topic |
-| 7 | الدرهم الرقمي | 14 | steady (+0.03) | +0.00 | ai-topic |
-| 8 | البنوك الرقمية الإمارات | 14 | steady (+0.02) | +0.00 | ai-topic |
-| 9 | embedded finance mena | 14 | steady (+0.02) | +0.00 | ai-topic |
-| 10 | higgsfield ai | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 11 | bnpl uae apps | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 12 | claude fable 5 | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 13 | google ai studio | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 14 | canva ai | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 15 | manus ai | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 16 | claude ai free | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 17 | what is claude | 13 | steady (+0.00) | +0.00 | question, ai-topic |
-| 18 | claude ai login | 13 | steady (+0.00) | +0.00 | ai-topic |
-| 19 | what is kimi ai | 13 | steady (+0.00) | +0.00 | question, ai-topic |
-| 20 | claude ai chat | 13 | steady (+0.00) | +0.00 | ai-topic |
+| 1 | open banking uae | 41 | cooling (-0.28) | +0.72 | ai-topic |
+| 2 | ai in banking | 26 | rising (+0.16) | -0.05 | ai-topic |
+| 3 | digital banks uae | 23 | steady (-0.14) | +0.12 | ai-topic |
+| 4 | digital dirham | 20 | steady (+0.06) | +0.00 | ai-topic |
+| 5 | fintech uae | 19 | steady (-0.13) | +0.29 | ai-topic |
+| 6 | embedded finance mena | 16 | steady (+0.01) | +0.00 | ai-topic |
+| 7 | البنوك الرقمية الإمارات | 16 | steady (+0.01) | +0.00 | ai-topic |
+| 8 | neobank uae | 16 | steady (+0.10) | -0.19 | ai-topic |
+| 9 | best books on ai in banking | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 10 | has fintech become way too api dependent | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 11 | what is the 30 rule in ai and finance | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 12 | how is tide hyderabad fintech | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 13 | what's one fintech startup that deserves more attention | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 14 | courses for ai in banking | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 15 | ai in banking and finance | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 16 | top ai in banking for digital platforms | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 17 | what is ai in banking | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 18 | ما هو claude | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 19 | best ai banking app | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 20 | ai in banking sector | 15 | steady (+0.00) | +0.00 | ai-topic |
 
 #### Deep dive — top 5 picks (week)
 
-- **flux1 schnell** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **gpt oss 120b** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-  - Evidence: 2026-08-08: trending model: https://huggingface.co/openai/gpt-oss-120b
 - **adcb bank near me** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
   - Evidence: 2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en]
-- **open banking uae** (geo, seo) — Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **kimi ai** (geo, seo) — Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages.
-  - Evidence: 2026-08-08: rising related query for 'kimi k3' in AE
+- **adcb** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **islamic banking uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **wealth management uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **fixed deposit uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 
 ## This month
 
@@ -108,86 +106,85 @@ Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, 
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | flux1 schnell | 100 | cooling (-0.21) | +243059.87 | — |
-| 2 | gpt oss 120b | 98 | cooling (-0.24) | +243059.87 | — |
-| 3 | adcb bank near me | 84 | cooling (-0.24) | +2.02 | — |
-| 4 | open banking uae | 70 | cooling (-0.27) | +1.54 | ai-topic |
-| 5 | wealth management uae | 64 | steady (+0.04) | +0.90 | — |
-| 6 | islamic banking uae | 59 | steady (+0.10) | +0.35 | — |
-| 7 | kimi ai | 57 | cooling (-0.25) | +1.11 | ai-topic |
-| 8 | digital banks uae | 53 | steady (+0.01) | +0.50 | ai-topic |
-| 9 | grok | 52 | rising (+0.24) | +0.17 | — |
-| 10 | adcb | 49 | steady (-0.01) | +0.12 | — |
-| 11 | what is an iban number | 46 | steady (-0.02) | +0.43 | question |
-| 12 | credit card uae | 46 | steady (+0.06) | +0.06 | — |
-| 13 | fixed deposit uae | 45 | cooling (-0.85) | +1.33 | — |
-| 14 | claude | 44 | steady (+0.07) | +0.10 | ai-topic |
-| 15 | how to send money from uae to india | 43 | cooling (-0.37) | +1.02 | question |
-| 16 | car loan uae | 41 | cooling (-0.80) | +1.15 | — |
-| 17 | kimi k3 ai | 40 | rising (+0.16) | -0.00 | ai-topic |
-| 18 | remittance uae to india | 39 | rising (+0.29) | -0.31 | — |
-| 19 | personal loan uae | 38 | cooling (-0.40) | +0.68 | — |
-| 20 | adcb com | 37 | steady (+0.01) | +0.19 | — |
+| 1 | adcb bank near me | 100 | cooling (-0.26) | +1.93 | — |
+| 2 | wealth management uae | 70 | steady (+0.02) | +0.90 | — |
+| 3 | islamic banking uae | 61 | steady (+0.08) | +0.35 | — |
+| 4 | fixed deposit uae | 55 | cooling (-0.66) | +1.33 | — |
+| 5 | adcb | 50 | steady (-0.12) | +0.29 | — |
+| 6 | car loan uae | 44 | cooling (-0.65) | +1.15 | — |
+| 7 | credit card uae | 44 | steady (+0.10) | +0.06 | — |
+| 8 | digital banks uae | 43 | steady (+0.07) | +0.12 | ai-topic |
+| 9 | what is an iban number | 43 | steady (+0.01) | +0.43 | question |
+| 10 | remittance uae to india | 40 | rising (+0.42) | -0.31 | — |
+| 11 | how to check credit score in uae | 31 | steady (-0.08) | +0.12 | question |
+| 12 | open banking uae | 30 | cooling (-0.46) | +0.72 | ai-topic |
+| 13 | الدرهم الرقمي | 28 | steady (+0.12) | +0.00 | ai-topic |
+| 14 | evaluate adcb on current and savings | 26 | steady (+0.10) | +0.00 | — |
+| 15 | best savings account uae | 25 | rising (+0.39) | -0.59 | — |
+| 16 | adcb banking issues | 25 | steady (+0.09) | +0.00 | — |
+| 17 | evaluate adcb on fees and charges | 24 | steady (+0.08) | +0.00 | — |
+| 18 | ai in banking | 22 | steady (+0.08) | -0.05 | ai-topic |
+| 19 | بطاقة ائتمان الإمارات | 22 | steady (-0.02) | -0.13 | — |
+| 20 | evaluate adcb on accounts | 21 | steady (+0.04) | +0.00 | — |
 
 ### AEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | what is an iban number | 46 | steady (-0.02) | +0.43 | question |
-| 2 | how to send money from uae to india | 43 | cooling (-0.37) | +1.02 | question |
-| 3 | how to check credit score in uae | 33 | cooling (-0.22) | +0.12 | question |
-| 4 | كيف أحول أموال من الإمارات إلى الهند | 32 | steady (+0.01) | +0.00 | question |
-| 5 | تحويل أموال من الإمارات | 32 | steady (+0.00) | +0.00 | question |
-| 6 | how is tide hyderabad fintech | 32 | steady (+0.00) | +0.00 | question, ai-topic |
-| 7 | which bank is best for salary account in uae | 32 | steady (+0.00) | +0.00 | question |
-| 8 | how to bloom gelatin | 32 | steady (+0.00) | +0.00 | question |
-| 9 | how to buy bloom energy stock | 32 | steady (+0.00) | +0.00 | question |
-| 10 | is this savor card bucketed | 32 | steady (+0.00) | +0.00 | question |
-| 11 | 2027 memory capacity is reportedly sold out | 32 | steady (+0.00) | +0.00 | question |
-| 12 | what is the 30 rule in ai and finance | 32 | steady (+0.00) | +0.00 | question, ai-topic |
-| 13 | what credit card to get next for the bonus/benefits | 32 | steady (+0.00) | +0.00 | question |
-| 14 | recommendations/suggestions on credit card i should apply for next | 32 | steady (+0.00) | +0.00 | question |
-| 15 | ambani took my money and i can't do anything | 32 | steady (+0.00) | +0.00 | question |
-| 16 | is capitalone savor one available on paze | 32 | steady (+0.00) | +0.00 | question |
-| 17 | is capitalone savor student available on paze | 32 | steady (+0.00) | +0.00 | question |
-| 18 | should i open my own independent account | 32 | steady (+0.00) | +0.00 | question |
-| 19 | how do i get my deposit | 32 | steady (+0.00) | +0.00 | question |
-| 20 | should i sell my car | 32 | steady (+0.00) | +0.00 | question |
+| 1 | what is an iban number | 43 | steady (+0.01) | +0.43 | question |
+| 2 | how to check credit score in uae | 31 | steady (-0.08) | +0.12 | question |
+| 3 | how to open a bank account in uae | 18 | cooling (-0.44) | +0.40 | question |
+| 4 | كيف أحول أموال من الإمارات إلى الهند | 17 | steady (+0.00) | +0.00 | question |
+| 5 | تحويل أموال من الإمارات | 17 | steady (+0.00) | +0.00 | question |
+| 6 | what is the 30 rule in ai and finance | 17 | steady (+0.00) | +0.00 | question, ai-topic |
+| 7 | how is tide hyderabad fintech | 17 | steady (+0.00) | +0.00 | question, ai-topic |
+| 8 | is this savor card bucketed | 17 | steady (+0.00) | +0.00 | question |
+| 9 | which bank is best for salary account in uae | 17 | steady (+0.00) | +0.00 | question |
+| 10 | recommendations/suggestions on credit card i should apply for next | 17 | steady (+0.00) | +0.00 | question |
+| 11 | ambani took my money and i can't do anything | 17 | steady (+0.00) | +0.00 | question |
+| 12 | what credit card to get next for the bonus/benefits | 17 | steady (+0.00) | +0.00 | question |
+| 13 | which credit card is best | 17 | steady (+0.00) | +0.00 | question |
+| 14 | should i sell my car | 17 | steady (-0.00) | +0.00 | question |
+| 15 | should i open my own independent account | 17 | steady (+0.00) | +0.00 | question |
+| 16 | how do i get my deposit | 17 | steady (+0.00) | +0.00 | question |
+| 17 | 20 years old what credit card to get | 17 | steady (+0.00) | +0.00 | question |
+| 18 | which bank is best for salary transfer in uae | 17 | steady (+0.00) | +0.00 | question |
+| 19 | why adcb app is not working today | 17 | steady (+0.00) | +0.00 | question |
+| 20 | why adcb bank is not working | 17 | steady (+0.00) | +0.00 | question |
 
 ### GEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | open banking uae | 70 | cooling (-0.27) | +1.54 | ai-topic |
-| 2 | kimi ai | 57 | cooling (-0.25) | +1.11 | ai-topic |
-| 3 | digital banks uae | 53 | steady (+0.01) | +0.50 | ai-topic |
-| 4 | claude | 44 | steady (+0.07) | +0.10 | ai-topic |
-| 5 | kimi k3 ai | 40 | rising (+0.16) | -0.00 | ai-topic |
-| 6 | الدرهم الرقمي | 37 | steady (+0.10) | +0.00 | ai-topic |
-| 7 | ai in banking | 35 | steady (+0.07) | -0.11 | ai-topic |
-| 8 | claude ai | 34 | cooling (-0.43) | +0.54 | ai-topic |
-| 9 | digital dirham | 34 | steady (+0.04) | +0.00 | ai-topic |
-| 10 | البنوك الرقمية الإمارات | 33 | steady (+0.03) | +0.00 | ai-topic |
-| 11 | embedded finance mena | 33 | steady (+0.03) | +0.00 | ai-topic |
-| 12 | claude fable 5 | 32 | steady (+0.00) | +0.00 | ai-topic |
-| 13 | higgsfield ai | 32 | steady (+0.00) | +0.00 | ai-topic |
-| 14 | claude extension for chrome | 32 | steady (+0.00) | +0.00 | ai-topic |
-| 15 | google ai studio | 32 | steady (+0.00) | +0.00 | ai-topic |
-| 16 | manus ai | 32 | steady (-0.00) | +0.00 | ai-topic |
-| 17 | courses for ai in banking | 32 | steady (+0.00) | +0.00 | ai-topic |
-| 18 | how to claude code | 32 | steady (+0.00) | +0.00 | question, ai-topic |
-| 19 | how to use kimi ai | 32 | steady (+0.00) | +0.00 | question, ai-topic |
-| 20 | claude for chrome | 32 | steady (+0.00) | +0.00 | ai-topic |
+| 1 | digital banks uae | 43 | steady (+0.07) | +0.12 | ai-topic |
+| 2 | open banking uae | 30 | cooling (-0.46) | +0.72 | ai-topic |
+| 3 | الدرهم الرقمي | 28 | steady (+0.12) | +0.00 | ai-topic |
+| 4 | ai in banking | 22 | steady (+0.08) | -0.05 | ai-topic |
+| 5 | digital dirham | 20 | steady (+0.04) | +0.00 | ai-topic |
+| 6 | fintech uae | 20 | cooling (-0.15) | +0.29 | ai-topic |
+| 7 | embedded finance mena | 19 | steady (+0.02) | +0.00 | ai-topic |
+| 8 | البنوك الرقمية الإمارات | 19 | steady (+0.02) | +0.00 | ai-topic |
+| 9 | neobank uae | 18 | steady (+0.10) | -0.19 | ai-topic |
+| 10 | ما هو claude code | 17 | steady (-0.00) | +0.00 | question, ai-topic |
+| 11 | has fintech become way too api dependent | 17 | steady (+0.00) | +0.00 | ai-topic |
+| 12 | how is tide hyderabad fintech | 17 | steady (+0.00) | +0.00 | question, ai-topic |
+| 13 | what is the 30 rule in ai and finance | 17 | steady (+0.00) | +0.00 | question, ai-topic |
+| 14 | what's one fintech startup that deserves more attention | 17 | steady (+0.00) | +0.00 | ai-topic |
+| 15 | courses for ai in banking | 17 | steady (+0.00) | +0.00 | ai-topic |
+| 16 | top ai in banking for digital platforms | 17 | steady (+0.00) | +0.00 | ai-topic |
+| 17 | what is ai in banking | 17 | steady (-0.00) | +0.00 | question, ai-topic |
+| 18 | ما هو claude | 17 | steady (-0.00) | +0.00 | question, ai-topic |
+| 19 | ai in banking and finance | 17 | steady (+0.00) | +0.00 | ai-topic |
+| 20 | ai in banking sector | 17 | steady (-0.00) | +0.00 | ai-topic |
 
 #### Deep dive — top 5 picks (month)
 
-- **flux1 schnell** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **gpt oss 120b** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-  - Evidence: 2026-08-08: trending model: https://huggingface.co/openai/gpt-oss-120b
 - **adcb bank near me** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
   - Evidence: 2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en]
-- **open banking uae** (geo, seo) — Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **wealth management uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **islamic banking uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **fixed deposit uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **adcb** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 
 ## This quarter
 
@@ -196,102 +193,102 @@ Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
 | 1 | fixed deposit uae | 100 | rising (+2.15) | +1.33 | — |
-| 2 | car loan uae | 86 | rising (+1.52) | +1.15 | — |
-| 3 | gpt oss 120b | 86 | rising (+0.94) | +243059.87 | — |
-| 4 | flux1 schnell | 86 | rising (+0.94) | +243059.87 | — |
-| 5 | personal loan uae | 82 | rising (+1.75) | +0.68 | — |
-| 6 | adcb bank near me | 70 | rising (+0.34) | +2.02 | — |
-| 7 | bloom | 59 | steady (+0.02) | +1.42 | — |
-| 8 | claude ai | 59 | rising (+0.50) | +0.54 | ai-topic |
-| 9 | open banking uae | 59 | steady (-0.06) | +1.54 | ai-topic |
-| 10 | what is an iban number | 56 | rising (+0.56) | +0.43 | question |
-| 11 | credit card uae | 56 | rising (+0.59) | +0.06 | — |
-| 12 | how to send money from uae to india | 55 | rising (+0.18) | +1.02 | question |
-| 13 | digital banks uae | 52 | rising (+0.23) | +0.50 | ai-topic |
-| 14 | kimi ai | 51 | cooling (-0.21) | +1.11 | ai-topic |
-| 15 | wealth management uae | 50 | steady (-0.12) | +0.90 | — |
-| 16 | islamic banking uae | 49 | steady (+0.01) | +0.35 | — |
-| 17 | how to check credit score in uae | 47 | steady (+0.09) | +0.12 | question |
-| 18 | how to open a bank account in uae | 47 | steady (-0.14) | +0.40 | question |
-| 19 | business bank account uae | 46 | steady (+0.00) | +0.05 | — |
-| 20 | claude | 44 | steady (-0.00) | +0.10 | ai-topic |
+| 2 | car loan uae | 85 | rising (+1.52) | +1.15 | — |
+| 3 | personal loan uae | 81 | rising (+1.75) | +0.68 | — |
+| 4 | adcb bank near me | 66 | rising (+0.28) | +1.93 | — |
+| 5 | what is an iban number | 53 | rising (+0.56) | +0.43 | question |
+| 6 | credit card uae | 52 | rising (+0.59) | +0.06 | — |
+| 7 | fintech uae | 50 | rising (+0.51) | +0.29 | ai-topic |
+| 8 | adcb | 47 | steady (+0.02) | +0.29 | — |
+| 9 | wealth management uae | 46 | steady (-0.12) | +0.90 | — |
+| 10 | islamic banking uae | 45 | steady (+0.01) | +0.35 | — |
+| 11 | how to open a bank account in uae | 44 | steady (-0.10) | +0.40 | question |
+| 12 | how to check credit score in uae | 43 | steady (+0.07) | +0.12 | question |
+| 13 | business bank account uae | 40 | steady (-0.11) | +0.03 | — |
+| 14 | قرض شخصي الإمارات | 38 | rising (+0.28) | -0.45 | — |
+| 15 | قرض سيارة الإمارات | 38 | rising (+0.24) | -0.46 | — |
+| 16 | remittance uae to india | 38 | rising (+0.19) | -0.31 | — |
+| 17 | best savings bank uae | 37 | steady (+0.00) | +0.00 | — |
+| 18 | adcb bank near me branch | 37 | steady (+0.00) | +0.00 | — |
+| 19 | adcb bank swift code | 37 | steady (+0.00) | +0.00 | — |
+| 20 | adcb com updates online banking login | 37 | steady (+0.00) | +0.00 | — |
 
 ### AEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | what is an iban number | 56 | rising (+0.56) | +0.43 | question |
-| 2 | how to send money from uae to india | 55 | rising (+0.18) | +1.02 | question |
-| 3 | how to check credit score in uae | 47 | steady (+0.09) | +0.12 | question |
-| 4 | how to open a bank account in uae | 47 | steady (-0.14) | +0.40 | question |
-| 5 | تحويل أموال من الإمارات | 41 | steady (+0.00) | +0.00 | question |
-| 6 | which bank is best for salary account in uae | 41 | steady (+0.00) | +0.00 | question |
-| 7 | كيف أحول أموال من الإمارات إلى الهند | 41 | steady (+0.00) | +0.00 | question |
-| 8 | how to bloom gelatin | 41 | steady (+0.00) | +0.00 | question |
-| 9 | how is tide hyderabad fintech | 41 | steady (+0.00) | +0.00 | question, ai-topic |
-| 10 | is this savor card bucketed | 41 | steady (+0.00) | +0.00 | question |
-| 11 | 2027 memory capacity is reportedly sold out | 41 | steady (+0.00) | +0.00 | question |
-| 12 | what is the 30 rule in ai and finance | 41 | steady (+0.00) | +0.00 | question, ai-topic |
-| 13 | what credit card to get next for the bonus/benefits | 41 | steady (+0.00) | +0.00 | question |
-| 14 | recommendations/suggestions on credit card i should apply for next | 41 | steady (+0.00) | +0.00 | question |
-| 15 | ambani took my money and i can't do anything | 41 | steady (+0.00) | +0.00 | question |
-| 16 | is capitalone savor one available on paze | 41 | steady (+0.00) | +0.00 | question |
-| 17 | is capitalone savor student available on paze | 41 | steady (+0.00) | +0.00 | question |
-| 18 | should i open my own independent account | 41 | steady (+0.00) | +0.00 | question |
-| 19 | how do i get my deposit | 41 | steady (+0.00) | +0.00 | question |
-| 20 | should i sell my car | 41 | steady (+0.00) | +0.00 | question |
+| 1 | what is an iban number | 53 | rising (+0.56) | +0.43 | question |
+| 2 | how to open a bank account in uae | 44 | steady (-0.10) | +0.40 | question |
+| 3 | how to check credit score in uae | 43 | steady (+0.07) | +0.12 | question |
+| 4 | تحويل أموال من الإمارات | 37 | steady (+0.00) | +0.00 | question |
+| 5 | which bank is best for salary account in uae | 37 | steady (+0.00) | +0.00 | question |
+| 6 | what is the 30 rule in ai and finance | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 7 | how is tide hyderabad fintech | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 8 | is this savor card bucketed | 37 | steady (+0.00) | +0.00 | question |
+| 9 | كيف أحول أموال من الإمارات إلى الهند | 37 | steady (+0.00) | +0.00 | question |
+| 10 | recommendations/suggestions on credit card i should apply for next | 37 | steady (+0.00) | +0.00 | question |
+| 11 | ambani took my money and i can't do anything | 37 | steady (+0.00) | +0.00 | question |
+| 12 | what credit card to get next for the bonus/benefits | 37 | steady (+0.00) | +0.00 | question |
+| 13 | which credit card is best | 37 | steady (+0.00) | +0.00 | question |
+| 14 | should i sell my car | 37 | steady (+0.00) | +0.00 | question |
+| 15 | should i open my own independent account | 37 | steady (+0.00) | +0.00 | question |
+| 16 | how do i get my deposit | 37 | steady (+0.00) | +0.00 | question |
+| 17 | 20 years old what credit card to get | 37 | steady (+0.00) | +0.00 | question |
+| 18 | which bank is best for salary transfer in uae | 37 | steady (+0.00) | +0.00 | question |
+| 19 | why adcb app is not working today | 37 | steady (+0.00) | +0.00 | question |
+| 20 | why adcb bank is not working | 37 | steady (+0.00) | +0.00 | question |
 
 ### GEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | claude ai | 59 | rising (+0.50) | +0.54 | ai-topic |
-| 2 | open banking uae | 59 | steady (-0.06) | +1.54 | ai-topic |
-| 3 | digital banks uae | 52 | rising (+0.23) | +0.50 | ai-topic |
-| 4 | kimi ai | 51 | cooling (-0.21) | +1.11 | ai-topic |
-| 5 | claude | 44 | steady (-0.00) | +0.10 | ai-topic |
-| 6 | البنوك الرقمية الإمارات | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 7 | embedded finance mena | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 8 | digital dirham | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 9 | kimi k3 ai | 41 | steady (+0.00) | -0.00 | ai-topic |
-| 10 | الدرهم الرقمي | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 11 | claude fable 5 | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 12 | higgsfield ai | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 13 | claude for chrome | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 14 | claude extension for chrome | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 15 | google ai studio | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 16 | manus ai | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 17 | courses for ai in banking | 41 | steady (+0.00) | +0.00 | ai-topic |
-| 18 | how to claude code | 41 | steady (+0.00) | +0.00 | question, ai-topic |
-| 19 | how to use kimi ai | 41 | steady (+0.00) | +0.00 | question, ai-topic |
-| 20 | top ai in banking for digital platforms | 41 | steady (+0.00) | +0.00 | ai-topic |
+| 1 | fintech uae | 50 | rising (+0.51) | +0.29 | ai-topic |
+| 2 | digital dirham | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 3 | الدرهم الرقمي | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 4 | البنوك الرقمية الإمارات | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 5 | embedded finance mena | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 6 | has fintech become way too api dependent | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 7 | ما هو claude code | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 8 | ai in banking industry | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 9 | best ai bank in the world | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 10 | digital bank uae business | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 11 | digital dirham wallet | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 12 | how is tide hyderabad fintech | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 13 | what is the 30 rule in ai and finance | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 14 | what's one fintech startup that deserves more attention | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 15 | courses for ai in banking | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 16 | top ai in banking for digital platforms | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 17 | what is ai in banking | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 18 | ما هو claude | 37 | steady (+0.00) | +0.00 | question, ai-topic |
+| 19 | ai in banking and finance | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 20 | ai in banking sector | 37 | steady (+0.00) | +0.00 | ai-topic |
 
 #### Deep dive — top 5 picks (quarter)
 
 - **fixed deposit uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **car loan uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **gpt oss 120b** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-  - Evidence: 2026-08-08: trending model: https://huggingface.co/openai/gpt-oss-120b
-- **flux1 schnell** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **personal loan uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **adcb bank near me** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+  - Evidence: 2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en]
+- **what is an iban number** (aeo, seo) — Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
 
 ## Newly discovered queries & topics (related to your universe)
 
 - kimi k3 (discovery score 4129300)
+- adcb com updates (discovery score 3466550)
 - kimi k3 ai (discovery score 2120500)
 - claude ai (discovery score 1673700)
 - kimi ai (discovery score 1229550)
 - kimi api (discovery score 643300)
 - kimi k3 free (discovery score 616650)
 - kimi k3 api (discovery score 584500)
-- grok (discovery score 568000)
 - orlando bloom (discovery score 562650)
 - moonshot kimi k3 (discovery score 368050)
 - kimi k3 model (discovery score 359000)
 - bloom energy stock (discovery score 337950)
 - kimi k3 vs opus 5 (discovery score 327850)
 - kimi code (discovery score 306150)
-- adcb bank (discovery score 282400)
+- adcb bank (discovery score 305950)
 
 ## GEO citation share (last 30 days · TryProfound)
 
@@ -344,11 +341,11 @@ AI-answer mentions (TryProfound) plus community chatter (Reddit / news / HN disc
 | Entity | Type | Mentions | Share of voice |
 |--------|------|----------|----------------|
 | Emirates NBD | competitor | 459 | 11.9% |
-| ADCB | brand | 390 | 10.1% |
+| ADCB | brand | 414 | 10.7% |
 | Mashreq | competitor | 297 | 7.7% |
 | FAB | competitor | 174 | 4.5% |
 | First Abu Dhabi Bank | competitor | 151 | 3.9% |
-| Emirates Islamic | competitor | 141 | 3.7% |
+| Emirates Islamic | competitor | 141 | 3.6% |
 | Dubai Islamic Bank | competitor | 127 | 3.3% |
 | RAKBANK | competitor | 120 | 3.1% |
 | Abu Dhabi Islamic Bank | competitor | 96 | 2.5% |
@@ -357,7 +354,7 @@ AI-answer mentions (TryProfound) plus community chatter (Reddit / news / HN disc
 | بنك الإمارات دبي الوطني | competitor | 67 | 1.7% |
 | ADIB | competitor | 66 | 1.7% |
 | Abu Dhabi Commercial Bank | brand | 66 | 1.7% |
-| بنك دبي الإسلامي | competitor | 56 | 1.5% |
+| بنك دبي الإسلامي | competitor | 56 | 1.4% |
 | Wio Bank | competitor | 51 | 1.3% |
 | الإمارات الإسلامي | competitor | 50 | 1.3% |
 | بنك أبوظبي الأول | competitor | 48 | 1.2% |
