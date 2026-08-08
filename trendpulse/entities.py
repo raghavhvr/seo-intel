@@ -68,10 +68,19 @@ def scan_discoveries(cfg: dict, store: Store, discoveries: list[Discovery]) -> i
         haystack = f"{disc.keyword} {disc.context}".lower()
         for entity, (kind, rx) in patterns.items():
             if rx.search(haystack):
+                # One sighting = one mention. Discovery scores are NOT
+                # comparable across sources — pytrends marks breakout rising
+                # queries with percent-growth numbers in the hundreds of
+                # thousands, and share-of-voice sums mention values: two such
+                # rows once credited ADCB with 446k "mentions" (97% SOV),
+                # burying every real competitor signal in the report.
                 mentions.append(EntityMention(
                     date=date, entity=entity, kind=kind, source=disc.source,
-                    context=disc.context[:150], value=max(disc.score, 1.0)))
+                    context=disc.context[:150], value=1.0))
     written = store.upsert_entity_mentions(mentions)
+    # Retroactive for history already collected under the old weighting: a
+    # 'mention'-metric value above 1 is always a discovery-score artifact.
+    store.clamp_mention_values()
     if written:
         log.info("[entities] %d brand/competitor mentions in today's discoveries", written)
     return written
