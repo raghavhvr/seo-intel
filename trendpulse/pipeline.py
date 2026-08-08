@@ -140,6 +140,20 @@ def run_report(cfg: dict, models: dict[str, HorizonModel] | None = None) -> Path
     return path
 
 
+def run_dashboard(cfg: dict) -> Path:
+    """Re-render the HTML dashboard from data already in the DB — no ingest,
+    no training. Lets design changes reach the published page in seconds
+    instead of waiting for the next full daily run."""
+    from trendpulse.dashboard import generate_dashboard
+
+    store = Store(db_path(cfg))
+    try:
+        return generate_dashboard(store, cfg, Path(cfg["reports"]["output_dir"]),
+                                  extra_paths=[Path("docs/index.html")])
+    finally:
+        store.close()
+
+
 def run_notify(cfg: dict, report_path: Path | str = "") -> bool:
     from trendpulse.notify import send_alerts
 
