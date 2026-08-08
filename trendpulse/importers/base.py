@@ -6,8 +6,21 @@ import logging
 import re
 import zipfile
 from pathlib import Path
+from typing import NamedTuple
 
 log = logging.getLogger(__name__)
+
+# An 8 MB GA4 export with one stray quote overflows csv's default 128 KB field
+# cap ("_csv.Error: field larger than field limit"). sys.maxsize overflows a C
+# long on Windows, so use a plain large constant.
+csv.field_size_limit(10_000_000)
+
+
+class Table(NamedTuple):
+    name: str          # archive-qualified display name, carries export window
+    rows: list[dict]
+    headers: list[str]
+    preamble: str      # leading '# …' comment block (GA4 keeps its date range here)
 
 
 def find_files(directory: str | Path, patterns: list[str]) -> list[Path]:
@@ -36,38 +49,44 @@ def map_columns(fieldnames: list[str], spec: dict[str, tuple[str, ...]]) -> dict
     return mapping
 
 
-def _parse_csv_text(text: str) -> tuple[list[dict], list[str]]:
+def _parse_csv_text(text: str) -> tuple[list[dict], list[str], str]:
     # GA4's UI exports open with a comment preamble ('# All Users', '# 2026…')
     # before the real header row. Without stripping it, the first comment line
     # becomes the header, no expected column matches, and the file silently
-    # imports zero rows.
+    # imports zero rows. The preamble is kept — GA4 hides the export's date
+    # range in it ('# 20251001-20260228'), which the importer needs to turn a
+    # bare Month column into real dates.
     lines = text.splitlines()
     start = 0
     while start < len(lines) and (not lines[start].strip()
                                   or lines[start].lstrip().startswith("#")):
         start += 1
+    preamble = "\n".join(lines[:start])
     text = "\n".join(lines[start:])
-    try:
-        dialect = csv.Sniffer().sniff(text[:4096], delimiters=",;\t")
-    except csv.Error:
-        dialect = csv.excel
-    reader = csv.DictReader(io.StringIO(text), dialect=dialect)
+    # Delimiter only — csv.Sniffer's full-dialect guessing misfires on real
+    # GA4 exports (a wrongly inferred quote rule swallowed megabytes into one
+    # "field" and crashed the run). Count candidates in the header line.
+    header = text.split("\n", 1)[0]
+    delimiter = max(",;\t", key=header.count)
+    reader = csv.DictReader(io.StringIO(text), delimiter=delimiter)
     rows = list(reader)
-    return rows, list(reader.fieldnames or [])
+    return rows, list(reader.fieldnames or []), preamble
 
 
 def read_rows(path: Path) -> tuple[list[dict], list[str]]:
-    """CSV (any delimiter via sniffer, UTF-8 BOM tolerant) or Excel via pandas."""
+    """CSV (delimiter auto-detected, UTF-8 BOM tolerant) or Excel via pandas."""
     if path.suffix.lower() in (".xlsx", ".xls"):
         import pandas as pd
 
         frame = pd.read_excel(path)
         return frame.to_dict("records"), [str(c) for c in frame.columns]
-    return _parse_csv_text(path.read_text(encoding="utf-8-sig", errors="replace"))
+    rows, headers, _pre = _parse_csv_text(path.read_text(encoding="utf-8-sig",
+                                                         errors="replace"))
+    return rows, headers
 
 
 def iter_tables(path: Path):
-    """Yield (display_name, rows, headers) for every table a file holds.
+    """Yield a Table for every table a file holds.
 
     Plain CSV/Excel files yield themselves once. Zip archives (what the GSC UI
     actually hands you — Queries.csv, Pages.csv, Countries.csv, … bundled) are
@@ -81,11 +100,16 @@ def iter_tables(path: Path):
                 if member.endswith("/") or not member.lower().endswith((".csv", ".tsv")):
                     continue
                 text = zf.read(member).decode("utf-8-sig", errors="replace")
-                rows, headers = _parse_csv_text(text)
-                yield f"{path.name}/{member}", rows, headers
+                rows, headers, preamble = _parse_csv_text(text)
+                yield Table(f"{path.name}/{member}", rows, headers, preamble)
         return
-    rows, headers = read_rows(path)
-    yield path.name, rows, headers
+    if path.suffix.lower() in (".xlsx", ".xls"):
+        rows, headers = read_rows(path)
+        yield Table(path.name, rows, headers, "")
+        return
+    rows, headers, preamble = _parse_csv_text(
+        path.read_text(encoding="utf-8-sig", errors="replace"))
+    yield Table(path.name, rows, headers, preamble)
 
 
 _YMD = re.compile(r"^(\d{4})(\d{2})(\d{2})$")
