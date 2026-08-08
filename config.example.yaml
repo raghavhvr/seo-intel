@@ -205,6 +205,9 @@ reddit:
 stackexchange:
   sites: ["money", "webmasters"]
 
+google_trends:
+  regions_per_run: 4   # AE runs daily; the other 7 regions rotate (rate limits)
+
 model:
   min_samples: 200
   horizons:

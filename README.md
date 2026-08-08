@@ -43,15 +43,15 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 
 | Source | Provides | Channel(s) | Cadence | Auth | Notes |
 |--------|----------|-----------|---------|------|-------|
-| Google Trends (`pytrends`) | Search interest 0–100 **per country** + rising related queries, 90-day daily backfill | SEO | Daily | None | Unofficial API; rate-limited (collector backs off gracefully) |
-| Google Autocomplete | Real query suggestions **per country × language** (EN + AR modifiers) | SEO, AEO | Real-time | None | Unofficial endpoint (`suggestqueries.google.com`) |
+| Google Trends (`pytrends`) | Search interest 0–100 **per country** + rising related queries, 90-day daily backfill | SEO | Daily | None | Unofficial, aggressively rate-limited → primary region daily + remaining regions rotate (`regions_per_run`), 60s back-off on 429 |
+| Google Autocomplete | Real query suggestions **per country × language** (EN + AR modifiers) | SEO, AEO | Real-time | None | Unofficial endpoint (`suggestqueries.google.com`); highest-relevance discovery source in audits |
 | Wikimedia Pageviews | Official, open API; daily article views per language edition (en + ar), 60-day backfill | SEO, GEO | Daily | None | Most reliable source here; no per-country filter |
-| Hacker News (Algolia API) | Official search API; story counts + front page | GEO | Real-time | None | Best early-warning for AI/dev topics |
-| Stack Exchange API | Official; question volume + hot questions (`money`, `webmasters`) | AEO | Real-time | None (optional key raises quota) | Literally the questions people want answered |
-| Reddit | Rising threads & questions in UAE/GCC + money/AI subreddits | AEO, GEO | Real-time | Optional free OAuth (`REDDIT_CLIENT_ID/SECRET`) — public JSON otherwise | Set the env vars for reliability |
+| Hacker News (Algolia API) | Official search API; story counts + front page | GEO | Real-time | None | Global tech community — auto-gated to GEO-relevant keywords only |
+| Stack Exchange API | Official; question volume (30d, core terms) + hot questions (`money`, `webmasters`) | AEO | Real-time | None (optional key raises quota) | Post-2024 cadence is low — weekly counts are sparse; hot-question mining is the real value |
+| Reddit | Rising threads & questions in UAE/GCC + money/AI subreddits | AEO, GEO | Real-time | Optional free OAuth (`REDDIT_CLIENT_ID/SECRET`) | Public JSON is 403-blocked from datacenters → built-in **RSS fallback** (no scores); OAuth restores vote counts |
 | Google News RSS | Article velocity per keyword **per country × language** (AE:en, AE:ar, …) | SEO | Real-time | None | News velocity often leads search demand |
-| arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Research chatter → AI answers weeks later |
-| Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Shows which AI capabilities/jargon are gaining traction |
+| arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Auto-gated to GEO-relevant keywords |
+| Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Auto-gated to GEO-relevant keywords |
 
 **First-party and GEO data (already wired in):**
 
