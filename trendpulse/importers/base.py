@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import csv
+import io
 import logging
 import re
+import zipfile
 from pathlib import Path
 
 log = logging.getLogger(__name__)
@@ -34,6 +36,16 @@ def map_columns(fieldnames: list[str], spec: dict[str, tuple[str, ...]]) -> dict
     return mapping
 
 
+def _parse_csv_text(text: str) -> tuple[list[dict], list[str]]:
+    try:
+        dialect = csv.Sniffer().sniff(text[:4096], delimiters=",;\t")
+    except csv.Error:
+        dialect = csv.excel
+    reader = csv.DictReader(io.StringIO(text), dialect=dialect)
+    rows = list(reader)
+    return rows, list(reader.fieldnames or [])
+
+
 def read_rows(path: Path) -> tuple[list[dict], list[str]]:
     """CSV (any delimiter via sniffer, UTF-8 BOM tolerant) or Excel via pandas."""
     if path.suffix.lower() in (".xlsx", ".xls"):
@@ -41,16 +53,29 @@ def read_rows(path: Path) -> tuple[list[dict], list[str]]:
 
         frame = pd.read_excel(path)
         return frame.to_dict("records"), [str(c) for c in frame.columns]
-    with path.open(newline="", encoding="utf-8-sig", errors="replace") as fh:
-        sample = fh.read(4096)
-        fh.seek(0)
-        try:
-            dialect = csv.Sniffer().sniff(sample, delimiters=",;\t")
-        except csv.Error:
-            dialect = csv.excel
-        reader = csv.DictReader(fh, dialect=dialect)
-        rows = list(reader)
-        return rows, list(reader.fieldnames or [])
+    return _parse_csv_text(path.read_text(encoding="utf-8-sig", errors="replace"))
+
+
+def iter_tables(path: Path):
+    """Yield (display_name, rows, headers) for every table a file holds.
+
+    Plain CSV/Excel files yield themselves once. Zip archives (what the GSC UI
+    actually hands you — Queries.csv, Pages.csv, Countries.csv, … bundled) are
+    read in place, one yield per member, so exports can be dropped in exactly
+    as downloaded. The display name keeps the archive's own filename first
+    because that's where the export window lives ('…-Jul-26.zip'); members
+    without a usable column set are the caller's job to skip."""
+    if path.suffix.lower() == ".zip":
+        with zipfile.ZipFile(path) as zf:
+            for member in sorted(zf.namelist()):
+                if member.endswith("/") or not member.lower().endswith((".csv", ".tsv")):
+                    continue
+                text = zf.read(member).decode("utf-8-sig", errors="replace")
+                rows, headers = _parse_csv_text(text)
+                yield f"{path.name}/{member}", rows, headers
+        return
+    rows, headers = read_rows(path)
+    yield path.name, rows, headers
 
 
 def num(value) -> float:
