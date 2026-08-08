@@ -5,23 +5,39 @@ import logging
 import sys
 
 
+def _add_common(parser: argparse.ArgumentParser, *, suppress: bool) -> None:
+    """--config/--verbose work both before AND after the subcommand
+    (`trendpulse --config x run-daily` and `trendpulse run-daily --config x`).
+    Subcommand copies use SUPPRESS defaults so an omitted flag never
+    overwrites a value given before the subcommand."""
+    default = argparse.SUPPRESS if suppress else None
+    parser.add_argument("--config", default=default,
+                        help="Path to config.yaml (default: config.yaml, then config.example.yaml)")
+    parser.add_argument("--verbose", "-v", action="store_true",
+                        default=argparse.SUPPRESS if suppress else False)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="trendpulse",
         description="Trend spotting for SEO / AEO / GEO teams.",
     )
-    parser.add_argument("--config", default=None,
-                        help="Path to config.yaml (default: config.yaml, then config.example.yaml)")
-    parser.add_argument("--verbose", "-v", action="store_true")
+    _add_common(parser, suppress=False)
     sub = parser.add_subparsers(dest="command", required=True)
 
-    sub.add_parser("ingest", help="Pull today's data from all enabled sources")
-    sub.add_parser("import", help="Import offline GSC/GA4 dumps from data_imports/")
-    sub.add_parser("train", help="Retrain the trend models on all collected history")
-    sub.add_parser("report", help="Regenerate weekly/monthly/quarterly focus reports")
-    sub.add_parser("notify", help="Send breakout alerts + briefing to Slack/Teams webhooks")
-    sub.add_parser("run-daily", help="import + ingest + train + report + notify (the scheduled daily job)")
+    commands = {
+        "ingest": "Pull today's data from all enabled sources",
+        "import": "Import offline GSC/GA4 dumps from data_imports/",
+        "train": "Retrain the trend models on all collected history",
+        "report": "Regenerate weekly/monthly/quarterly focus reports",
+        "notify": "Send breakout alerts + briefing to Slack/Teams webhooks",
+        "run-daily": "import + ingest + train + report + notify (the scheduled daily job)",
+    }
+    for name, help_text in commands.items():
+        _add_common(sub.add_parser(name, help=help_text), suppress=True)
+
     demo = sub.add_parser("demo", help="Offline end-to-end run on synthetic data")
+    _add_common(demo, suppress=True)
     demo.add_argument("--days", type=int, default=150,
                       help="Days of synthetic history to generate (default: 150)")
     return parser
