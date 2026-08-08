@@ -56,6 +56,25 @@ def test_mentions_count_once_regardless_of_discovery_score(tmp_path):
     store.close()
 
 
+def test_mention_split_is_ranked_by_total(tmp_path):
+    """AI vs community split, ordered by total mentions — a plain 'ORDER BY
+    3 + 4' silently becomes the constant 7 in SQLite (no ordering), which put
+    1-mention entities above Emirates NBD on the dashboard."""
+    from trendpulse.types import EntityMention
+
+    store = Store(tmp_path / "t.db")
+    rows = ([("ADCB", "profound:ChatGPT")] * 3 + [("ADCB", "reddit")] * 2
+            + [("Emirates NBD", "profound:Gemini")] * 4
+            + [("ADNOC", "google_news")])
+    store.upsert_entity_mentions([
+        EntityMention(date="2026-08-08", entity=e, kind="competitor", source=s,
+                      context=f"ctx {i}") for i, (e, s) in enumerate(rows)])
+    split = store.entity_mention_split(days=7)
+    assert [(e, ai, com) for e, _k, ai, com in split] == [
+        ("ADCB", 3.0, 2.0), ("Emirates NBD", 4.0, 0.0), ("ADNOC", 0.0, 1.0)]
+    store.close()
+
+
 def test_word_boundaries_prevent_false_positives(tmp_path):
     store = Store(tmp_path / "t.db")
     discs = [Discovery(date="2026-08-07", keyword="fabulous credit card hacks",
