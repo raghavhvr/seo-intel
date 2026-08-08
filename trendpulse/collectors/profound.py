@@ -92,28 +92,44 @@ class ProfoundCollector(Collector):
                         [c.get("name") for c in categories][:10])
         return None
 
+    # v1 report facts, verified live against the ADCB category (2026-08-05, in
+    # a sibling project) — do not "simplify" these away:
+    #  * The per-asset leaderboard comes from POST /v1/reports/visibility with
+    #    dimensions ["date", "asset_name"]. v2's group_by REJECTS any asset
+    #    grouping ("asset" is not a legal value -> HTTP 422, seen in prod).
+    #  * dimensions and metrics arrays in each response row come back in
+    #    ALPHABETICAL field-name order, NOT request order. Positional reads
+    #    silently transpose share_of_voice into visibility_score — always map
+    #    with dict(zip(sorted(names), row[...])).
+    #  * start_date must be STRICTLY before end_date (same-day windows 422).
+    #  * Report data lags ~1 day; rows carry their own date dimension.
+    VIS_METRICS = ("share_of_voice", "visibility_score")
+
     def _visibility(self, category: str, start: str, end: str
                     ) -> tuple[list[Observation], list[EntityMention]]:
-        body = {
+        dims = ("asset_name", "date")
+        rows = _rows(self._post("/v1/reports/visibility", {
             "category_id": category,
             "start_date": start,
             "end_date": end,
-            "group_by": ["asset"],
-            "metrics": ["visibility_score", "share_of_voice"],
-        }
-        rows = _rows(self._post("/v2/reports/visibility", body))
-        date = today()
+            "date_interval": "day",
+            "metrics": list(self.VIS_METRICS),
+            "dimensions": list(dims),
+            "pagination": {"limit": 2000, "offset": 0},
+        }))
         obs: list[Observation] = []
         mentions: list[EntityMention] = []
         for row in rows:
             if not isinstance(row, dict):
                 continue
-            asset = row.get("asset") or {}
-            name = asset.get("name") if isinstance(asset, dict) else str(asset or "")
+            named_dims = dict(zip(sorted(dims), row.get("dimensions") or []))
+            named_mets = dict(zip(sorted(self.VIS_METRICS), row.get("metrics") or []))
+            name = str(named_dims.get("asset_name") or "")
+            date = str(named_dims.get("date") or "")[:10] or today()
             if not name:
                 continue
-            sov = row.get("share_of_voice")
-            vis = row.get("visibility_score")
+            sov = named_mets.get("share_of_voice")
+            vis = named_mets.get("visibility_score")
             if sov is not None:
                 obs.append(Observation(date=date, keyword=normalize(name),
                                        source=self.name, metric="ai_share_of_voice",
@@ -129,25 +145,48 @@ class ProfoundCollector(Collector):
                 metric="share_of_voice", value=float(sov or 0)))
         return obs, mentions
 
+    MAX_ANSWER_PAGES = 5  # 5 x 200 = up to 1000 answers per run
+
     def _answers(self, category: str, start: str, end: str
                  ) -> tuple[list[Discovery], list[EntityMention]]:
-        rows = _rows(self._post("/v2/prompts/answers", {
-            "category_id": category, "start_date": start, "end_date": end,
-        }))
+        # /v2/prompts/answers paginates with {limit, cursor}; the default limit
+        # is 10, which silently discards almost the whole day. model/topic
+        # arrive as {id, name} objects.
+        rows: list = []
+        cursor: str | None = None
+        for _page in range(self.MAX_ANSWER_PAGES):
+            body: dict = {"category_id": category, "start_date": start,
+                          "end_date": end, "limit": 200}
+            if cursor:
+                body["cursor"] = cursor
+            payload = self._post("/v2/prompts/answers", body)
+            rows.extend(_rows(payload))
+            info = payload.get("info") if isinstance(payload, dict) else None
+            cursor = (info or {}).get("next_cursor")
+            if not cursor:
+                break
+
         date = today()
         discs: list[Discovery] = []
         mentions: list[EntityMention] = []
+
+        def _name(value, default: str) -> str:
+            if isinstance(value, dict):
+                return str(value.get("name") or default)
+            return str(value or default)
+
         for row in rows:
             if not isinstance(row, dict):
                 continue
             prompt = (row.get("prompt") or "").strip()
-            model = row.get("model") or "AI"
+            model = _name(row.get("model"), "AI")
             norm = normalize(prompt)
             # prompts are longer than keywords — allow full questions up to 20 words
             if norm and 3 <= len(norm) <= 140 and norm.count(" ") <= 20:
+                topic = _name(row.get("topic"), "—")
                 discs.append(Discovery(
                     date=date, keyword=norm, source=self.name,
-                    context=f"AI prompt ({model}) · topic: {row.get('topic', '—')}",
+                    context=f"AI prompt ({model}) · topic: {topic}",
                     score=80.0,  # real questions AI engines answer — top AEO/GEO material
                 ))
             for brand in row.get("mentions") or []:
