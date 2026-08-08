@@ -7,7 +7,8 @@ from pathlib import Path
 
 import calendar
 
-from trendpulse.importers.base import find_files, iter_tables, map_columns, num
+from trendpulse.importers.base import (find_files, iso_date, iter_tables,
+                                       map_columns, num)
 from trendpulse.keywords import normalize, valid_candidate
 from trendpulse.storage import Store
 from trendpulse.types import Observation
@@ -81,7 +82,7 @@ def import_gsc(store: Store, cfg: dict) -> int:
                 kw = normalize(str(row.get(mapping["query"], "")))
                 if not valid_candidate(kw):
                     continue
-                date = (str(row.get(mapping["date"], "")).strip()[:10]
+                date = (iso_date(row.get(mapping["date"], ""))
                         if "date" in mapping else _file_date(name, idx, len(rows)))
                 base = dict(keyword=kw, source=source, region="", language="")
                 if "impressions" in mapping:
