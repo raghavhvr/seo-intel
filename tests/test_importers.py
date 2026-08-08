@@ -70,21 +70,31 @@ def test_gsc_zip_import_with_month_in_filename(tmp_path):
     store.close()
 
 
-def test_gsc_generative_ai_export_gets_its_own_source(tmp_path):
-    """The Generative-AI report is a subset of search performance. Same-month
-    imports under one source would overwrite each other on the observations
-    primary key — and the AI subset is GEO ground truth worth keeping apart."""
+def test_gsc_generative_ai_export_imports_pages_as_topics(tmp_path):
+    """The real Generative-AI zip has NO Queries.csv (verified against the
+    ADCB exports: Chart/Pages/Countries/Devices/Filters only). Its Pages.csv —
+    which pages surface in AI Overviews — imports as topic keywords under
+    source `gsc_ai`, kept apart from `gsc` so same-month imports can't
+    overwrite each other on the observations primary key."""
     gsc = tmp_path / "gsc"
     gsc.mkdir()
     _gsc_zip(gsc / "GSC-Search-Performance-Jul-26.zip",
              "Top queries,Clicks,Impressions\nbest bank uae,300,9000\n")
-    _gsc_zip(gsc / "GSC-Generative-AI-Jul-26.zip",
-             "Top queries,Clicks,Impressions\nbest bank uae,12,400\n")
+    with zipfile.ZipFile(gsc / "GSC-Generative-AI-Jul-26.zip", "w") as zf:
+        zf.writestr("Chart.csv", "Date,Impressions\n2026-07-01,120\n")
+        zf.writestr("Pages.csv",
+                    "Top pages,Impressions\n"
+                    "https://www.adcb.com/en/personal-banking/cards/credit-cards/,400\n")
+        zf.writestr("Countries.csv", "Country,Impressions\nare,500\n")
+        zf.writestr("Filters.csv", "Filter,Value\nDate,\"Jul 1, 2026-Jul 31, 2026\"\n")
     store = Store(tmp_path / "t.db")
     import_gsc(store, _cfg(tmp_path))
-    series = store.series("best bank uae")
-    assert series[("gsc", "impressions", "", "")] == {"2026-07-31": 9000.0}
-    assert series[("gsc_ai", "impressions", "", "")] == {"2026-07-31": 400.0}
+    assert store.series("best bank uae")[("gsc", "impressions", "", "")] == {
+        "2026-07-31": 9000.0}
+    # full URL -> topic ('en' locale segment dropped, last 3 path parts kept)
+    topic = "personal banking cards credit cards"
+    assert store.series(topic)[("gsc_ai", "impressions", "", "")] == {
+        "2026-07-31": 400.0}
     store.close()
 
 

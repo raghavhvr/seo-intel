@@ -126,6 +126,16 @@ def iso_date(value) -> str:
     return text[:10]
 
 
+def slug_to_topic(page: str, normalize) -> str:
+    """Collapse a landing-page URL/slug into a topic keyword:
+    '/en/cards/personal-loan/' -> 'cards personal loan'. Locale segments
+    (two-letter path parts) are dropped; only the last three segments count."""
+    page = page.split("?")[0].split("#")[0]
+    page = re.sub(r"^https?://[^/]+", "", page).strip("/")
+    parts = [p for p in page.split("/") if p and len(p) != 2]
+    return normalize(" ".join(parts[-3:]).replace("-", " ").replace("_", " "))
+
+
 def num(value) -> float:
     try:
         return float(str(value).replace(",", "").replace("%", "").strip() or 0)

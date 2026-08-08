@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from trendpulse.importers.base import (find_files, iso_date, iter_tables,
-                                       map_columns, num)
+                                       map_columns, num, slug_to_topic)
 from trendpulse.importers.gsc import _file_date
 from trendpulse.keywords import normalize, valid_candidate
 from trendpulse.storage import Store
@@ -36,9 +36,7 @@ RANGE_RE = re.compile(r"(\d{8})-(\d{8})")
 
 
 def _slug_to_topic(slug: str) -> str:
-    slug = slug.split("?")[0].split("#")[0].strip("/")
-    parts = [p for p in slug.split("/") if p and len(p) != 2]  # drop locale segments
-    return normalize(" ".join(parts[-3:]).replace("-", " ").replace("_", " "))
+    return slug_to_topic(slug, normalize)
 
 
 def _month_dater(preamble: str):
