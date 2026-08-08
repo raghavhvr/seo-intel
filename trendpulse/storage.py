@@ -214,6 +214,31 @@ class Store:
         )
         return [(r[0], r[1]) for r in cur.fetchall()]
 
+    def wikipedia_mappings(self) -> list[tuple[str, str, str]]:
+        """Distinct (source, keyword, article) triples already stored for the
+        Wikipedia collector, read back out of each row's `raw` payload."""
+        cur = self.conn.execute(
+            "SELECT DISTINCT source, keyword, raw FROM observations"
+            " WHERE source LIKE 'wikipedia%' AND raw IS NOT NULL"
+        )
+        out: list[tuple[str, str, str]] = []
+        for source, keyword, raw in cur.fetchall():
+            try:
+                article = json.loads(raw).get("article")
+            except (TypeError, ValueError):
+                continue
+            if article:
+                out.append((source, keyword, str(article)))
+        return out
+
+    def delete_observations(self, source: str, keyword: str) -> int:
+        cur = self.conn.execute(
+            "DELETE FROM observations WHERE source = ? AND keyword = ?",
+            (source, keyword),
+        )
+        self.conn.commit()
+        return cur.rowcount
+
     def series(self, keyword: str) -> dict[tuple[str, str, str, str], dict[str, float]]:
         """All metric series for one keyword:
         {(source, metric, region, language): {date: value}}."""

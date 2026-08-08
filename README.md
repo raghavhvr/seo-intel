@@ -155,6 +155,8 @@ After merging to your default branch the cron runs automatically. New keywords d
 - **Guardrails**: `keywords.max_universe` and `keywords.max_new_per_day` cap universe growth.
 - **Curating Wikipedia mappings**: run `python -m trendpulse ingest -v` and grep for `rejected as off-topic`. If a rejected keyword has a genuinely matching article, add it under `wikipedia.articles` (per-language or flat) — curated entries bypass the gate. Verify the title returns data first: `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/all-agents/<Title>/daily/2026010100/2026020100`. Skip articles averaging under ~30 views/day; at that volume the series is Poisson noise, not trend signal.
 
+  Editing that map is safe to iterate on: every `ingest` re-checks the stored Wikipedia history against the current gate and config and deletes rows whose article no longer qualifies, so corrections apply retroactively instead of waiting ~60 days for the old backfill to age out. Removals are logged with the offending article, and a keyword regenerates its history on the next run once it has a mapping. Only Wikipedia rows are ever touched.
+
 ## Caveats
 
 - `pytrends` and the autocomplete endpoint are unofficial Google APIs — expect 429s. Trends runs the primary region daily and rotates the rest (`google_trends.regions_per_run`), so full regional coverage accrues over the week rather than one throttled run. In practice the primary region usually lands (~11.6k observations in a clean run) while later regions in the rotation get throttled — this is why the rotation exists, but do not expect all eight countries on any single day.

@@ -20,9 +20,12 @@ explicitly via `wikipedia.articles` in config.yaml.
 """
 from __future__ import annotations
 
+import logging
 import re
 
 from trendpulse.keywords import STOPWORDS, normalize
+
+log = logging.getLogger(__name__)
 
 # Market/geo words. They express where the searcher is, and never appear in the
 # title of the concept article they are asking about.
@@ -104,6 +107,33 @@ def best_match(keyword: str, candidates: list[str]) -> str | None:
     if not passing:
         return None
     return min(passing, key=lambda c: (len(_tokens(c)), len(c)))
+
+
+def prune_stale_observations(cfg: dict, store) -> int:
+    """Delete stored Wikipedia observations whose article fails today's gate.
+
+    The gate only stops *new* bad mappings. History already collected under a
+    wrong mapping keeps feeding the blended score for as long as its 60-day
+    backfill window survives — so a bank's 'how to send money from uae to
+    india' series went on tracking "United Arab Emirates in the 2026 Iran war"
+    long after the matcher had been fixed. Re-checking on every ingest makes
+    the fix retroactive, and makes a later edit to `wikipedia.articles` clean
+    up after itself.
+
+    Deletion is confined to Wikipedia rows whose recorded article the current
+    config and gate both reject; every removal is logged with its article, and
+    the rows regenerate on the next run if a mapping is added for them.
+    """
+    removed = 0
+    for source, keyword, article in store.wikipedia_mappings():
+        lang = source.partition("_")[2]
+        if configured_article(cfg, keyword, lang) == article or matches(keyword, article):
+            continue
+        rows = store.delete_observations(source, keyword)
+        removed += rows
+        log.info("[wikipedia] dropped %d stale observations: %s '%s' -> %r",
+                 rows, source, keyword, article)
+    return removed
 
 
 def configured_article(cfg: dict, keyword: str, lang: str) -> str | None:

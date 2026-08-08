@@ -17,7 +17,13 @@ log = logging.getLogger(__name__)
 
 def run_ingest(cfg: dict) -> tuple[int, int]:
     """One ingestion pass over all enabled collectors."""
+    from trendpulse.wikimatch import prune_stale_observations
+
     store = Store(db_path(cfg))
+    # Retroactive: drops history collected under a keyword->article mapping
+    # that today's gate or config rejects, so a matcher fix takes effect now
+    # rather than after the old backfill ages out.
+    prune_stale_observations(cfg, store)
     universe = keyword_universe(cfg, store)
     keywords = sorted(universe)
     log.info("ingesting %d keywords from %d collectors",

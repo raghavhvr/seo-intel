@@ -5,7 +5,10 @@ from __future__ import annotations
 import pandas as pd
 
 from trendpulse.features import blended_attention, source_family
-from trendpulse.wikimatch import best_match, configured_article, content_tokens, matches
+from trendpulse.storage import Store
+from trendpulse.types import Observation
+from trendpulse.wikimatch import (best_match, configured_article, content_tokens,
+                                  matches, prune_stale_observations)
 
 # Real top hits from the Wikipedia search API for the shipped UAE banking
 # seeds — every one of these was silently accepted before the gate existed.
@@ -74,6 +77,43 @@ def test_curated_overrides_bypass_the_gate():
     assert configured_article(cfg, "الدرهم الرقمي", "ar") == "عملة رقمية"
     assert configured_article(cfg, "car loan uae", "en") is None
     assert configured_article({}, "digital dirham", "en") is None
+
+
+def test_prune_removes_only_the_off_topic_wikipedia_history(tmp_path):
+    """The gate stops new bad mappings; pruning is what makes it retroactive,
+    so a 60-day backfill of the wrong article stops scoring immediately."""
+    store = Store(str(tmp_path / "t.db"))
+    rows = [
+        # Real mappings from the production DB, all off-topic.
+        ("wikipedia_en", "how to send money from uae to india",
+         "United Arab Emirates in the 2026 Iran war"),
+        ("wikipedia_ar", "how to open a bank account in uae",
+         "التوغلات الإسرائيلية في الضفة الغربية"),
+        ("wikipedia_en", "best savings account uae", "Revolut"),
+        # Correct, and must survive.
+        ("wikipedia_en", "adcb", "ADCB"),
+        # Wrong today, but curated in config — the override wins.
+        ("wikipedia_ar", "بطاقة ائتمان الإمارات", "بطاقة ائتمان"),
+    ]
+    store.upsert_observations([
+        Observation(date=f"2026-08-{d:02d}", keyword=kw, source=src,
+                    metric="pageviews", value=10.0, raw={"article": art})
+        for src, kw, art in rows for d in range(1, 4)
+    ])
+    # A non-Wikipedia row that must not be touched.
+    store.upsert_observations([Observation(
+        date="2026-08-01", keyword="best savings account uae",
+        source="google_trends", metric="interest", value=55.0, region="AE")])
+
+    cfg = {"wikipedia": {"articles": {"ar": {"بطاقة ائتمان الإمارات": "بطاقة ائتمان"}}}}
+    assert prune_stale_observations(cfg, store) == 9  # 3 bad mappings x 3 days
+
+    survived = {(s, k) for s, k, _a in store.wikipedia_mappings()}
+    assert survived == {("wikipedia_en", "adcb"), ("wikipedia_ar", "بطاقة ائتمان الإمارات")}
+    assert store.series("best savings account uae").keys() == {
+        ("google_trends", "interest", "AE", "")}
+    assert prune_stale_observations(cfg, store) == 0  # idempotent
+    store.close()
 
 
 def _index(days: int = 40) -> pd.DatetimeIndex:
