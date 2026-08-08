@@ -18,6 +18,22 @@ log = logging.getLogger(__name__)
 BASE = "https://api.tryprofound.com"
 
 
+def _rows(payload) -> list:
+    """Rows from a Profound response, whichever shape it arrives in.
+
+    The API answers with either a bare JSON list or an {info, data} envelope
+    depending on endpoint and account. The old code called .get() straight on
+    the payload, so a bare list crashed the whole collector with
+    "'list' object has no attribute 'get'" — which safe_fetch then swallowed,
+    silently zeroing every AI share-of-voice number for the day."""
+    if isinstance(payload, list):
+        return payload
+    if isinstance(payload, dict):
+        data = payload.get("data")
+        return data if isinstance(data, list) else []
+    return []
+
+
 class ProfoundCollector(Collector):
     """TryProfound API — the GEO ground truth: how often AI engines mention
     and cite adcb.com for banking & finance prompts.
@@ -57,8 +73,8 @@ class ProfoundCollector(Collector):
     def _resolve_category(self) -> str | None:
         if self.category_id:
             return self.category_id
-        data = self._get("/v1/org/categories")
-        categories = data.get("data", data if isinstance(data, list) else [])
+        categories = [c for c in _rows(self._get("/v1/org/categories"))
+                      if isinstance(c, dict)]
         wanted = {t for t in re.split(r"[^a-z0-9]+", self.category_name.lower()) if t}
         best: tuple[int, dict | None] = (0, None)
         for cat in categories:
@@ -85,11 +101,13 @@ class ProfoundCollector(Collector):
             "group_by": ["asset"],
             "metrics": ["visibility_score", "share_of_voice"],
         }
-        rows = self._post("/v2/reports/visibility", body).get("data", [])
+        rows = _rows(self._post("/v2/reports/visibility", body))
         date = today()
         obs: list[Observation] = []
         mentions: list[EntityMention] = []
         for row in rows:
+            if not isinstance(row, dict):
+                continue
             asset = row.get("asset") or {}
             name = asset.get("name") if isinstance(asset, dict) else str(asset or "")
             if not name:
@@ -113,13 +131,15 @@ class ProfoundCollector(Collector):
 
     def _answers(self, category: str, start: str, end: str
                  ) -> tuple[list[Discovery], list[EntityMention]]:
-        rows = self._post("/v2/prompts/answers", {
+        rows = _rows(self._post("/v2/prompts/answers", {
             "category_id": category, "start_date": start, "end_date": end,
-        }).get("data", [])
+        }))
         date = today()
         discs: list[Discovery] = []
         mentions: list[EntityMention] = []
         for row in rows:
+            if not isinstance(row, dict):
+                continue
             prompt = (row.get("prompt") or "").strip()
             model = row.get("model") or "AI"
             norm = normalize(prompt)

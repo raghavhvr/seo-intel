@@ -72,6 +72,51 @@ def test_profound_end_to_end(monkeypatch):
     assert collector.citations[0].prompt.startswith("What is the best bank")
 
 
+def test_profound_survives_bare_list_responses(monkeypatch):
+    """Regression: the live API can answer with a bare JSON list instead of an
+    {info, data} envelope. The 2026-08-08 production run crashed on exactly
+    this ("'list' object has no attribute 'get'"), and safe_fetch swallowed
+    it — a whole day of AI share-of-voice silently became zero rows."""
+    collector = ProfoundCollector(CFG)
+    collector.api_key = "test-key"
+
+    def fake_get(url, timeout=None, headers=None):
+        # bare list, no envelope — the shape that crashed production
+        return FakeResponse([{"id": "cat-1", "name": "Banking & Finance"}])
+
+    def fake_post(url, json=None, timeout=None, headers=None):  # noqa: A002
+        if url.endswith("/v2/reports/visibility"):
+            return FakeResponse([
+                {"asset": {"name": "adcb.com"}, "share_of_voice": 14.5,
+                 "visibility_score": 61.0},
+                "unexpected-string-row",  # junk rows must be skipped, not fatal
+            ])
+        return FakeResponse([
+            {"prompt": "Which UAE bank has the best mortgage?",
+             "model": "Perplexity", "mentions": ["FAB"],
+             "citations": ["https://www.fab.ae/mortgages"]},
+        ])
+
+    monkeypatch.setattr("requests.get", fake_get)
+    monkeypatch.setattr("requests.post", fake_post)
+
+    obs, discs, mentions = collector.safe_fetch([])
+    assert {(o.keyword, o.metric) for o in obs} == {
+        ("adcbcom", "ai_share_of_voice"), ("adcbcom", "ai_visibility")}
+    assert any(d.keyword.startswith("which uae bank") for d in discs)
+    assert ("FAB", "competitor") in {(m.entity, m.kind) for m in mentions}
+    assert collector.citations and collector.citations[0].domain == "fab.ae"
+
+
+def test_profound_handles_unrecognizable_payloads(monkeypatch):
+    """A null or scalar payload yields empty results, never an exception."""
+    collector = ProfoundCollector(CFG)
+    collector.api_key = "test-key"
+    monkeypatch.setattr("requests.get",
+                        lambda url, timeout=None, headers=None: FakeResponse(None))
+    assert collector.safe_fetch([]) == ([], [], [])
+
+
 def test_profound_skips_without_key(monkeypatch):
     monkeypatch.delenv("PROFOUND_API_KEY", raising=False)
     collector = ProfoundCollector(CFG)
