@@ -52,6 +52,7 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 | Google News RSS | Article velocity per keyword **per country × language** (AE:en, AE:ar, …) | SEO | Real-time | None | News velocity often leads search demand |
 | arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Auto-gated to GEO-relevant keywords |
 | Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Auto-gated to GEO-relevant keywords |
+| NASA EONET | Natural events (floods, storms, dust, earthquakes) mapped to banking demand | SEO, AEO | Near-real-time | None | Gulf floods → insurance-claim queries; disasters in remittance corridors (India/Pakistan/Philippines) → money-transfer spikes. Client-side bbox filtering (server-side `bbox` leaks) + curated category→keyword mapping |
 
 **First-party and GEO data (already wired in):**
 
