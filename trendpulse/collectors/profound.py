@@ -4,13 +4,14 @@ import logging
 import os
 import re
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 import requests
 
 from trendpulse.collectors.base import Collector, today
 from trendpulse.entities import is_brand_mention
 from trendpulse.keywords import normalize
-from trendpulse.types import Discovery, EntityMention, Observation
+from trendpulse.types import Citation, Discovery, EntityMention, Observation
 
 log = logging.getLogger(__name__)
 
@@ -136,10 +137,12 @@ class ProfoundCollector(Collector):
                     source=f"profound:{model}",
                     context=f"prompt: {prompt[:120]}", value=1.0))
             for url in row.get("citations") or []:
-                discs.append(Discovery(
-                    date=date, keyword=f"[citation] {url}", source=self.name,
-                    context=f"URL cited by {model} for: {prompt[:100]}",
-                    score=60.0,
+                url = str(url).strip()
+                if not url.startswith("http"):
+                    continue
+                domain = urlparse(url).netloc.lower().removeprefix("www.")
+                self.citations.append(Citation(
+                    date=date, url=url, domain=domain, prompt=prompt, model=model,
                 ))
         return discs, mentions
 

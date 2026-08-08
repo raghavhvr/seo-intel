@@ -39,3 +39,14 @@ class EntityMention:
     context: str = ""
     metric: str = "mention"
     value: float = 1.0
+
+
+@dataclass
+class Citation:
+    """One URL cited by an AI engine in an answer to a tracked prompt."""
+
+    date: str
+    url: str
+    domain: str
+    prompt: str
+    model: str = ""

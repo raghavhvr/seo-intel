@@ -30,6 +30,8 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
         obs, discs = result[0], result[1]
         if len(result) > 2:  # Profound also returns entity mentions
             store.upsert_entity_mentions(result[2])
+        if collector.citations:
+            store.upsert_citations(collector.citations)
         total_obs += store.upsert_observations(obs)
         total_disc += store.upsert_discoveries(discs)
         new_discoveries.extend(discs)
@@ -120,12 +122,24 @@ def run_report(cfg: dict, models: dict[str, HorizonModel] | None = None) -> Path
     return path
 
 
+def run_notify(cfg: dict, report_path: Path | str = "") -> bool:
+    from trendpulse.notify import send_alerts
+
+    store = Store(db_path(cfg))
+    try:
+        return send_alerts(cfg, store, str(report_path))
+    finally:
+        store.close()
+
+
 def run_daily(cfg: dict) -> Path:
-    """The full daily loop: offline dumps + fresh data -> retrain -> reports."""
+    """The full daily loop: dumps + fresh data -> retrain -> report -> alerts."""
     run_import(cfg)
     run_ingest(cfg)
     models = run_train(cfg)
-    return run_report(cfg, models)
+    path = run_report(cfg, models)
+    run_notify(cfg, path)
+    return path
 
 
 def run_demo(cfg: dict, days: int = 150) -> Path:

@@ -4,7 +4,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from trendpulse.types import Discovery, EntityMention, Observation
+from trendpulse.types import Citation, Discovery, EntityMention, Observation
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS observations (
@@ -53,6 +53,14 @@ CREATE TABLE IF NOT EXISTS entities (
     metric  TEXT NOT NULL DEFAULT 'mention',
     value   REAL NOT NULL DEFAULT 1,
     PRIMARY KEY (date, entity, source, context, metric)
+);
+CREATE TABLE IF NOT EXISTS citations (
+    date    TEXT NOT NULL,
+    url     TEXT NOT NULL,
+    domain  TEXT NOT NULL,
+    prompt  TEXT NOT NULL,
+    model   TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (date, url, prompt, model)
 );
 CREATE INDEX IF NOT EXISTS idx_obs_kw ON observations (keyword, date);
 CREATE INDEX IF NOT EXISTS idx_disc_kw ON discoveries (keyword, date);
@@ -150,6 +158,25 @@ class Store:
             " WHERE entity = ? AND context != '' AND date >= date('now', ?)"
             " ORDER BY date DESC LIMIT ?",
             (entity, f"-{days} days", limit),
+        )
+        return cur.fetchall()
+
+    # -- citations ----------------------------------------------------------
+    def upsert_citations(self, citations: list[Citation]) -> int:
+        rows = [(c.date, c.url, c.domain, c.prompt, c.model) for c in citations]
+        self.conn.executemany(
+            "INSERT OR REPLACE INTO citations (date, url, domain, prompt, model)"
+            " VALUES (?, ?, ?, ?, ?)",
+            rows,
+        )
+        self.conn.commit()
+        return len(rows)
+
+    def citation_rows(self, days: int = 30) -> list[tuple[str, str, str, str, str]]:
+        cur = self.conn.execute(
+            "SELECT date, url, domain, prompt, model FROM citations"
+            " WHERE date >= date('now', ?)",
+            (f"-{days} days",),
         )
         return cur.fetchall()
 

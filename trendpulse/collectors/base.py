@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import requests
 
-from trendpulse.types import Discovery, Observation
+from trendpulse.types import Citation, Discovery, Observation
 
 log = logging.getLogger(__name__)
 
@@ -45,6 +45,7 @@ class Collector:
 
     def __init__(self, cfg: dict):
         self.cfg = cfg
+        self.citations: list[Citation] = []  # populated by fetch() where applicable
 
     def fetch(self, keywords: list[str]) -> tuple[list[Observation], list[Discovery]]:
         raise NotImplementedError
