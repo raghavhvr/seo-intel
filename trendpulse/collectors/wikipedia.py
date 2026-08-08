@@ -63,9 +63,11 @@ class WikipediaCollector(Collector):
         languages = self.cfg.get("languages") or ["en"]
         matched = 0
 
+        # keywords arrive seeds-first; cap the per-edition search volume so a
+        # grown universe (500 keywords -> 1000 searches) can't stall the run.
         for lang in languages:
             project = f"{lang}.wikipedia.org"
-            for kw in keywords:
+            for kw in keywords[:150]:
                 try:
                     title = self._resolve_title(project, kw, lang)
                     if not title:

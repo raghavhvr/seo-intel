@@ -79,6 +79,34 @@ def test_curated_overrides_bypass_the_gate():
     assert configured_article({}, "digital dirham", "en") is None
 
 
+def test_universe_orders_seeds_before_discoveries(tmp_path):
+    """Collectors bound their request volume with keywords[:N], so the
+    universe's iteration order is the ingestion priority. Seeds must come
+    first (in config order), then discoveries by score — never alphabetical,
+    which would let a day-two flood of 'best …' autocomplete discoveries
+    starve the client's actual seed list out of every capped collector."""
+    from datetime import date
+
+    from trendpulse.keywords import keyword_universe
+    from trendpulse.pipeline import run_ingest  # noqa: F401 (ordering contract)
+    from trendpulse.types import Discovery
+
+    cfg = {"seeds": {"seo": ["credit card uae"], "aeo": ["zzz how to get a loan"],
+                     "geo": []},
+           "keywords": {"max_universe": 6, "max_new_per_day": 10}}
+    store = Store(str(tmp_path / "u.db"))
+    store.upsert_discoveries([
+        Discovery(date="2026-08-08", keyword="aaa best savings account",
+                  source="autocomplete", score=5.0),
+        Discovery(date="2026-08-08", keyword="mid score keyword",
+                  source="autocomplete", score=50.0),
+    ])
+    order = list(keyword_universe(cfg, store))
+    assert order[:2] == ["credit card uae", "zzz how to get a loan"]  # seeds first
+    assert order[2:] == ["mid score keyword", "aaa best savings account"]  # by score
+    store.close()
+
+
 def test_prune_removes_only_the_off_topic_wikipedia_history(tmp_path):
     """The gate stops new bad mappings; pruning is what makes it retroactive,
     so a 60-day backfill of the wrong article stops scoring immediately."""

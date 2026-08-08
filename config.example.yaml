@@ -303,6 +303,8 @@ wikipedia:
 
 google_trends:
   regions_per_run: 4   # AE runs daily; the other 7 regions rotate (rate limits)
+  max_keywords: 60     # top-priority keywords per run (seeds first); Trends
+                       # 429s hard beyond ~12 batches per region
 
 model:
   min_samples: 200

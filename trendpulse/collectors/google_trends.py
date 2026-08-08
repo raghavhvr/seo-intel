@@ -49,6 +49,13 @@ class GoogleTrendsCollector(Collector):
     def fetch(self, keywords: list[str]) -> tuple[list[Observation], list[Discovery]]:
         from pytrends.request import TrendReq  # optional dependency
 
+        # Highest-priority keywords only (seeds first — see pipeline ordering).
+        # Trends is the most aggressively rate-limited source here: an uncapped
+        # 500-keyword universe means 100 batches per region and Google 429s
+        # essentially all of it, burning hours of workflow time for nothing.
+        cap = int(self.cfg.get("google_trends", {}).get("max_keywords", 60))
+        keywords = keywords[:cap]
+
         pytrends = TrendReq(hl=self.cfg.get("language", "en-US"), tz=0, timeout=(10, 30))
         regions = self._regions_for_today()
         lang = (self.cfg.get("languages") or ["en"])[0]

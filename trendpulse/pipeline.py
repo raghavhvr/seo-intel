@@ -25,7 +25,13 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
     # rather than after the old backfill ages out.
     prune_stale_observations(cfg, store)
     universe = keyword_universe(cfg, store)
-    keywords = sorted(universe)
+    # Priority order, NOT alphabetical: keyword_universe lists config seeds
+    # first, then discoveries by score. Collectors cap their request volume
+    # with keywords[:N], so once the universe outgrows those caps (day two —
+    # one day of discoveries is ~1000 candidates against a 500 cap), sorting
+    # alphabetically would spend the whole budget on whatever starts with
+    # 'best …' and starve the seeds the client actually cares about.
+    keywords = list(universe)
     log.info("ingesting %d keywords from %d collectors",
              len(keywords), len(enabled_collectors(cfg)))
 
