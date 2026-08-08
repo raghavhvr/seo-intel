@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from trendpulse.importers.base import find_files, iter_tables, map_columns, num
+from trendpulse.importers.base import (find_files, iso_date, iter_tables,
+                                       map_columns, num)
 from trendpulse.importers.gsc import _file_date
 from trendpulse.keywords import normalize, valid_candidate
 from trendpulse.storage import Store
@@ -48,7 +49,7 @@ def import_ga4(store: Store, cfg: dict) -> int:
                 topic = _slug_to_topic(str(row.get(mapping["page"], "")))
                 if not valid_candidate(topic):
                     continue
-                date = (str(row.get(mapping["date"], "")).strip()[:10]
+                date = (iso_date(row.get(mapping["date"], ""))
                         if "date" in mapping else _file_date(name, idx, len(rows)))
                 obs.append(Observation(
                     date=date, keyword=topic, source="ga4", metric="organic_sessions",

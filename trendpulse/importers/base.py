@@ -37,6 +37,16 @@ def map_columns(fieldnames: list[str], spec: dict[str, tuple[str, ...]]) -> dict
 
 
 def _parse_csv_text(text: str) -> tuple[list[dict], list[str]]:
+    # GA4's UI exports open with a comment preamble ('# All Users', '# 2026…')
+    # before the real header row. Without stripping it, the first comment line
+    # becomes the header, no expected column matches, and the file silently
+    # imports zero rows.
+    lines = text.splitlines()
+    start = 0
+    while start < len(lines) and (not lines[start].strip()
+                                  or lines[start].lstrip().startswith("#")):
+        start += 1
+    text = "\n".join(lines[start:])
     try:
         dialect = csv.Sniffer().sniff(text[:4096], delimiters=",;\t")
     except csv.Error:
@@ -76,6 +86,20 @@ def iter_tables(path: Path):
         return
     rows, headers = read_rows(path)
     yield path.name, rows, headers
+
+
+_YMD = re.compile(r"^(\d{4})(\d{2})(\d{2})$")
+
+
+def iso_date(value) -> str:
+    """Normalize a row's date cell to YYYY-MM-DD. GA4 exports write dates as
+    bare '20260301'; stored verbatim they'd sit alongside '2026-03-01' keys
+    from every other source and split one day into two."""
+    text = str(value).strip()
+    match = _YMD.match(text)
+    if match:
+        return "-".join(match.groups())
+    return text[:10]
 
 
 def num(value) -> float:

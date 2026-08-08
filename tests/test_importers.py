@@ -94,6 +94,42 @@ def test_gsc_missing_dir_is_noop(tmp_path):
     store.close()
 
 
+def test_ga4_import_skips_comment_preamble(tmp_path):
+    """GA4 UI exports open with '# …' comment lines before the header. They
+    must be skipped, or the file silently imports zero rows."""
+    ga4 = tmp_path / "ga4"
+    ga4.mkdir()
+    (ga4 / "GA4-Landing-Pages-Jul-26.csv").write_text(
+        "# ----------------------------------------\n"
+        "# All Users\n"
+        "# Landing page + query string\n"
+        "# 20260701-20260731\n"
+        "# ----------------------------------------\n"
+        "Landing page + query string,Sessions,Total users\n"
+        "/en/cards/personal-loan/,500,420\n"
+    )
+    store = Store(tmp_path / "t.db")
+    assert import_ga4(store, _cfg(tmp_path)) == 1
+    series = store.series("cards personal loan")
+    # month-style filename dates the aggregate rows (Jul-26 -> month end)
+    assert series[("ga4", "organic_sessions", "", "")] == {"2026-07-31": 500.0}
+    store.close()
+
+
+def test_dates_without_dashes_are_normalized(tmp_path):
+    """GA4 writes dates as bare '20260301'; stored verbatim they'd coexist
+    with '2026-03-01' keys from every other source and split days in two."""
+    ga4 = tmp_path / "ga4"
+    ga4.mkdir()
+    (ga4 / "export.csv").write_text(
+        "Date,Landing page,Sessions\n20260301,/en/cards/,500\n")
+    store = Store(tmp_path / "t.db")
+    import_ga4(store, _cfg(tmp_path))
+    assert store.series("cards")[("ga4", "organic_sessions", "", "")] == {
+        "2026-03-01": 500.0}
+    store.close()
+
+
 def test_ga4_import_landing_pages(tmp_path):
     ga4 = tmp_path / "ga4"
     ga4.mkdir()
