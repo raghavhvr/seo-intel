@@ -8,7 +8,7 @@ from pathlib import Path
 import calendar
 
 from trendpulse.importers.base import (find_files, iso_date, iter_tables,
-                                       map_columns, num)
+                                       map_columns, num, slug_to_topic)
 from trendpulse.keywords import normalize, valid_candidate
 from trendpulse.storage import Store
 from trendpulse.types import Observation
@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 
 # GSC exports use "Top queries" (EN UI) but tolerate other spellings.
 QUERY_COLS = ("query", "top queries", "top query", "search query", "keyword")
+PAGE_COLS = ("top pages", "page", "pages", "top page")
 DATE_COLS = ("date", "day")
 IMPRESSIONS_COLS = ("impressions", "impr")
 CLICKS_COLS = ("clicks",)
@@ -72,14 +73,24 @@ def import_gsc(store: Store, cfg: dict) -> int:
         source = "gsc_ai" if AI_EXPORT_RE.search(path.name) else "gsc"
         for name, rows, headers, _preamble in iter_tables(path):
             mapping = map_columns(headers, {
-                "query": QUERY_COLS, "date": DATE_COLS,
+                "query": QUERY_COLS, "page": PAGE_COLS, "date": DATE_COLS,
                 "impressions": IMPRESSIONS_COLS, "clicks": CLICKS_COLS,
             })
-            if "query" not in mapping:
-                log.debug("[gsc] %s has no query column — skipped", name)
+            # The Generative-AI export ships NO Queries.csv at all (verified:
+            # Chart/Pages/Countries/Devices/Filters only — Google withholds
+            # query-level AI data). Pages.csv is the signal there: which pages
+            # surface in AI Overviews/AI Mode, collapsed to topic keywords the
+            # same way GA4 landing pages are. Performance zips keep using
+            # Queries.csv only — their Pages member would double-count.
+            use_pages = source == "gsc_ai" and "query" not in mapping and "page" in mapping
+            if "query" not in mapping and not use_pages:
+                log.debug("[gsc] %s has no usable keyword column — skipped", name)
                 continue
             for idx, row in enumerate(rows):
-                kw = normalize(str(row.get(mapping["query"], "")))
+                if use_pages:
+                    kw = slug_to_topic(str(row.get(mapping["page"], "")), normalize)
+                else:
+                    kw = normalize(str(row.get(mapping["query"], "")))
                 if not valid_candidate(kw):
                     continue
                 date = (iso_date(row.get(mapping["date"], ""))
