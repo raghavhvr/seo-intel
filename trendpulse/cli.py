@@ -19,7 +19,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("import", help="Import offline GSC/GA4 dumps from data_imports/")
     sub.add_parser("train", help="Retrain the trend models on all collected history")
     sub.add_parser("report", help="Regenerate weekly/monthly/quarterly focus reports")
-    sub.add_parser("run-daily", help="import + ingest + train + report (the scheduled daily job)")
+    sub.add_parser("notify", help="Send breakout alerts + briefing to Slack/Teams webhooks")
+    sub.add_parser("run-daily", help="import + ingest + train + report + notify (the scheduled daily job)")
     demo = sub.add_parser("demo", help="Offline end-to-end run on synthetic data")
     demo.add_argument("--days", type=int, default=150,
                       help="Days of synthetic history to generate (default: 150)")
@@ -51,6 +52,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Models trained: {active}")
     elif args.command == "report":
         print(f"Report written to {pipeline.run_report(cfg)}")
+    elif args.command == "notify":
+        sent = pipeline.run_notify(cfg)
+        print("Alert sent." if sent else "Nothing sent (no webhooks or nothing to alert).")
     elif args.command == "run-daily":
         print(f"Report written to {pipeline.run_daily(cfg)}")
     elif args.command == "demo":

@@ -207,6 +207,38 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
             lines.append(f"- {kw} (discovery score {s:.0f})")
         lines.append("")
 
+    # --- GEO citation gaps: who AI engines cite for banking prompts --------
+    from trendpulse.gaps import citation_gaps, citation_summary
+
+    summary = citation_summary(store, cfg, days=30)
+    if summary:
+        lines.append("## GEO citation share (last 30 days · TryProfound)")
+        lines.append("")
+        lines.append("Domains AI engines cite most for banking & finance prompts:")
+        lines.append("")
+        lines.append("| Domain | Citations | Share | |")
+        lines.append("|--------|-----------|-------|---|")
+        for domain, count, share, role in summary[:12]:
+            tag = {"own": "**← you**", "competitor": "competitor", "other": ""}[role]
+            lines.append(f"| {domain} | {count} | {share:.1f}% | {tag} |")
+        lines.append("")
+
+        gaps = citation_gaps(store, cfg, days=30, limit=10)
+        if gaps:
+            lines.append("### Citation gaps — prompts where AI cites others, not you")
+            lines.append("")
+            lines.append("This is your GEO content backlog: pages to publish or "
+                         "reshape so AI engines can cite them.")
+            lines.append("")
+            for rank, gap in enumerate(gaps, 1):
+                lines.append(
+                    f"{rank}. **{gap['prompt']}** — cited: "
+                    f"{', '.join(gap['domains'])} ({', '.join(gap['models'])})")
+                lines.append(
+                    "   → Publish/refresh a page that directly answers this; mirror "
+                    "what cited pages do well (clear answer up top, rates/table, FAQ schema).")
+            lines.append("")
+
     # --- Brand share-of-voice: AI answers (Profound) + community chatter ---
     visibility = store.entity_visibility(days=7)
     if visibility:
