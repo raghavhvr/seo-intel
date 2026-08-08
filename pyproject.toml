@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trendpulse"
+version = "0.1.0"
+description = "Open-source trend spotting for SEO, AEO and GEO teams — daily data ingestion, continuously-trained trend model, weekly/monthly/quarterly keyword focus reports."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "requests>=2.31",
+    "pyyaml>=6.0",
+    "feedparser>=6.0",
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "scikit-learn>=1.4",
+    "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+trends = ["pytrends>=4.9"]
+dev = ["pytest>=8.0", "pytrends>=4.9"]
+
+[project.scripts]
+trendpulse = "trendpulse.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["trendpulse*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

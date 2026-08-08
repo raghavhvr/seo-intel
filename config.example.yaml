@@ -1,0 +1,223 @@
+# TrendPulse configuration — UAE-first GCC & Levant focus for a regional bank
+# (client profile: ADCB / Abu Dhabi Commercial Bank).
+project: "ADCB — Abu Dhabi Commercial Bank"
+market: "UAE-first · GCC & Levant"
+region: "AE"              # legacy fallback
+language: "en-US"
+regions: ["AE", "SA", "QA", "KW", "BH", "OM", "JO", "LB"]   # UAE first = primary
+languages: ["en", "ar"]   # English + Arabic are both essential in the Gulf
+timezone: "Asia/Dubai"
+
+# ---------------------------------------------------------------------------
+# Seed topics — bilingual. Arabic seeds unlock Arabic autocomplete,
+# Arabic Google News and ar.wikipedia pageviews.
+# ---------------------------------------------------------------------------
+seeds:
+  seo:
+    # English — core retail banking demand
+    - "credit card uae"
+    - "personal loan uae"
+    - "mortgage rates uae"
+    - "best savings account uae"
+    - "open bank account online uae"
+    - "business bank account uae"
+    - "car loan uae"
+    - "fixed deposit uae"
+    - "remittance uae to india"
+    - "islamic banking uae"
+    - "wealth management uae"
+    - "adcb"
+    # Arabic — نفس الموضوعات بالعربية
+    - "قرض شخصي الإمارات"
+    - "بطاقة ائتمان الإمارات"
+    - "فتح حساب بنكي في الإمارات"
+    - "أفضل بنك في الإمارات"
+    - "حساب توفير الإمارات"
+    - "تحويل أموال من الإمارات"
+    - "قرض سيارة الإمارات"
+    - "التمويل العقاري الإمارات"
+  aeo:
+    - "how to open a bank account in uae"
+    - "what is the minimum salary for a credit card in uae"
+    - "how to check credit score in uae"
+    - "how to send money from uae to india"
+    - "what is an iban number"
+    - "which bank is best for salary account in uae"
+    - "how does islamic home finance work"
+    - "كيف أفتح حساب بنكي في الإمارات"
+    - "ما هو الحد الأدنى للراتب للحصول على قرض شخصي"
+    - "كيف أحول أموال من الإمارات إلى الهند"
+  geo:
+    - "digital banks uae"
+    - "neobank uae"
+    - "ai in banking"
+    - "open banking uae"
+    - "digital dirham"
+    - "bnpl uae"
+    - "fintech uae"
+    - "embedded finance mena"
+    - "البنوك الرقمية الإمارات"
+    - "الدرهم الرقمي"
+
+# Share-of-voice entities: brand + the UAE competitive set
+entities:
+  brand: ["ADCB", "Abu Dhabi Commercial Bank", "بنك أبوظبي التجاري"]
+  competitors:
+    - "Emirates NBD"
+    - "First Abu Dhabi Bank"
+    - "FAB"
+    - "Dubai Islamic Bank"
+    - "Mashreq"
+    - "RAKBANK"
+    - "Commercial Bank of Dubai"
+    - "HSBC UAE"
+    - "Wio"
+    - "Liv"
+
+# Terms that mark a keyword as GEO-relevant (AI-assistant territory)
+geo_terms:
+  - "ai"
+  - "llm"
+  - "chatgpt"
+  - "gemini"
+  - "copilot"
+  - "neobank"
+  - "digital bank"
+  - "digital dirham"
+  - "cbdc"
+  - "open banking"
+  - "fintech"
+  - "bnpl"
+  - "embedded finance"
+
+# ---------------------------------------------------------------------------
+# GCC & Levant seasonal calendar. Hijri dates shift yearly — those are marked
+# expected: true. prep_weeks controls when keyword angles enter the universe.
+# ---------------------------------------------------------------------------
+seasonal_events:
+  - name: "Back to school (UAE)"
+    start: 2026-08-24
+    prep_weeks: 4
+    regions: [AE]
+    keywords: ["school fee payment plan uae", "education savings account uae", "kids bank account uae"]
+    action: "Publish school-fee financing + education savings content; parents research 2–4 weeks before term."
+  - name: "Saudi National Day"
+    start: 2026-09-23
+    prep_weeks: 3
+    regions: [SA]
+    keywords: ["saudi national day offers", "saudi national day bank promotions"]
+    action: "Coordinate cross-border offers content for KSA portfolio."
+  - name: "GITEX Global Dubai"
+    start: 2026-10-12
+    end: 2026-10-16
+    prep_weeks: 5
+    regions: [AE]
+    keywords: ["fintech uae", "digital banking innovation", "ai banking uae"]
+    action: "GEO play: publish AI-in-banking POV pieces before GITEX so AI engines cite them during event coverage."
+  - name: "UAE National Day (Eid Al Etihad)"
+    start: 2026-12-02
+    prep_weeks: 4
+    regions: [AE]
+    keywords: ["uae national day offers", "national day credit card offers uae"]
+    action: "Offers landing pages should be live and indexed by mid-November."
+  - name: "Dubai Shopping Festival"
+    start: 2026-12-05
+    end: 2027-01-15
+    prep_weeks: 6
+    regions: [AE]
+    keywords: ["dubai shopping festival credit card offers", "dsf cashback", "best credit card for shopping uae"]
+    action: "Peak card-spend season — refresh cashback/offers pages and comparison content in November."
+  - name: "Ramadan"
+    start: 2027-02-07
+    end: 2027-03-08
+    prep_weeks: 6
+    expected: true
+    regions: [AE, SA, QA, KW, BH, OM, JO, LB]
+    keywords: ["ramadan bank offers uae", "ramadan personal loan offers", "charity donation zakat uae", "ramadan working hours banks"]
+    action: "Publish Ramadan offers, zakat calculators and branch-hours content by early January; AEO questions spike ('are banks open during ramadan')."
+  - name: "Eid Al Fitr"
+    start: 2027-03-09
+    prep_weeks: 4
+    expected: true
+    regions: [AE, SA, QA, KW, BH, OM, JO, LB]
+    keywords: ["eid al fitr offers uae", "eid travel deals credit card", "eidiya kids account"]
+    action: "Travel + gifting spend spikes; push card and remittance content."
+  - name: "Eid Al Adha"
+    start: 2027-05-16
+    prep_weeks: 4
+    expected: true
+    regions: [AE, SA, QA, KW, BH, OM, JO, LB]
+    keywords: ["eid al adha travel offers", "hajj savings plan", "livestock payment uae"]
+    action: "Hajj savings and travel-finance angles for KSA/UAE."
+
+sources:
+  google_trends: true
+  autocomplete: true
+  wikipedia: true
+  hackernews: true
+  reddit: true
+  stackexchange: true
+  google_news: true
+  arxiv: true
+  huggingface: true
+  profound: true           # needs PROFOUND_API_KEY (Enterprise); skipped silently otherwise
+
+# TryProfound — adcb.com is set up as a project, category "Banking & Finance".
+# Set the API key as a secret env var; category/asset are auto-discovered but
+# can be pinned here (or via PROFOUND_CATEGORY_ID / PROFOUND_ASSET).
+profound:
+  category_name: "banking and finance"
+  asset: "adcb.com"
+  # category_id: ""       # pin to skip auto-discovery (GET /v1/org/categories)
+
+# Offline data dumps — drop exports here and run `python -m trendpulse import`
+# (also runs first in `run-daily`). This directory is git-ignored: it contains
+# private first-party data.
+imports:
+  gsc_dir: "data_imports/gsc"   # GSC → Performance → Search results → Queries/Pages export (CSV/Excel, dated or aggregate)
+  ga4_dir: "data_imports/ga4"   # GA4 → Landing pages (organic) export (CSV/Excel)
+
+# Domains used for citation-gap analysis (who AI engines cite vs. you)
+brand_domains: ["adcb.com"]
+competitor_domains:
+  - "emiratesnbd.com"
+  - "fab.ae"
+  - "dib.ae"
+  - "mashreq.com"
+  - "rakbank.ae"
+  - "cbd.ae"
+  - "hsbc.ae"
+  - "wio.io"
+  - "liv.me"
+
+# Morning briefing + breakout alerts. Set SLACK_WEBHOOK_URL and/or
+# TEAMS_WEBHOOK_URL as repo secrets; missing webhooks are skipped silently.
+alerts:
+  enabled: true
+  breakout_z: 3.0        # velocity z-score that counts as "act now"
+  max_items: 8
+  report_url: "https://github.com/raghavhvr/seo-intel/blob/main/reports/latest.md"
+
+reddit:
+  subreddits: ["dubai", "abudhabi", "UAE", "saudiarabia", "qatar",
+               "personalfinance", "banking", "fintech", "CredCards"]
+
+stackexchange:
+  sites: ["money", "webmasters"]
+
+model:
+  min_samples: 200
+  horizons:
+    week: 7
+    month: 30
+    quarter: 90
+
+keywords:
+  max_universe: 500
+  max_new_per_day: 40
+
+reports:
+  top_n: 20
+  output_dir: "reports"
+
+data_dir: "data"
