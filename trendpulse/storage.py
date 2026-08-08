@@ -148,6 +148,22 @@ class Store:
         self.conn.commit()
         return cur.rowcount
 
+    def entity_mention_split(self, days: int = 7) -> list[tuple[str, str, float, float]]:
+        """(entity, kind, ai_mentions, community_mentions) over the window —
+        AI-assistant answers (profound sources) vs community/news chatter."""
+        cur = self.conn.execute(
+            "SELECT entity, kind,"
+            " SUM(CASE WHEN source LIKE 'profound%' THEN value ELSE 0 END),"
+            " SUM(CASE WHEN source LIKE 'profound%' THEN 0 ELSE value END)"
+            " FROM entities WHERE metric = 'mention' AND date >= date('now', ?)"
+            # ORDER BY total mentions. NOT "ORDER BY 3 + 4": ordinal column
+            # references only work as bare integers — in an expression SQLite
+            # evaluates 3 + 4 as the constant 7, i.e. no ordering at all.
+            " GROUP BY entity, kind ORDER BY SUM(value) DESC",
+            (f"-{days} days",),
+        )
+        return cur.fetchall()
+
     def entity_visibility(self, days: int = 7) -> list[tuple[str, str, float, float]]:
         """(entity, kind, mentions, share_of_voice) over the trailing window."""
         cur = self.conn.execute(
