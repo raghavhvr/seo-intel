@@ -125,11 +125,17 @@ def run_train(cfg: dict) -> dict[str, HorizonModel]:
 
 
 def run_report(cfg: dict, models: dict[str, HorizonModel] | None = None) -> Path:
+    from trendpulse.dashboard import generate_dashboard
+
     store = Store(db_path(cfg))
     universe = keyword_universe(cfg, store)
     if models is None:
         models = load_models(cfg)
     path = generate_report(store, cfg, universe, models)
+    # Non-technical companion to the markdown report; docs/index.html doubles
+    # as a GitHub Pages site (Settings -> Pages -> main branch, /docs folder).
+    out_dir = Path(cfg["reports"]["output_dir"])
+    generate_dashboard(store, cfg, out_dir, extra_paths=[Path("docs/index.html")])
     store.close()
     return path
 

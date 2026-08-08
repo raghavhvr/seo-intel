@@ -189,6 +189,14 @@ class Store:
         )
         return cur.fetchall()
 
+    def delete_scores(self, date: str) -> int:
+        """Clear one day's scores before re-scoring: a keyword dropped from
+        the universe (e.g. by a tightened relevance gate) must not linger in
+        the day's ranking from an earlier run."""
+        cur = self.conn.execute("DELETE FROM scores WHERE date = ?", (date,))
+        self.conn.commit()
+        return cur.rowcount
+
     def save_score(self, date: str, keyword: str, horizon: str, channel: str,
                    trend_score: float, predicted_delta: float, velocity_z: float) -> None:
         self.conn.execute(

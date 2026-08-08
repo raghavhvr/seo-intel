@@ -52,12 +52,42 @@ def test_seasonality_windows():
 
 def test_relevance_gate():
     tokens = universe_tokens(["credit card uae", "personal loan uae",
-                              "bank account uae", "قرض شخصي"])
+                              "bank account uae", "ai in banking", "قرض شخصي"])
     assert is_relevant("best credit card offers uae", tokens, GEO_CFG)     # token overlap
     assert is_relevant("how to open a bank account", tokens, GEO_CFG)      # question + overlap
-    assert is_relevant("ai banking platforms", tokens, GEO_CFG)            # geo term
+    assert is_relevant("ai banking platforms", tokens, GEO_CFG)            # AI + banking vocab
     assert not is_relevant("so paulo urban forest", tokens, GEO_CFG)       # front-page noise
     assert not is_relevant("which gym is this", tokens, GEO_CFG)           # off-topic question
+    # AI-flavored is NOT sufficient by itself: trending-model names from
+    # Hugging Face/HN once reached the top of the SEO focus list this way.
+    assert not is_relevant("flux1 schnell", tokens, GEO_CFG)
+    assert not is_relevant("kimi ai", tokens, GEO_CFG)     # bare 'ai' can't vouch
+    assert not is_relevant("claude", tokens, GEO_CFG)
+
+
+def test_universe_admits_only_seed_relevant_discoveries(tmp_path):
+    """The universe's door: discoveries enter only when they share vocabulary
+    with the seeds. It used to stand open to anything up to the cap."""
+    from trendpulse.keywords import keyword_universe
+    from trendpulse.types import Discovery
+
+    cfg = {"seeds": {"seo": ["credit card uae", "ai in banking"], "aeo": [], "geo": []},
+           "geo_terms": ["ai"],
+           "keywords": {"max_universe": 50, "max_new_per_day": 10}}
+    store = Store(tmp_path / "u.db")
+    store.upsert_discoveries([
+        Discovery(date="2026-08-08", keyword="flux1 schnell",
+                  source="huggingface", score=9000.0),
+        Discovery(date="2026-08-08", keyword="kimi ai",
+                  source="hackernews", score=5000.0),
+        Discovery(date="2026-08-08", keyword="best credit card for cashback uae",
+                  source="autocomplete", score=8.0),
+    ])
+    universe = keyword_universe(cfg, store)
+    assert "best credit card for cashback uae" in universe
+    assert "flux1 schnell" not in universe
+    assert "kimi ai" not in universe
+    store.close()
 
 
 def test_observation_region_language_roundtrip(tmp_path):
