@@ -1,21 +1,21 @@
 rank,keyword,channel,horizon,trend_score,predicted_delta,velocity_z,breakout,evidence,suggested_action
-1,flux1 schnell,seo,week,100.0,-0.214,243059.867,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-2,gpt oss 120b,seo,week,98.2,-0.242,243059.867,False,2026-08-08: trending model: https://huggingface.co/openai/gpt-oss-120b,Create/refresh a dedicated page targeting this query; interlink from related pages.
-3,adcb bank near me,seo,week,92.9,-0.048,2.017,False,2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en],Create/refresh a dedicated page targeting this query; interlink from related pages.
-4,islamic banking uae,seo,week,68.0,-0.11,1.439,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-5,adcb,seo,week,57.3,0.314,0.115,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-6,open banking uae,seo,week,54.4,-0.41,1.543,False,,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
-7,wealth management uae,seo,week,51.4,-0.028,0.9,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-8,digital banks uae,seo,week,44.8,0.072,0.496,False,,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
-9,how to send money from uae to india,seo,week,43.5,-0.138,1.017,False,2026-08-08: question suggestion for 'how to remittance uae to india' [AE/en],Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
-10,bloom,seo,week,39.7,-0.576,1.418,False,2026-08-08: trending model: https://huggingface.co/bigscience/bloom,Create/refresh a dedicated page targeting this query; interlink from related pages.
-11,credit card uae,seo,week,39.4,0.172,0.057,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-12,fixed deposit uae,seo,week,35.0,-0.785,1.332,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-13,how to open a bank account in uae,seo,week,33.0,-0.168,0.395,False,,Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
-14,kimi k3,seo,week,27.3,-0.172,0.367,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-15,car loan uae,seo,week,25.6,-0.804,1.149,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-16,personal loan uae,seo,week,23.5,-0.506,0.844,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-17,adcb com,seo,week,23.2,0.031,0.189,False,2026-08-08: rising related query for 'adcb' in AE,Create/refresh a dedicated page targeting this query; interlink from related pages.
-18,open bank account online uae,seo,week,22.0,-0.127,-0.033,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
-19,الدرهم الرقمي,seo,week,21.8,-0.196,0.531,False,,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
-20,remittance uae to india,seo,week,19.8,0.226,-0.306,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+1,flux1 schnell,seo,week,100.0,-0.07,243059.867,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+2,gpt oss 120b,seo,week,91.3,-0.217,243059.867,False,2026-08-08: trending model: https://huggingface.co/openai/gpt-oss-120b,Create/refresh a dedicated page targeting this query; interlink from related pages.
+3,adcb bank near me,seo,week,82.9,-0.081,2.017,False,2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en],Create/refresh a dedicated page targeting this query; interlink from related pages.
+4,open banking uae,seo,week,62.9,-0.178,1.543,False,,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
+5,kimi ai,seo,week,59.3,0.05,1.107,False,2026-08-08: rising related query for 'kimi k3' in AE,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
+6,adcb,seo,week,55.9,0.383,0.115,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+7,wealth management uae,seo,week,46.5,-0.024,0.9,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+8,grok,seo,week,45.6,0.397,0.168,False,2026-08-08: rising related query for 'kimi k3' in AE,Create/refresh a dedicated page targeting this query; interlink from related pages.
+9,digital banks uae,seo,week,40.4,0.075,0.496,False,,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
+10,kimi k3,seo,week,37.9,0.062,0.367,False,2026-08-08: rising related query for 'kimi api' in OM | 2026-08-08: rising related query for 'kimi ai' in OM | 2026-08-08: rising related query for 'claude' in OM,Create/refresh a dedicated page targeting this query; interlink from related pages.
+11,how to send money from uae to india,seo,week,33.2,-0.234,1.017,False,2026-08-08: question suggestion for 'how to remittance uae to india' [AE/en],Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
+12,islamic banking uae,seo,week,30.4,-0.125,0.346,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+13,fixed deposit uae,seo,week,26.5,-0.861,1.332,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+14,bloom,seo,week,24.5,-0.76,1.418,False,2026-08-08: trending model: https://huggingface.co/bigscience/bloom,Create/refresh a dedicated page targeting this query; interlink from related pages.
+15,credit card uae,seo,week,24.1,-0.014,0.057,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+16,claude,seo,week,23.0,0.015,0.102,False,2026-08-08: rising related query for 'kimi k3' in OM,"Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages."
+17,how to open a bank account in uae,seo,week,21.1,-0.306,0.395,False,,Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
+18,remittance uae to india,seo,week,21.1,0.295,-0.306,False,,Create/refresh a dedicated page targeting this query; interlink from related pages.
+19,adcb com,seo,week,19.9,0.026,0.189,False,2026-08-08: rising related query for 'adcb' in AE,Create/refresh a dedicated page targeting this query; interlink from related pages.
+20,how to check credit score in uae,seo,week,19.3,-0.128,0.12,False,,Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
