@@ -66,8 +66,10 @@ def test_profound_end_to_end(monkeypatch):
 
     prompts = [d for d in discs if d.keyword.startswith("what is")]
     assert prompts and "ChatGPT" in prompts[0].context
-    assert any(d.keyword.startswith("[citation]") and "adcb.com" in d.keyword
-               for d in discs)
+    # citations are captured as structured rows, not keyword discoveries
+    assert any(c.domain == "adcb.com" and "savings" in c.url
+               for c in collector.citations)
+    assert collector.citations[0].prompt.startswith("What is the best bank")
 
 
 def test_profound_skips_without_key(monkeypatch):

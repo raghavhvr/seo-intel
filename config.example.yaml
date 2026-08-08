@@ -177,6 +177,27 @@ imports:
   gsc_dir: "data_imports/gsc"   # GSC → Performance → Search results → Queries/Pages export (CSV/Excel, dated or aggregate)
   ga4_dir: "data_imports/ga4"   # GA4 → Landing pages (organic) export (CSV/Excel)
 
+# Domains used for citation-gap analysis (who AI engines cite vs. you)
+brand_domains: ["adcb.com"]
+competitor_domains:
+  - "emiratesnbd.com"
+  - "fab.ae"
+  - "dib.ae"
+  - "mashreq.com"
+  - "rakbank.ae"
+  - "cbd.ae"
+  - "hsbc.ae"
+  - "wio.io"
+  - "liv.me"
+
+# Morning briefing + breakout alerts. Set SLACK_WEBHOOK_URL and/or
+# TEAMS_WEBHOOK_URL as repo secrets; missing webhooks are skipped silently.
+alerts:
+  enabled: true
+  breakout_z: 3.0        # velocity z-score that counts as "act now"
+  max_items: 8
+  report_url: "https://github.com/raghavhvr/seo-intel/blob/main/reports/latest.md"
+
 reddit:
   subreddits: ["dubai", "abudhabi", "UAE", "saudiarabia", "qatar",
                "personalfinance", "banking", "fintech", "CredCards"]

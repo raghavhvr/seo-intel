@@ -56,9 +56,14 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 **First-party and GEO data (already wired in):**
 
 - **GSC / GA4 data dumps** — drop exports into `data_imports/gsc/` and `data_imports/ga4/` (CSV or Excel; dated rows or aggregate exports — the importer detects columns and attributes aggregate rows to the export window in the filename). GSC impressions/clicks = ground-truth demand; GA4 organic sessions per landing page = satisfied demand (slugs become topic keywords). `python -m trendpulse import`, or automatic as the first step of `run-daily`. The directory is git-ignored — it's private first-party data.
-- **TryProfound (GEO ground truth)** — with `PROFOUND_API_KEY` set (Enterprise plan), the collector pulls the *Banking & Finance* category daily: per-asset **AI share-of-voice / visibility** (ADCB vs Emirates NBD, FAB, …), **raw prompt answers** (the actual questions AI engines field, with mentions per model — premium AEO/GEO targeting material), and **cited URLs** (which pages LLMs cite, so you can model the format that earns citations). The report gains a **Brand share of voice** section; community chatter mentions (Reddit/news/HN) are merged in with alias-aware matching (FAB ≠ "fabulous").
+- **TryProfound (GEO ground truth)** — with `PROFOUND_API_KEY` set (Enterprise plan), the collector pulls the *Banking & Finance* category daily: per-asset **AI share-of-voice / visibility** (ADCB vs Emirates NBD, FAB, …), **raw prompt answers** (the actual questions AI engines field, with mentions per model — premium AEO/GEO targeting material), and **cited URLs** stored as structured citation rows. The report gains **Brand share of voice** and **GEO citation gaps** sections; community chatter mentions (Reddit/news/HN) are merged in with alias-aware matching (FAB ≠ "fabulous").
 
-**Still free, still optional later:** YouTube Data API (free key) for video velocity; Common Crawl (open, monthly) for corpus shifts; a self-hosted LLM probe (Ollama) as a Profound complement.
+**Delivery & alerts (built in):**
+
+- **Morning briefing** to Slack and/or Teams (`SLACK_WEBHOOK_URL` / `TEAMS_WEBHOOK_URL` secrets): breakouts to act on now (velocity z ≥ `alerts.breakout_z`), top weekly focus queries, and ADCB's 7-day AI share of voice, with a link to the full report. Runs as the last step of `run-daily`; `python -m trendpulse notify` standalone. Missing webhooks skip silently.
+- **GEO citation-gap analysis** — aggregates 30 days of Profound citations into a domain share table (you vs competitors vs others) and ranks **prompts where AI engines cite other domains but never adcb.com** — a ready-made GEO content backlog with per-prompt actions.
+
+**Still free, still optional later:** YouTube Data API (free key) for video velocity; Common Crawl (open, monthly) for corpus shifts; a self-hosted LLM probe (Ollama) as a Profound complement; HTML dashboard on GitHub Pages.
 
 Paid-only gaps to be aware of: true SERP rank/People-Also-Ask at scale (SerpAPI, DataForSEO) and keyword search-volume tooling (Ahrefs/Semrush). The tool is designed to work without them; they plug in as extra collectors if you later want them.
 
@@ -67,13 +72,15 @@ Paid-only gaps to be aware of: true SERP rank/People-Also-Ask at scale (SerpAPI,
 ## Architecture
 
 ```
- config.yaml (seeds, entities, sources, horizons)
+ config.yaml (seeds, entities, regions, sources, horizons, seasonal events)
         │
-        ▼
- collectors/  ── 9 free APIs ──►  observations + discoveries
-        │                              │ SQLite (data/trendpulse.db)
+        ├── importers/   GSC + GA4 dumps (data_imports/, git-ignored)
+        ├── collectors/  ── 9 free APIs ──►  observations + discoveries
+        └── collectors/profound.py  ── TryProfound ──►  AI SOV, prompts, citations
+        │                              │ SQLite (data/trendpulse.db) + entities table
         ▼                              ▼
- features.py   blended attention = mean of per-source z-scores
+ features.py   blended attention = mean of per-series z-scores
+        │      (per source × metric × region × language)
         │      + velocity / momentum / breadth / calendar features
         ▼
  model.py      HistGradientBoosting per horizon (7/30/90d)
@@ -81,7 +88,8 @@ Paid-only gaps to be aware of: true SERP rank/People-Also-Ask at scale (SerpAPI,
         │      time-split holdout MAE logged to model_runs
         ▼
  report.py     reports/YYYY-MM-DD.md + latest.md + per-channel CSVs
-        │      ranked focus lists for week / month / quarter × SEO / AEO / GEO
+        │      week / month / quarter × SEO / AEO / GEO
+        │      + upcoming regional moments + brand share of voice
         ▼
  .github/workflows/daily.yml   runs the loop every day, commits results
 ```
