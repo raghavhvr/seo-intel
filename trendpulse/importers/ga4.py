@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from trendpulse.importers.base import find_files, map_columns, num, read_rows
+from trendpulse.importers.base import find_files, iter_tables, map_columns, num
 from trendpulse.importers.gsc import _file_date
 from trendpulse.keywords import normalize, valid_candidate
 from trendpulse.storage import Store
@@ -29,32 +29,32 @@ def _slug_to_topic(slug: str) -> str:
 
 def import_ga4(store: Store, cfg: dict) -> int:
     directory = Path(cfg.get("imports", {}).get("ga4_dir", "data_imports/ga4"))
-    files = find_files(directory, ["*.csv", "*.tsv", "*.xlsx", "*.xls"])
+    files = find_files(directory, ["*.csv", "*.tsv", "*.xlsx", "*.xls", "*.zip"])
     if not files:
         log.info("[ga4] no files in %s — skipping", directory)
         return 0
 
     obs: list[Observation] = []
     for path in files:
-        rows, headers = read_rows(path)
-        mapping = map_columns(headers, {
-            "page": PAGE_COLS, "date": DATE_COLS,
-            "sessions": SESSION_COLS, "users": USER_COLS,
-        })
-        if "page" not in mapping or "sessions" not in mapping:
-            log.debug("[ga4] %s lacks page/sessions columns — skipped", path.name)
-            continue
-        for idx, row in enumerate(rows):
-            topic = _slug_to_topic(str(row.get(mapping["page"], "")))
-            if not valid_candidate(topic):
+        for name, rows, headers in iter_tables(path):
+            mapping = map_columns(headers, {
+                "page": PAGE_COLS, "date": DATE_COLS,
+                "sessions": SESSION_COLS, "users": USER_COLS,
+            })
+            if "page" not in mapping or "sessions" not in mapping:
+                log.debug("[ga4] %s lacks page/sessions columns — skipped", name)
                 continue
-            date = (str(row.get(mapping["date"], "")).strip()[:10]
-                    if "date" in mapping else _file_date(path, idx, len(rows)))
-            obs.append(Observation(
-                date=date, keyword=topic, source="ga4", metric="organic_sessions",
-                value=num(row[mapping["sessions"]]), region="", language="",
-                raw={"page": str(row.get(mapping["page"], ""))[:200]},
-            ))
+            for idx, row in enumerate(rows):
+                topic = _slug_to_topic(str(row.get(mapping["page"], "")))
+                if not valid_candidate(topic):
+                    continue
+                date = (str(row.get(mapping["date"], "")).strip()[:10]
+                        if "date" in mapping else _file_date(name, idx, len(rows)))
+                obs.append(Observation(
+                    date=date, keyword=topic, source="ga4", metric="organic_sessions",
+                    value=num(row[mapping["sessions"]]), region="", language="",
+                    raw={"page": str(row.get(mapping["page"], ""))[:200]},
+                ))
     written = store.upsert_observations(obs)
     log.info("[ga4] imported %d observations from %d files", written, len(files))
     return written
