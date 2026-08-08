@@ -96,14 +96,14 @@ def test_universe_orders_seeds_before_discoveries(tmp_path):
            "keywords": {"max_universe": 6, "max_new_per_day": 10}}
     store = Store(str(tmp_path / "u.db"))
     store.upsert_discoveries([
-        Discovery(date="2026-08-08", keyword="aaa best savings account",
+        Discovery(date="2026-08-08", keyword="aaa credit card cashback",
                   source="autocomplete", score=5.0),
-        Discovery(date="2026-08-08", keyword="mid score keyword",
+        Discovery(date="2026-08-08", keyword="mid score loan query",
                   source="autocomplete", score=50.0),
     ])
     order = list(keyword_universe(cfg, store))
     assert order[:2] == ["credit card uae", "zzz how to get a loan"]  # seeds first
-    assert order[2:] == ["mid score keyword", "aaa best savings account"]  # by score
+    assert order[2:] == ["mid score loan query", "aaa credit card cashback"]  # by score
     store.close()
 
 

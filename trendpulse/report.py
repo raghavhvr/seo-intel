@@ -97,6 +97,7 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
     out_dir.mkdir(parents=True, exist_ok=True)
     top_n = int(cfg["reports"]["top_n"])
     date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    store.delete_scores(date)  # same-day re-runs replace the ranking, not append
     horizons = list(cfg["model"]["horizons"].keys())
     using_ml = {h: h in models for h in horizons}
 
