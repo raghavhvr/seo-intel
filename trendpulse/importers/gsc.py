@@ -70,7 +70,7 @@ def import_gsc(store: Store, cfg: dict) -> int:
     obs: list[Observation] = []
     for path in files:
         source = "gsc_ai" if AI_EXPORT_RE.search(path.name) else "gsc"
-        for name, rows, headers in iter_tables(path):
+        for name, rows, headers, _preamble in iter_tables(path):
             mapping = map_columns(headers, {
                 "query": QUERY_COLS, "date": DATE_COLS,
                 "impressions": IMPRESSIONS_COLS, "clicks": CLICKS_COLS,

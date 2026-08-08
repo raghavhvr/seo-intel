@@ -116,6 +116,32 @@ def test_ga4_import_skips_comment_preamble(tmp_path):
     store.close()
 
 
+def test_ga4_free_form_monthly_export(tmp_path):
+    """The real GA4 'Free form' export (verified against ADCB samples): bare
+    Month column with the year only in the '#' preamble range (crossing a year
+    boundary), rows per page x channel needing organic filtering + summing,
+    and a Grand total row to skip."""
+    ga4 = tmp_path / "ga4"
+    ga4.mkdir()
+    (ga4 / "20260805152159_GA4 Oct 2025 - Feb 2026.csv").write_text(
+        "# ----------------------------------------\n"
+        "# All Users\n"
+        "# 20251001-20260228\n"
+        "# ----------------------------------------\n"
+        "Month,Landing page,Session default channel group,Sessions\n"
+        "10,/en/cards/personal-loan/,Organic Search,100\n"
+        "10,/en/cards/personal-loan/,Organic Search,40\n"     # second source/medium
+        "10,/en/cards/personal-loan/,Direct,999\n"            # not search demand
+        "01,/en/cards/personal-loan/,Organic Search,30\n"     # next year (2026)
+        "Grand total,,,1169\n"
+    )
+    store = Store(tmp_path / "t.db")
+    import_ga4(store, _cfg(tmp_path))
+    series = store.series("cards personal loan")[("ga4", "organic_sessions", "", "")]
+    assert series == {"2025-10-31": 140.0, "2026-01-31": 30.0}
+    store.close()
+
+
 def test_dates_without_dashes_are_normalized(tmp_path):
     """GA4 writes dates as bare '20260301'; stored verbatim they'd coexist
     with '2026-03-01' keys from every other source and split days in two."""
