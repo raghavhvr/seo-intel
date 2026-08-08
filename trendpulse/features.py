@@ -20,18 +20,31 @@ def _calendar(dates: list[str]) -> pd.DatetimeIndex:
     return pd.to_datetime(pd.Series(sorted(set(dates)))).dt.normalize()
 
 
+def source_family(source: str) -> str:
+    """Per-edition variants of one platform ('wikipedia_en', 'wikipedia_ar')
+    are the same source for weighting and breadth."""
+    return "wikipedia" if source.startswith("wikipedia_") else source
+
+
 def blended_attention(series_map: dict[tuple, dict[str, float]],
                       index: pd.DatetimeIndex) -> tuple[pd.Series, pd.Series]:
     """Blend all source series into one daily 'attention' series per keyword.
 
     Each series (source × metric × region × language) is z-scored over its own
     history first, so sources with wildly different scales (pageviews vs.
-    0-100 Trends interest) and different countries contribute comparably.
-    Returns (attention, breadth) where breadth is the count of series with
-    above-baseline activity that day.
+    0-100 Trends interest) contribute comparably. Series are then collapsed
+    **per source** before averaging across sources: a source that happens to
+    emit many series — one per country, per language, per metric — must not
+    outweigh a source that emits one. Without that step, eight Google Trends
+    regions drown out a single Wikipedia series on raw series count alone.
+
+    Returns (attention, breadth) where breadth is the count of distinct
+    *sources* with above-baseline activity that day. Counting series instead
+    would let one chatty source manufacture its own "cross-source
+    confirmation", which is the exact noise breadth exists to filter.
     """
-    cols, breadth = [], pd.Series(0.0, index=index)
-    for _key, values in series_map.items():
+    per_source: dict[str, list[pd.Series]] = {}
+    for key, values in series_map.items():
         ser = pd.Series(values, dtype=float)
         ser.index = pd.to_datetime(ser.index)
         ser = ser.groupby(level=0).sum().reindex(index)
@@ -39,11 +52,17 @@ def blended_attention(series_map: dict[tuple, dict[str, float]],
             continue
         mu, sd = float(ser.mean()), float(ser.std(ddof=0))
         z = ((ser - mu) / (sd if sd > 1e-9 else 1.0)).clip(-5, 5)
-        cols.append(z.fillna(0.0))
-        breadth = breadth + (z.fillna(-10) > 0).astype(float)
-    if not cols:
-        return pd.Series(0.0, index=index), breadth
-    attention = pd.concat(cols, axis=1).mean(axis=1)
+        per_source.setdefault(source_family(key[0]), []).append(z)
+    if not per_source:
+        return pd.Series(0.0, index=index), pd.Series(0.0, index=index)
+    # NaN-preserving means: a source is silent on a day only when every one of
+    # its series is, so a quiet region never dilutes a spike in another.
+    frame = pd.concat(
+        [pd.concat(cols, axis=1).mean(axis=1) for cols in per_source.values()],
+        axis=1,
+    )
+    attention = frame.mean(axis=1).fillna(0.0)
+    breadth = (frame > 0).sum(axis=1).astype(float)
     return attention, breadth
 
 

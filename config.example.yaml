@@ -256,6 +256,51 @@ reddit:
 stackexchange:
   sites: ["money", "webmasters"]
 
+# ---------------------------------------------------------------------------
+# Wikipedia article mapping.
+#
+# The search API always returns *something*, so its top hit is only trusted
+# when the title covers every content token of the keyword (see
+# trendpulse/wikimatch.py). Left ungated it produced nonsense: "credit card
+# uae" -> RuPay, "how to check credit score in uae" -> a Bollywood film,
+# "الدرهم الرقمي" (digital dirham) -> درهم مغربي, the *Moroccan* dirham.
+#
+# Almost no localized commercial query has an encyclopaedia article, so the
+# gate rejects most seeds by design. The map below restores the ones where a
+# global concept article is a fair proxy for the topic. Every title was checked
+# against the pageviews API; entries that 404 or average under ~30 views/day
+# were left out, because at that volume the series is Poisson noise rather than
+# trend signal (this is why ar.wikipedia contributes so little — the edition is
+# simply small for finance topics).
+#
+# Pageviews here are global per edition, never UAE-filtered. Treat this as a
+# topic-level interest signal; localized demand comes from Trends, autocomplete
+# and GSC.
+# ---------------------------------------------------------------------------
+wikipedia:
+  articles:
+    en:
+      "credit card uae": "Credit card"
+      "personal loan uae": "Unsecured debt"
+      "mortgage rates uae": "Mortgage loan"
+      "car loan uae": "Car finance"
+      "fixed deposit uae": "Time deposit"
+      "remittance uae to india": "Remittance"
+      "best savings account uae": "Savings account"
+      "open bank account online uae": "Transaction account"
+      "wealth management uae": "Wealth management"
+      "digital banks uae": "Neobank"
+      "digital dirham": "Central bank digital currency"
+      "bnpl uae": "Buy now, pay later"
+      "fintech uae": "Financial technology"
+      "open banking uae": "Open banking"
+      "what is an iban number": "International Bank Account Number"
+      "islamic banking uae": "Islamic banking and finance"
+    ar:
+      "قرض شخصي الإمارات": "قرض"
+      "قرض سيارة الإمارات": "قرض"
+      "بطاقة ائتمان الإمارات": "بطاقة ائتمان"
+
 google_trends:
   regions_per_run: 4   # AE runs daily; the other 7 regions rotate (rate limits)
 

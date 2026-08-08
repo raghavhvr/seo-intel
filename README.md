@@ -12,14 +12,19 @@
 
 The shipped `config.yaml` is tuned for a UAE bank (ADCB profile) — retarget by editing one file:
 
-- **Countries**: `regions: [AE, SA, QA, KW, BH, OM, JO, LB]` (UAE first = primary). Google Trends interest, autocomplete suggestions and Google News velocity are collected **per country** and stored with a region tag, so a query breaking out in KSA but flat in the UAE is visible as such (cross-country confirmation feeds the breadth feature).
+- **Countries**: `regions: [AE, SA, QA, KW, BH, OM, JO, LB]` (UAE first = primary). Google Trends interest and autocomplete suggestions are genuinely collected **per country** and stored with a region tag, so a query breaking out in KSA but flat in the UAE is visible as such. Google News is *not* per-country — see the caveat below.
 - **Bilingual EN + AR**: `languages: [en, ar]`. Arabic seeds are included out of the box (e.g. قرض شخصي الإمارات, التمويل العقاري الإمارات); normalization handles Arabic script and strips tashkeel, Arabic question words (كيف، هل، ما، …) feed the AEO channel, and Wikipedia pageviews are pulled from both `en.wikipedia` and `ar.wikipedia`.
 - **Banking universe**: retail-banking seeds (cards, personal/auto loans, mortgages, savings, remittances, Islamic banking, business banking), AEO money questions, and GEO topics (digital banks, Digital Dirham/CBDC, open banking, BNPL, fintech) — plus a competitor entity set (Emirates NBD, FAB, DIB, Mashreq, RAKBANK, CBD, HSBC UAE, Wio, Liv) for share-of-voice tracking.
 - **GCC seasonal calendar** (`seasonal_events`): Ramadan, Eid Al Fitr, Eid Al Adha (expected dates — Hijri shifts; verify before publishing), Dubai Shopping Festival, UAE/Saudi National Days, GITEX, back-to-school. Each event carries prep lead-time and keyword angles; the report shows an **"Upcoming regional moments"** section and the pipeline auto-injects event keywords into the tracked universe when the prep window opens — banking content must rank *before* the moment, not during it.
 - **Relevance gate**: broad global feeds (HN front page, HF trending) are only folded into the tracked universe when they share vocabulary with it, are question-shaped, or are GEO-relevant — regional noise stays out of a banking client's focus list.
 - Regional community signals come from r/dubai, r/abudhabi, r/UAE, r/saudiarabia, r/qatar plus global money subs, and `money.stackexchange.com` for AEO questions.
 
-Known limits: Wikipedia pageviews are per-edition, not per-country (the API has no geo filter); Reddit/StackExchange/HN are global English-heavy communities — the UAE-specificity there comes from the subreddit/keyword mix.
+Known limits, all audited against the live APIs rather than assumed:
+
+- **Google News RSS is not geo-filtered.** `gl`/`ceid` select the edition chrome, not the result set: AE, SA and QA return byte-identical article sets for the same query, under both `hl=en` and `hl=en-AE`. Regional intent has to come from the query text (`credit card uae`), so news results carry no region tag.
+- **Wikipedia pageviews are per-edition, not per-country** (the API has no geo filter), and most localized commercial queries have no article at all. Article matching is gated (`trendpulse/wikimatch.py`) and the real mappings are curated in `config.yaml` under `wikipedia.articles` — treat this as topic-level interest, not UAE demand.
+- **Reddit/StackExchange/HN are global, English-heavy communities** — the UAE-specificity there comes from the subreddit/keyword mix.
+- **Arabic coverage is thin outside search.** ar.wikipedia has few finance articles with enough traffic to z-score, and Arabic news volume per keyword is often 0–2 articles/week. Arabic signal is strongest in Trends and autocomplete.
 
 ---
 
@@ -45,11 +50,11 @@ Inputs needed from the SEO team: the seed topics, brand/competitor entity names,
 |--------|----------|-----------|---------|------|-------|
 | Google Trends (`pytrends`) | Search interest 0–100 **per country** + rising related queries, 90-day daily backfill | SEO | Daily | None | Unofficial, aggressively rate-limited → primary region daily + remaining regions rotate (`regions_per_run`), 60s back-off on 429 |
 | Google Autocomplete | Real query suggestions **per country × language** (EN + AR modifiers) | SEO, AEO | Real-time | None | Unofficial endpoint (`suggestqueries.google.com`); highest-relevance discovery source in audits |
-| Wikimedia Pageviews | Official, open API; daily article views per language edition (en + ar), 60-day backfill | SEO, GEO | Daily | None | Most reliable source here; no per-country filter |
+| Wikimedia Pageviews | Official, open API; daily article views per language edition (en + ar), 60-day backfill | SEO, GEO | Daily | None | Most *reliable* API here, but weak signal: global per edition, no country filter, and most localized queries have no article — matching is relevance-gated + curated |
 | Hacker News (Algolia API) | Official search API; story counts + front page | GEO | Real-time | None | Global tech community — auto-gated to GEO-relevant keywords only |
 | Stack Exchange API | Official; question volume (30d, core terms) + hot questions (`money`, `webmasters`) | AEO | Real-time | None (optional key raises quota) | Post-2024 cadence is low — weekly counts are sparse; hot-question mining is the real value |
 | Reddit via [Arctic Shift](https://arctic-shift.photon-reddit.com) | Mention counts + threads in UAE/GCC + money subreddits | AEO, GEO | Daily archive | None | No Reddit API access needed. One bulk pull per subreddit + local keyword/entity matching (word-boundary safe); paced for its rate limits |
-| Google News RSS | Article velocity per keyword **per country × language** (AE:en, AE:ar, …) | SEO | Real-time | None | News velocity often leads search demand |
+| Google News RSS | Article velocity per keyword **per language** (en, ar) | SEO | Real-time | None | News velocity often leads search demand. Search results are **not** geo-filtered (audited AE/SA/QA — identical) so there is no per-country breakdown |
 | arXiv API | Official, open; new-paper velocity per topic | GEO | Daily | None | Auto-gated to GEO-relevant keywords |
 | Hugging Face Hub API | Official, open; trending models & model counts per topic | GEO | Real-time | None | Auto-gated to GEO-relevant keywords |
 | NASA EONET | Natural events (floods, storms, dust, earthquakes) mapped to banking demand | SEO, AEO | Near-real-time | None | Gulf floods → insurance-claim queries; disasters in remittance corridors (India/Pakistan/Philippines) → money-transfer spikes. Client-side bbox filtering (server-side `bbox` leaks) + curated category→keyword mapping |
@@ -96,6 +101,8 @@ Paid-only gaps to be aware of: true SERP rank/People-Also-Ask at scale (SerpAPI,
 ```
 
 Why blended z-scores: pageviews (thousands), Trends interest (0–100) and mention counts (units) are incomparable raw, so each source series is z-scored against its own history before blending. A keyword that is hot on *several* sources at once scores highest — cross-source confirmation kills single-source noise.
+
+Series are collapsed **per source** before they are averaged across sources, and `breadth` counts distinct *sources* rather than distinct series. Without that, a source that emits many series — one per country, per language, per metric — both outweighs single-series sources and manufactures its own "cross-source confirmation", which is precisely the noise breadth exists to filter.
 
 ## Quick start
 
@@ -146,10 +153,12 @@ After merging to your default branch the cron runs automatically. New keywords d
 - **New source**: subclass `Collector` in `trendpulse/collectors/`, return `Observation`/`Discovery` objects, register it in `collectors/__init__.py`. Collectors must never raise — log and degrade gracefully so one flaky API never kills a daily run.
 - **Slack/email delivery**: post `reports/latest.md` from the workflow.
 - **Guardrails**: `keywords.max_universe` and `keywords.max_new_per_day` cap universe growth.
+- **Curating Wikipedia mappings**: run `python -m trendpulse ingest -v` and grep for `rejected as off-topic`. If a rejected keyword has a genuinely matching article, add it under `wikipedia.articles` (per-language or flat) — curated entries bypass the gate. Verify the title returns data first: `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/all-agents/<Title>/daily/2026010100/2026020100`. Skip articles averaging under ~30 views/day; at that volume the series is Poisson noise, not trend signal.
 
 ## Caveats
 
-- `pytrends` and the autocomplete endpoint are unofficial Google APIs — expect 429s. Trends runs the primary region daily and rotates the rest (`google_trends.regions_per_run`), so full regional coverage accrues over the week rather than one throttled run.
+- `pytrends` and the autocomplete endpoint are unofficial Google APIs — expect 429s. Trends runs the primary region daily and rotates the rest (`google_trends.regions_per_run`), so full regional coverage accrues over the week rather than one throttled run. In practice the primary region usually lands (~11.6k observations in a clean run) while later regions in the rotation get throttled — this is why the rotation exists, but do not expect all eight countries on any single day.
+- Wikipedia contributes far fewer series than the seed count suggests, by design. The search API always returns *something*, so its top hit is only accepted when the title covers every content token of the keyword; ungated it mapped `credit card uae` → *RuPay*, `how to check credit score in uae` → a Bollywood film, and `الدرهم الرقمي` → درهم مغربي, the **Moroccan** dirham. Curate genuine mappings under `wikipedia.articles`; rejected keywords are logged each run so the list can grow from evidence.
 - Reddit data comes from the Arctic Shift archive API (no official Reddit API needed). It rate-limits politely ("slow down" responses) — the collector paces requests and retries; scores reflect archive-time values, not live votes.
 - Stack Exchange question volume is genuinely low post-2024 — treat it as an AEO question-mining source, not a velocity gauge.
 - HN/arXiv/Hugging Face are global tech sources; they only track GEO-relevant keywords (banking terms there are noise by design).
