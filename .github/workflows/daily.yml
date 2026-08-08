@@ -63,7 +63,30 @@ jobs:
           fi
           git commit -m "chore: daily trend ingest + model retrain ($(date -u +%F))"
           for attempt in 1 2 3; do
-            git pull --rebase origin "${{ github.ref_name }}"
+            if ! git pull --rebase origin "${{ github.ref_name }}"; then
+              # Binary conflict on the SQLite DB: someone pushed an import
+              # while this run was ingesting. Git can't merge binaries, but
+              # SQLite can — resolve to the row-level UNION of both versions
+              # so neither the pushed import nor this run's ingest is lost.
+              # (:2 = the upstream/main version during a rebase.)
+              git show :2:data/trendpulse.db > /tmp/remote-trendpulse.db
+              git checkout --theirs -- data/ reports/
+              python - <<'PYEOF'
+          import sqlite3
+          con = sqlite3.connect("data/trendpulse.db")
+          con.execute("ATTACH '/tmp/remote-trendpulse.db' AS remote")
+          tables = [r[0] for r in con.execute(
+              "SELECT name FROM remote.sqlite_master"
+              " WHERE type='table' AND name NOT LIKE 'sqlite_%'")]
+          for table in tables:
+              con.execute(f'INSERT OR REPLACE INTO main."{table}"'
+                          f' SELECT * FROM remote."{table}"')
+          con.commit()
+          print("merged remote DB rows into this run's DB:", tables)
+          PYEOF
+              git add data/ reports/
+              GIT_EDITOR=true git rebase --continue
+            fi
             if git push; then
               exit 0
             fi
