@@ -109,6 +109,23 @@ def best_match(keyword: str, candidates: list[str]) -> str | None:
     return min(passing, key=lambda c: (len(_tokens(c)), len(c)))
 
 
+def configured_article(cfg: dict, keyword: str, lang: str) -> str | None:
+    """Explicit operator override from config: `wikipedia.articles`.
+
+    Accepts either a flat {keyword: title} map (applies to every edition) or a
+    per-language {lang: {keyword: title}} map. Curated mappings bypass the gate
+    entirely — a human has already vouched for them.
+    """
+    articles = (cfg.get("wikipedia") or {}).get("articles") or {}
+    per_lang = articles.get(lang)
+    if isinstance(per_lang, dict):
+        hit = per_lang.get(keyword) or per_lang.get(normalize(keyword))
+        if hit:
+            return str(hit)
+    hit = articles.get(keyword) or articles.get(normalize(keyword))
+    return str(hit) if isinstance(hit, str) else None
+
+
 def prune_stale_observations(cfg: dict, store) -> int:
     """Delete stored Wikipedia observations whose article fails today's gate.
 
@@ -134,20 +151,3 @@ def prune_stale_observations(cfg: dict, store) -> int:
         log.info("[wikipedia] dropped %d stale observations: %s '%s' -> %r",
                  rows, source, keyword, article)
     return removed
-
-
-def configured_article(cfg: dict, keyword: str, lang: str) -> str | None:
-    """Explicit operator override from config: `wikipedia.articles`.
-
-    Accepts either a flat {keyword: title} map (applies to every edition) or a
-    per-language {lang: {keyword: title}} map. Curated mappings bypass the gate
-    entirely — a human has already vouched for them.
-    """
-    articles = (cfg.get("wikipedia") or {}).get("articles") or {}
-    per_lang = articles.get(lang)
-    if isinstance(per_lang, dict):
-        hit = per_lang.get(keyword) or per_lang.get(normalize(keyword))
-        if hit:
-            return str(hit)
-    hit = articles.get(keyword) or articles.get(normalize(keyword))
-    return str(hit) if isinstance(hit, str) else None
