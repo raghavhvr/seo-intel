@@ -15,6 +15,12 @@ concurrency:
 jobs:
   trendpulse:
     runs-on: ubuntu-latest
+    # Secrets are read from this GitHub Environment (Settings -> Environments
+    # -> "trendpulse" -> Environment secrets). Repo-level Actions secrets work
+    # too. The workflow file itself never contains key material — the
+    # `${{ secrets.* }}` references resolve at runtime, encrypted at rest and
+    # masked in logs.
+    environment: trendpulse
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,9 +35,6 @@ jobs:
 
       - name: Ingest, retrain, report
         env:
-          # Optional — create a free Reddit script app for reliable access
-          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
-          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
           # Optional — TryProfound Enterprise API key (GEO visibility for adcb.com)
           PROFOUND_API_KEY: ${{ secrets.PROFOUND_API_KEY }}
           # PROFOUND_CATEGORY_ID: ${{ secrets.PROFOUND_CATEGORY_ID }}  # pin to skip auto-discovery

@@ -5,7 +5,7 @@ import time
 from datetime import datetime, timedelta, timezone
 
 from trendpulse.collectors.base import Collector, http_get, today
-from trendpulse.keywords import normalize, valid_candidate
+from trendpulse.keywords import is_geo_relevant, normalize, valid_candidate
 from trendpulse.types import Discovery, Observation
 
 log = logging.getLogger(__name__)
@@ -26,6 +26,12 @@ class HackerNewsCollector(Collector):
         week_ago = int((datetime.now(timezone.utc) - timedelta(days=7)).timestamp())
         obs: list[Observation] = []
         discs: list[Discovery] = []
+
+        # HN is a global tech community — only GEO-relevant keywords have
+        # signal there; tracking "credit card uae" on HN is pure noise.
+        keywords = [kw for kw in keywords
+                    if is_geo_relevant(kw, self.cfg.get("geo_terms"))]
+        log.info("[%s] tracking %d GEO-relevant keywords", self.name, len(keywords))
 
         for kw in keywords:
             try:

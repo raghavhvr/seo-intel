@@ -51,11 +51,13 @@ def test_seasonality_windows():
 
 
 def test_relevance_gate():
-    tokens = universe_tokens(["credit card uae", "personal loan uae", "قرض شخصي"])
+    tokens = universe_tokens(["credit card uae", "personal loan uae",
+                              "bank account uae", "قرض شخصي"])
     assert is_relevant("best credit card offers uae", tokens, GEO_CFG)     # token overlap
-    assert is_relevant("how to open a bank account", tokens, GEO_CFG)      # question
+    assert is_relevant("how to open a bank account", tokens, GEO_CFG)      # question + overlap
     assert is_relevant("ai banking platforms", tokens, GEO_CFG)            # geo term
     assert not is_relevant("so paulo urban forest", tokens, GEO_CFG)       # front-page noise
+    assert not is_relevant("which gym is this", tokens, GEO_CFG)           # off-topic question
 
 
 def test_observation_region_language_roundtrip(tmp_path):

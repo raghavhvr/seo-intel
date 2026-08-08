@@ -161,6 +161,55 @@ sources:
   arxiv: true
   huggingface: true
   profound: true           # needs PROFOUND_API_KEY (Enterprise); skipped silently otherwise
+  eonet: true              # NASA natural-event tracker (open, no auth)
+
+# ---------------------------------------------------------------------------
+# NASA EONET: natural events -> banking keyword angles. Events are filtered
+# client-side to these bounding boxes ([west, south, east, north]) and only
+# curated categories produce signal. Quiet periods (zero events) are normal.
+# Category ids: floods, severeStorms, dustHaze, earthquakes, wildfires,
+# tempExtremes, volcanoes, drought, landslides (see /api/v3/categories).
+# ---------------------------------------------------------------------------
+eonet:
+  window_days: 30
+  regions:
+    gcc_levant:
+      bbox: [34, 12, 63, 37]     # Arabian Peninsula + Levant
+      category_keywords:
+        floods:
+          - "car insurance flood claim uae"
+          - "home insurance flood damage uae"
+          - "emergency loan uae"
+          - "insurance claim process uae"
+        severeStorms:
+          - "storm damage insurance claim uae"
+          - "travel insurance uae"
+          - "flight delay compensation uae"
+        dustHaze:
+          - "travel insurance uae"
+          - "flight delay compensation uae"
+        earthquakes:
+          - "charity donation uae"
+          - "emergency money transfer uae"
+    south_asia_corridor:          # India / Pakistan / Bangladesh expat corridor
+      bbox: [60, 5, 93, 37]
+      category_keywords:
+        floods:
+          - "send money to india from uae"
+          - "send money to pakistan from uae"
+          - "emergency money transfer uae"
+        earthquakes:
+          - "send money to india from uae"
+          - "send money to pakistan from uae"
+          - "charity donation uae"
+    philippines_corridor:         # Filipino expat remittance corridor
+      bbox: [116, 4, 127, 21]
+      category_keywords:
+        severeStorms:
+          - "send money to philippines from uae"
+          - "emergency money transfer uae"
+        floods:
+          - "send money to philippines from uae"
 
 # TryProfound — adcb.com is set up as a project, category "Banking & Finance".
 # Set the API key as a secret env var; category/asset are auto-discovered but
@@ -198,12 +247,17 @@ alerts:
   max_items: 8
   report_url: "https://github.com/raghavhvr/seo-intel/blob/main/reports/latest.md"
 
+# Reddit data comes from the Arctic Shift archive API (public, no Reddit API
+# credentials needed): https://arctic-shift.photon-reddit.com
 reddit:
   subreddits: ["dubai", "abudhabi", "UAE", "saudiarabia", "qatar",
-               "personalfinance", "banking", "fintech", "CredCards"]
+               "personalfinance", "banking", "fintech", "CreditCards"]
 
 stackexchange:
   sites: ["money", "webmasters"]
+
+google_trends:
+  regions_per_run: 4   # AE runs daily; the other 7 regions rotate (rate limits)
 
 model:
   min_samples: 200

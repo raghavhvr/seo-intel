@@ -5,6 +5,7 @@ import logging
 from trendpulse.collectors.arxiv import ArxivCollector
 from trendpulse.collectors.autocomplete import AutocompleteCollector
 from trendpulse.collectors.base import Collector
+from trendpulse.collectors.eonet import EonetCollector
 from trendpulse.collectors.google_news import GoogleNewsCollector
 from trendpulse.collectors.google_trends import GoogleTrendsCollector
 from trendpulse.collectors.hackernews import HackerNewsCollector
@@ -27,6 +28,7 @@ REGISTRY: dict[str, type[Collector]] = {
     "arxiv": ArxivCollector,
     "huggingface": HuggingFaceCollector,
     "profound": ProfoundCollector,
+    "eonet": EonetCollector,
 }
 
 

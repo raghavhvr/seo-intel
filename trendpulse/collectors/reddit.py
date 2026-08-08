@@ -1,104 +1,110 @@
 from __future__ import annotations
 
 import logging
-import os
 import time
+from datetime import datetime, timedelta, timezone
 
-import requests
-
-from trendpulse.collectors.base import USER_AGENT, Collector, http_get, today
+from trendpulse.collectors.base import Collector, http_get, today
 from trendpulse.keywords import is_question, normalize, valid_candidate
 from trendpulse.types import Discovery, Observation
 
 log = logging.getLogger(__name__)
 
+API = "https://arctic-shift.photon-reddit.com/api/posts/search"
+
+# Tokens ignored when matching keywords against post text: geo qualifiers
+# (the subreddit already scopes geography) and generic stopwords.
+SKIP_TOKENS = {
+    "uae", "emirates", "dubai", "abu", "dhabi", "saudi", "arabia", "gcc",
+    "mena", "qatar", "kuwait", "bahrain", "oman", "jordan", "lebanon",
+    "the", "a", "an", "in", "on", "of", "for", "to", "and", "or", "is",
+    "how", "what", "which", "best", "my", "i",
+}
+
+
+def _core_tokens(keyword: str) -> set[str]:
+    return {t for t in keyword.lower().split() if t not in SKIP_TOKENS and len(t) > 1}
+
+
+def _matches(tokens: set[str], text: str) -> bool:
+    return bool(tokens) and all(t in text for t in tokens)
+
 
 class RedditCollector(Collector):
-    """Reddit mentions + rising threads in marketing/AI subreddits.
+    """Reddit via the Arctic Shift archive API (public, no Reddit API access
+    required): https://arctic-shift.photon-reddit.com
 
-    Uses free OAuth (script app) when REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET
-    are set; otherwise falls back to the public JSON endpoints, which Reddit
-    sometimes rate-limits — failures are logged and skipped.
-    """
+    Design around its rate limits: ONE bulk fetch of the last 7 days of posts
+    per subreddit (not per-keyword searches), then local keyword matching for
+    mention counts and title harvesting for discoveries. Requests are paced
+    and retried once on the API's soft 'slow down' response."""
 
     name = "reddit"
 
-    def __init__(self, cfg: dict):
-        super().__init__(cfg)
-        self._token: str | None = None
-
-    def _oauth_token(self) -> str | None:
-        if self._token:
-            return self._token
-        client_id = os.environ.get("REDDIT_CLIENT_ID")
-        secret = os.environ.get("REDDIT_CLIENT_SECRET")
-        if not client_id or not secret:
-            return None
-        resp = requests.post(
-            "https://www.reddit.com/api/v1/access_token",
-            auth=(client_id, secret),
-            data={"grant_type": "client_credentials"},
-            headers={"User-Agent": USER_AGENT}, timeout=15,
-        )
-        resp.raise_for_status()
-        self._token = resp.json()["access_token"]
-        return self._token
-
-    def _get(self, url: str, params: dict) -> dict:
-        token = self._oauth_token()
-        if token:
-            resp = http_get(f"https://oauth.reddit.com{url}", params=params,
-                            headers={"Authorization": f"Bearer {token}"},
-                            timeout=15, retries=1)
-            return resp.json()
-        resp = http_get(f"https://www.reddit.com{url}.json", params=params,
-                        timeout=15, retries=1)
-        return resp.json()
+    def _recent_posts(self, sub: str, after: str) -> list[dict]:
+        for attempt in (1, 2):
+            resp = http_get(API, params={
+                "subreddit": sub, "after": after, "limit": 100,
+            }, timeout=45, retries=1)
+            payload = resp.json()
+            posts = payload.get("data")
+            if posts is not None:
+                return posts
+            # {"data": null, "error": "Timeout. Maybe slow down a bit"}
+            log.info("[%s] r/%s: %s (attempt %d)", self.name, sub,
+                     payload.get("error", "empty response"), attempt)
+            time.sleep(15 * attempt)
+        return []
 
     def fetch(self, keywords: list[str]) -> tuple[list[Observation], list[Discovery]]:
         date = today()
-        subreddits = self.cfg.get("reddit", {}).get("subreddits", ["marketing"])
+        after = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+        subreddits = self.cfg.get("reddit", {}).get("subreddits", ["dubai"])
         obs: list[Observation] = []
         discs: list[Discovery] = []
+        counts: dict[str, float] = {kw: 0.0 for kw in keywords}
+        token_map = {kw: _core_tokens(kw) for kw in keywords}
 
-        for kw in keywords[:80]:
-            total = 0.0
-            for sub in subreddits[:4]:
-                try:
-                    data = self._get(f"/r/{sub}/search", {
-                        "q": kw, "restrict_sr": "1", "sort": "new",
-                        "t": "week", "limit": 25,
-                    })
-                    children = data.get("data", {}).get("children", [])
-                    total += len(children)
-                    for child in children[:3]:
-                        post = child.get("data", {})
-                        title = normalize(post.get("title") or "")
-                        if valid_candidate(title):
-                            discs.append(Discovery(
-                                date=date, keyword=title, source=self.name,
-                                context=f"r/{sub}: https://reddit.com{post.get('permalink', '')}",
-                                score=float(post.get("score") or 0) + (10 if is_question(title) else 0),
-                            ))
-                except Exception as exc:  # noqa: BLE001
-                    log.debug("[%s] r/%s '%s' failed: %s", self.name, sub, kw, exc)
-                time.sleep(0.4)
-            obs.append(Observation(date=date, keyword=kw, source=self.name,
-                                   metric="posts_7d", value=total))
+        # Titles only become discoveries when the post matches a tracked
+        # keyword or names a tracked entity — a bulk subreddit feed is mostly
+        # off-topic chatter otherwise. Entity matching uses word boundaries
+        # ("Liv" must not match "delivery").
+        import re as _re
+        entities = self.cfg.get("entities", {})
+        entity_rxs = [
+            _re.compile(rf"(?<![a-z0-9]){_re.escape(e.lower())}(?![a-z0-9])")
+            for e in (entities.get("brand", []) + entities.get("competitors", []))
+        ]
 
         for sub in subreddits:
             try:
-                data = self._get(f"/r/{sub}/hot", {"limit": 30})
-                for child in data.get("data", {}).get("children", []):
-                    post = child.get("data", {})
-                    title = normalize(post.get("title") or "")
-                    if valid_candidate(title):
-                        discs.append(Discovery(
-                            date=date, keyword=title, source=self.name,
-                            context=f"hot in r/{sub}",
-                            score=float(post.get("score") or 0) + (10 if is_question(title) else 0),
-                        ))
+                posts = self._recent_posts(sub, after)
             except Exception as exc:  # noqa: BLE001
-                log.debug("[%s] r/%s hot failed: %s", self.name, sub, exc)
-            time.sleep(0.4)
+                log.debug("[%s] r/%s failed: %s", self.name, sub, exc)
+                posts = []
+            log.debug("[%s] r/%s: %d posts since %s", self.name, sub, len(posts), after)
+
+            for post in posts:
+                title = post.get("title") or ""
+                text = f"{title} {post.get('selftext') or ''}".lower()
+                matched = False
+                for kw, tokens in token_map.items():
+                    if _matches(tokens, text):
+                        counts[kw] += 1.0
+                        matched = True
+                if not matched and not any(rx.search(text) for rx in entity_rxs):
+                    continue
+                norm = normalize(title)
+                if valid_candidate(norm):
+                    score = float(post.get("score") or 0)
+                    discs.append(Discovery(
+                        date=date, keyword=norm, source=self.name,
+                        context=f"r/{sub}: https://reddit.com{post.get('permalink', '')}",
+                        score=score + (10 if is_question(norm) else 0),
+                    ))
+            time.sleep(5)  # Arctic Shift asks for gentle pacing
+
+        for kw, count in counts.items():
+            obs.append(Observation(date=date, keyword=kw, source=self.name,
+                                   metric="posts_7d", value=count))
         return obs, discs
