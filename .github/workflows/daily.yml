@@ -22,9 +22,9 @@ jobs:
     # masked in logs.
     environment: trendpulse
     steps:
+      # GITHUB_TOKEN is injected automatically by GitHub Actions — there is
+      # nothing to configure for it.
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -33,12 +33,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # ALL secrets below are OPTIONAL. Unset ones resolve to empty strings
+      # and the matching feature simply skips (Profound collector, Slack/Teams
+      # briefing) — the run itself always proceeds.
       - name: Ingest, retrain, report
         env:
-          # Optional — TryProfound Enterprise API key (GEO visibility for adcb.com)
+          # TryProfound Enterprise API key (GEO visibility for adcb.com)
           PROFOUND_API_KEY: ${{ secrets.PROFOUND_API_KEY }}
           # PROFOUND_CATEGORY_ID: ${{ secrets.PROFOUND_CATEGORY_ID }}  # pin to skip auto-discovery
-          # Optional — morning briefing + breakout alerts
+          # Morning briefing + breakout alerts
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
         run: python -m trendpulse run-daily --config config.yaml

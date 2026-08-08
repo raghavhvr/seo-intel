@@ -153,6 +153,7 @@ After merging to your default branch the cron runs automatically. New keywords d
 - Reddit data comes from the Arctic Shift archive API (no official Reddit API needed). It rate-limits politely ("slow down" responses) — the collector paces requests and retries; scores reflect archive-time values, not live votes.
 - Stack Exchange question volume is genuinely low post-2024 — treat it as an AEO question-mining source, not a velocity gauge.
 - HN/arXiv/Hugging Face are global tech sources; they only track GEO-relevant keywords (banking terms there are noise by design).
+- NASA EONET is quiet in the Gulf for months at a time — zero events is normal, and the collector contributes nothing until an event fires (then it injects the mapped keyword angles with the event as evidence).
 - Scores are directional decision-support, not traffic forecasts. Validate big bets against Search Console before committing serious resources.
 - Check each source's terms of service for your usage volume.
 
