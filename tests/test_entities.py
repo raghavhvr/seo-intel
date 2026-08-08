@@ -29,6 +29,33 @@ def test_scan_discoveries_finds_mentions(tmp_path):
     store.close()
 
 
+def test_mentions_count_once_regardless_of_discovery_score(tmp_path):
+    """A pytrends breakout discovery carries a percent-growth score (282400 in
+    production); summed as a mention value it once gave ADCB 97% SOV off two
+    rows. Every sighting counts exactly once, and stored history collected
+    under the old weighting is clamped on the next scan."""
+    from trendpulse.types import EntityMention
+
+    store = Store(tmp_path / "t.db")
+    # history written by the old code: score used as value
+    store.upsert_entity_mentions([EntityMention(
+        date="2026-08-07", entity="ADCB", kind="brand", source="google_trends",
+        context="rising related query for 'adcb' in KW", value=282400.0)])
+    discs = [
+        Discovery(date="2026-08-08", keyword="emirates nbd rates",
+                  source="google_trends", context="rising", score=161100.0),
+        Discovery(date="2026-08-08", keyword="adcb credit card offer",
+                  source="reddit", context="thread", score=3.0),
+    ]
+    scan_discoveries(CFG, store, discs)
+    import pytest
+
+    visibility = {e: (mentions, sov) for e, _k, mentions, sov in store.entity_visibility()}
+    assert visibility["ADCB"] == (2.0, pytest.approx(200 / 3))   # clamped history + new row
+    assert visibility["Emirates NBD"] == (1.0, pytest.approx(100 / 3))  # breakout score ignored
+    store.close()
+
+
 def test_word_boundaries_prevent_false_positives(tmp_path):
     store = Store(tmp_path / "t.db")
     discs = [Discovery(date="2026-08-07", keyword="fabulous credit card hacks",

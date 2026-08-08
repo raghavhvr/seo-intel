@@ -139,6 +139,15 @@ class Store:
         self.conn.commit()
         return len(rows)
 
+    def clamp_mention_values(self) -> int:
+        """Reset mention values that carry a discovery score instead of a
+        count. Share-of-voice sums these, so one pytrends breakout number
+        (e.g. 282400 = percent growth) dwarfs thousands of real mentions."""
+        cur = self.conn.execute(
+            "UPDATE entities SET value = 1.0 WHERE metric = 'mention' AND value > 1.0")
+        self.conn.commit()
+        return cur.rowcount
+
     def entity_visibility(self, days: int = 7) -> list[tuple[str, str, float, float]]:
         """(entity, kind, mentions, share_of_voice) over the trailing window."""
         cur = self.conn.execute(
