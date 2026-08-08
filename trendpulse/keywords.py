@@ -97,10 +97,11 @@ def universe_tokens(keywords) -> set[str]:
 
 def is_relevant(keyword: str, tokens: set[str], cfg: dict) -> bool:
     """Gate for folding discoveries into the tracked universe: keeps
-    question-shaped and GEO-relevant finds plus anything sharing vocabulary
-    with the existing universe (e.g. 'uae', 'credit', 'card'). Global
-    front-page noise fails all three checks."""
-    if is_question(keyword) or is_geo_relevant(keyword, cfg.get("geo_terms")):
+    GEO-relevant finds and anything sharing vocabulary with the existing
+    universe (e.g. 'credit', 'card', 'loan'). Being question-shaped is NOT
+    sufficient on its own — community feeds are full of off-topic questions
+    ('which gym is this') that a bank should never track."""
+    if is_geo_relevant(keyword, cfg.get("geo_terms")):
         return True
     toks = {t for t in keyword.split() if t not in STOPWORDS}
     return bool(toks & tokens)
