@@ -4,6 +4,7 @@ import logging
 import time
 
 from trendpulse.collectors.base import Collector, http_get, today
+from trendpulse.keywords import is_geo_relevant
 from trendpulse.types import Discovery, Observation
 
 log = logging.getLogger(__name__)
@@ -22,6 +23,11 @@ class HuggingFaceCollector(Collector):
         date = today()
         obs: list[Observation] = []
         discs: list[Discovery] = []
+
+        # HF Hub is AI-only — skip keywords with no GEO relevance.
+        keywords = [kw for kw in keywords
+                    if is_geo_relevant(kw, self.cfg.get("geo_terms"))]
+        log.info("[%s] tracking %d GEO-relevant keywords", self.name, len(keywords))
 
         for kw in keywords[:60]:
             try:

@@ -4,6 +4,7 @@ import logging
 import os
 import time
 
+import feedparser
 import requests
 
 from trendpulse.collectors.base import USER_AGENT, Collector, http_get, today
@@ -14,11 +15,14 @@ log = logging.getLogger(__name__)
 
 
 class RedditCollector(Collector):
-    """Reddit mentions + rising threads in marketing/AI subreddits.
+    """Reddit mentions + rising threads in UAE/GCC and money subreddits.
 
-    Uses free OAuth (script app) when REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET
-    are set; otherwise falls back to the public JSON endpoints, which Reddit
-    sometimes rate-limits — failures are logged and skipped.
+    Access strategy, in order:
+    1. Free OAuth (script app) when REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET
+       are set — most reliable.
+    2. Public JSON endpoints — frequently 403 from datacenter IPs.
+    3. Public RSS feeds (search.rss / hot.rss) — no auth needed; scores are
+       unavailable so discoveries get a flat score (+ question bonus).
     """
 
     name = "reddit"
@@ -26,6 +30,7 @@ class RedditCollector(Collector):
     def __init__(self, cfg: dict):
         super().__init__(cfg)
         self._token: str | None = None
+        self._json_blocked = False
 
     def _oauth_token(self) -> str | None:
         if self._token:
@@ -44,20 +49,63 @@ class RedditCollector(Collector):
         self._token = resp.json()["access_token"]
         return self._token
 
-    def _get(self, url: str, params: dict) -> dict:
+    def _search(self, sub: str, kw: str) -> list[dict]:
+        """Recent posts matching kw in a subreddit: [{title, url, score}]."""
         token = self._oauth_token()
         if token:
-            resp = http_get(f"https://oauth.reddit.com{url}", params=params,
-                            headers={"Authorization": f"Bearer {token}"},
-                            timeout=15, retries=1)
-            return resp.json()
-        resp = http_get(f"https://www.reddit.com{url}.json", params=params,
-                        timeout=15, retries=1)
-        return resp.json()
+            data = http_get(f"https://oauth.reddit.com/r/{sub}/search", params={
+                "q": kw, "restrict_sr": "1", "sort": "new", "t": "week", "limit": 25,
+            }, headers={"Authorization": f"Bearer {token}"}, timeout=15, retries=1).json()
+            return [{"title": c["data"].get("title", ""),
+                     "url": f"https://reddit.com{c['data'].get('permalink', '')}",
+                     "score": float(c["data"].get("score") or 0)}
+                    for c in data.get("data", {}).get("children", [])]
+        if not self._json_blocked:
+            try:
+                data = http_get(f"https://www.reddit.com/r/{sub}/search.json", params={
+                    "q": kw, "restrict_sr": "1", "sort": "new", "t": "week", "limit": 25,
+                }, timeout=15, retries=0).json()
+                return [{"title": c["data"].get("title", ""),
+                         "url": f"https://reddit.com{c['data'].get('permalink', '')}",
+                         "score": float(c["data"].get("score") or 0)}
+                        for c in data.get("data", {}).get("children", [])]
+            except Exception as exc:  # noqa: BLE001 - usually a 403 wall
+                log.info("[%s] JSON endpoint blocked (%s) — falling back to RSS",
+                         self.name, exc)
+                self._json_blocked = True
+        feed = feedparser.parse(
+            f"https://www.reddit.com/r/{sub}/search.rss?q={requests.utils.quote(kw)}"
+            f"&restrict_sr=1&sort=new&t=week",
+            request_headers={"User-Agent": USER_AGENT})
+        return [{"title": e.get("title", ""), "url": e.get("link", ""), "score": 1.0}
+                for e in feed.entries]
+
+    def _hot(self, sub: str) -> list[dict]:
+        token = self._oauth_token()
+        if token or not self._json_blocked:
+            try:
+                if token:
+                    data = http_get(f"https://oauth.reddit.com/r/{sub}/hot",
+                                    params={"limit": 30},
+                                    headers={"Authorization": f"Bearer {token}"},
+                                    timeout=15, retries=1).json()
+                else:
+                    data = http_get(f"https://www.reddit.com/r/{sub}/hot.json",
+                                    params={"limit": 30}, timeout=15, retries=0).json()
+                return [{"title": c["data"].get("title", ""),
+                         "url": f"https://reddit.com{c['data'].get('permalink', '')}",
+                         "score": float(c["data"].get("score") or 0)}
+                        for c in data.get("data", {}).get("children", [])]
+            except Exception:  # noqa: BLE001
+                self._json_blocked = True
+        feed = feedparser.parse(f"https://www.reddit.com/r/{sub}/hot/.rss",
+                                request_headers={"User-Agent": USER_AGENT})
+        return [{"title": e.get("title", ""), "url": e.get("link", ""), "score": 1.0}
+                for e in feed.entries]
 
     def fetch(self, keywords: list[str]) -> tuple[list[Observation], list[Discovery]]:
         date = today()
-        subreddits = self.cfg.get("reddit", {}).get("subreddits", ["marketing"])
+        subreddits = self.cfg.get("reddit", {}).get("subreddits", ["dubai"])
         obs: list[Observation] = []
         discs: list[Discovery] = []
 
@@ -65,20 +113,15 @@ class RedditCollector(Collector):
             total = 0.0
             for sub in subreddits[:4]:
                 try:
-                    data = self._get(f"/r/{sub}/search", {
-                        "q": kw, "restrict_sr": "1", "sort": "new",
-                        "t": "week", "limit": 25,
-                    })
-                    children = data.get("data", {}).get("children", [])
-                    total += len(children)
-                    for child in children[:3]:
-                        post = child.get("data", {})
-                        title = normalize(post.get("title") or "")
+                    posts = self._search(sub, kw)
+                    total += len(posts)
+                    for post in posts[:3]:
+                        title = normalize(post["title"])
                         if valid_candidate(title):
                             discs.append(Discovery(
                                 date=date, keyword=title, source=self.name,
-                                context=f"r/{sub}: https://reddit.com{post.get('permalink', '')}",
-                                score=float(post.get("score") or 0) + (10 if is_question(title) else 0),
+                                context=f"r/{sub}: {post['url']}",
+                                score=post["score"] + (10 if is_question(title) else 0),
                             ))
                 except Exception as exc:  # noqa: BLE001
                     log.debug("[%s] r/%s '%s' failed: %s", self.name, sub, kw, exc)
@@ -88,15 +131,13 @@ class RedditCollector(Collector):
 
         for sub in subreddits:
             try:
-                data = self._get(f"/r/{sub}/hot", {"limit": 30})
-                for child in data.get("data", {}).get("children", []):
-                    post = child.get("data", {})
-                    title = normalize(post.get("title") or "")
+                for post in self._hot(sub):
+                    title = normalize(post["title"])
                     if valid_candidate(title):
                         discs.append(Discovery(
                             date=date, keyword=title, source=self.name,
-                            context=f"hot in r/{sub}",
-                            score=float(post.get("score") or 0) + (10 if is_question(title) else 0),
+                            context=f"hot in r/{sub}: {post['url']}",
+                            score=post["score"] + (10 if is_question(title) else 0),
                         ))
             except Exception as exc:  # noqa: BLE001
                 log.debug("[%s] r/%s hot failed: %s", self.name, sub, exc)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import time
+from datetime import datetime, timezone
 
 from trendpulse.collectors.base import Collector, today
 from trendpulse.types import Discovery, Observation
@@ -13,17 +14,45 @@ BATCH = 5  # Google Trends compares up to 5 terms per request
 
 class GoogleTrendsCollector(Collector):
     """Interest-over-time backfill (last ~90 days, daily) plus rising related
-    queries, per configured country. Uses pytrends (unofficial API) — free,
-    updates daily, but rate-limited, so failures are logged and skipped."""
+    queries, per country. Uses pytrends (unofficial API) — free and daily, but
+    aggressively rate-limited: the primary region runs every day and the
+    remaining regions rotate (`google_trends.regions_per_run`), with a long
+    back-off + one retry on HTTP 429. Full regional coverage accrues over the
+    week instead of one throttled mega-run."""
 
     name = "google_trends"
+
+    def _regions_for_today(self) -> list[str]:
+        regions = self.cfg.get("regions") or [self.cfg.get("region", "US")]
+        per_run = int(self.cfg.get("google_trends", {}).get("regions_per_run", 4))
+        if per_run >= len(regions) or len(regions) < 2:
+            return regions
+        primary, rest = regions[0], regions[1:]
+        day = datetime.now(timezone.utc).timetuple().tm_yday
+        start = (day * (per_run - 1)) % len(rest)
+        rotated = rest[start:] + rest[:start]
+        return [primary, *rotated[:per_run - 1]]
+
+    def _fetch_batch(self, pytrends, batch: list[str], region: str):
+        try:
+            pytrends.build_payload(batch, cat=0, timeframe="today 3-m", geo=region)
+            return pytrends.interest_over_time(), pytrends.related_queries()
+        except Exception as exc:  # noqa: BLE001
+            if "429" in str(exc):
+                log.info("[%s] 429 on %s — backing off 60s and retrying once",
+                         self.name, region)
+                time.sleep(60)
+                pytrends.build_payload(batch, cat=0, timeframe="today 3-m", geo=region)
+                return pytrends.interest_over_time(), pytrends.related_queries()
+            raise
 
     def fetch(self, keywords: list[str]) -> tuple[list[Observation], list[Discovery]]:
         from pytrends.request import TrendReq  # optional dependency
 
         pytrends = TrendReq(hl=self.cfg.get("language", "en-US"), tz=0, timeout=(10, 30))
-        regions = self.cfg.get("regions") or [self.cfg.get("region", "US")]
+        regions = self._regions_for_today()
         lang = (self.cfg.get("languages") or ["en"])[0]
+        log.info("[%s] regions today: %s", self.name, regions)
         obs: list[Observation] = []
         discs: list[Discovery] = []
         date = today()
@@ -32,8 +61,7 @@ class GoogleTrendsCollector(Collector):
             for i in range(0, len(keywords), BATCH):
                 batch = keywords[i:i + BATCH]
                 try:
-                    pytrends.build_payload(batch, cat=0, timeframe="today 3-m", geo=region)
-                    frame = pytrends.interest_over_time()
+                    frame, related = self._fetch_batch(pytrends, batch, region)
                     if not frame.empty:
                         frame = frame.drop(columns=["isPartial"], errors="ignore")
                         for kw in batch:
@@ -45,10 +73,6 @@ class GoogleTrendsCollector(Collector):
                                     source=self.name, metric="interest",
                                     value=float(value), region=region, language=lang,
                                 ))
-                    try:
-                        related = pytrends.related_queries()
-                    except Exception:
-                        related = {}
                     for kw in batch:
                         rising = (related.get(kw) or {}).get("rising")
                         if rising is None or rising.empty:
@@ -61,5 +85,6 @@ class GoogleTrendsCollector(Collector):
                             ))
                 except Exception as exc:  # noqa: BLE001 - 429s are expected
                     log.warning("[%s] %s batch %s failed: %s", self.name, region, batch, exc)
-                time.sleep(1.5)  # be polite with the rate limiter
+                time.sleep(3.0)  # be polite with the rate limiter
         return obs, discs
+

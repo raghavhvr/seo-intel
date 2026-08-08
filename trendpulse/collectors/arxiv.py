@@ -7,7 +7,7 @@ from urllib.parse import quote
 import feedparser
 
 from trendpulse.collectors.base import Collector, today
-from trendpulse.keywords import normalize, valid_candidate
+from trendpulse.keywords import is_geo_relevant, normalize, valid_candidate
 from trendpulse.types import Discovery, Observation
 
 log = logging.getLogger(__name__)
@@ -26,6 +26,11 @@ class ArxivCollector(Collector):
         date = today()
         obs: list[Observation] = []
         discs: list[Discovery] = []
+
+        # arXiv is a research corpus — only GEO/AI keywords have signal.
+        keywords = [kw for kw in keywords
+                    if is_geo_relevant(kw, self.cfg.get("geo_terms"))]
+        log.info("[%s] tracking %d GEO-relevant keywords", self.name, len(keywords))
 
         for kw in keywords[:40]:
             query = quote(f'all:"{kw}"')
