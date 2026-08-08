@@ -51,7 +51,9 @@ def load_config(path: str | Path | None = None) -> dict:
     candidates = [Path(path)] if path else [Path("config.yaml"), Path("config.example.yaml")]
     for candidate in candidates:
         if candidate.exists():
-            with candidate.open() as fh:
+            # Explicit UTF-8: the shipped config is full of Arabic seeds, and
+            # Windows' default locale encoding (cp1252) cannot read it.
+            with candidate.open(encoding="utf-8") as fh:
                 user = yaml.safe_load(fh) or {}
             cfg = _merge(DEFAULTS, user)
             cfg["_config_path"] = str(candidate)

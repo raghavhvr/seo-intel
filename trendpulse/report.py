@@ -84,7 +84,7 @@ def _evidence(store: Store, keyword: str) -> str:
 def _write_csv(path: Path, rows: list[dict]) -> None:
     if not rows:
         return
-    with path.open("w", newline="") as fh:
+    with path.open("w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
         writer.writeheader()
         writer.writerows(rows)
@@ -269,7 +269,7 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
     store.conn.commit()
 
     report_path = out_dir / f"{date}.md"
-    report_path.write_text("\n".join(lines))
-    (out_dir / "latest.md").write_text("\n".join(lines))
+    report_path.write_text("\n".join(lines), encoding="utf-8")
+    (out_dir / "latest.md").write_text("\n".join(lines), encoding="utf-8")
     log.info("report written to %s", report_path)
     return report_path
