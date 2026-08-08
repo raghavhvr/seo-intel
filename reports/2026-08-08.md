@@ -1,6 +1,6 @@
 # Trend report — ADCB — Abu Dhabi Commercial Bank
 
-Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, SA, QA, KW, BH, OM, JO, LB · keywords tracked: 496 · scoring: ML model
+Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, SA, QA, KW, BH, OM, JO, LB · keywords tracked: 500 · scoring: ML model
 
 ## Upcoming regional moments (next 90 days)
 
@@ -20,85 +20,86 @@ Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, 
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | adcb bank near me | 100 | cooling (-0.16) | +1.93 | — |
-| 2 | adcb | 79 | rising (+0.29) | +0.29 | — |
-| 3 | islamic banking uae | 65 | rising (+0.20) | +0.35 | — |
-| 4 | wealth management uae | 56 | steady (-0.09) | +0.90 | — |
-| 5 | fixed deposit uae | 56 | cooling (-0.59) | +1.33 | — |
-| 6 | open banking uae | 41 | cooling (-0.28) | +0.72 | ai-topic |
-| 7 | car loan uae | 39 | cooling (-0.66) | +1.15 | — |
-| 8 | remittance uae to india | 37 | rising (+0.43) | -0.31 | — |
-| 9 | how to open a bank account in uae | 36 | cooling (-0.19) | +0.40 | question |
-| 10 | what is an iban number | 32 | steady (-0.07) | +0.43 | question |
-| 11 | credit card uae | 30 | steady (-0.02) | +0.06 | — |
-| 12 | how to check credit score in uae | 29 | steady (-0.06) | +0.12 | question |
-| 13 | how to send money from uae to india | 27 | cooling (-0.19) | +0.52 | question |
-| 14 | ai in banking | 26 | rising (+0.16) | -0.05 | ai-topic |
-| 15 | evaluate adcb on fees and charges | 24 | steady (+0.11) | +0.00 | — |
-| 16 | digital banks uae | 23 | steady (-0.14) | +0.12 | ai-topic |
-| 17 | adcb banking issues | 23 | steady (+0.10) | +0.00 | — |
-| 18 | business bank account uae | 22 | cooling (-0.18) | +0.03 | — |
-| 19 | mortgage rates uae | 22 | cooling (-0.38) | +0.22 | — |
-| 20 | digital dirham | 20 | steady (+0.06) | +0.00 | ai-topic |
+| 1 | adcb bank issue | 100 | steady (+0.00) | +20753.16 | — |
+| 2 | adcb bank near me | 66 | cooling (-0.22) | +1.79 | — |
+| 3 | open banking uae | 60 | cooling (-0.22) | +1.58 | ai-topic |
+| 4 | islamic banking uae | 57 | rising (+0.26) | +0.42 | — |
+| 5 | adcb | 52 | rising (+0.23) | +0.21 | — |
+| 6 | best savings account uae | 35 | rising (+0.24) | -0.26 | — |
+| 7 | digital banks uae | 34 | rising (+0.27) | -0.07 | ai-topic |
+| 8 | fixed deposit uae | 32 | cooling (-0.77) | +1.31 | — |
+| 9 | what is an iban number | 30 | steady (-0.14) | +0.61 | question |
+| 10 | oracle bans ai-generated code from openjdk | 28 | steady (-0.10) | +0.59 | — |
+| 11 | how to open a bank account in uae | 27 | cooling (-0.21) | +0.35 | question |
+| 12 | remittance uae to india | 27 | rising (+0.36) | -0.31 | — |
+| 13 | credit card uae | 25 | steady (-0.10) | +0.20 | — |
+| 14 | how to send money from uae to india | 24 | steady (-0.12) | +0.40 | question |
+| 15 | evaluate adcb on digital banking and app | 23 | cooling (-0.19) | +0.59 | — |
+| 16 | neobank uae | 23 | rising (+0.24) | -0.21 | ai-topic |
+| 17 | how to check credit score in uae | 22 | steady (+0.00) | -0.04 | question |
+| 18 | التمويل العقاري الإمارات | 22 | steady (-0.06) | +0.29 | breakout |
+| 19 | adcb banking issues | 21 | steady (+0.10) | +0.00 | — |
+| 20 | adcb bank | 20 | steady (-0.08) | +0.25 | — |
 
 ### AEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | how to open a bank account in uae | 36 | cooling (-0.19) | +0.40 | question |
-| 2 | what is an iban number | 32 | steady (-0.07) | +0.43 | question |
-| 3 | how to check credit score in uae | 29 | steady (-0.06) | +0.12 | question |
-| 4 | how to send money from uae to india | 27 | cooling (-0.19) | +0.52 | question |
-| 5 | كيف أحول أموال من الإمارات إلى الهند | 15 | steady (+0.00) | +0.00 | question |
-| 6 | تحويل أموال من الإمارات | 15 | steady (+0.00) | +0.00 | question |
-| 7 | which bank is best for salary account in uae | 15 | steady (+0.00) | +0.00 | question |
-| 8 | is this savor card bucketed | 15 | steady (+0.00) | +0.00 | question |
-| 9 | how is tide hyderabad fintech | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 1 | what is an iban number | 30 | steady (-0.14) | +0.61 | question |
+| 2 | how to open a bank account in uae | 27 | cooling (-0.21) | +0.35 | question |
+| 3 | how to send money from uae to india | 24 | steady (-0.12) | +0.40 | question |
+| 4 | how to check credit score in uae | 22 | steady (+0.00) | -0.04 | question |
+| 5 | كيف أحول أموال من الإمارات إلى الهند | 16 | steady (+0.00) | +0.00 | question |
+| 6 | what is adcb | 15 | steady (+0.00) | +0.00 | question |
+| 7 | ما هو bloom | 15 | steady (+0.00) | +0.00 | question |
+| 8 | ما هو claude | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 9 | تحويل أموال من الإمارات | 15 | steady (+0.00) | +0.00 | question |
 | 10 | recommendations/suggestions on credit card i should apply for next | 15 | steady (+0.00) | +0.00 | question |
 | 11 | ambani took my money and i can't do anything | 15 | steady (+0.00) | +0.00 | question |
 | 12 | what credit card to get next for the bonus/benefits | 15 | steady (+0.00) | +0.00 | question |
 | 13 | what is the 30 rule in ai and finance | 15 | steady (+0.00) | +0.00 | question, ai-topic |
-| 14 | should i sell my car | 15 | steady (+0.00) | +0.00 | question |
-| 15 | should i open my own independent account | 15 | steady (+0.00) | +0.00 | question |
-| 16 | how do i get my deposit | 15 | steady (+0.00) | +0.00 | question |
-| 17 | 20 years old what credit card to get | 15 | steady (+0.00) | +0.00 | question |
-| 18 | which bank is best for salary transfer in uae | 15 | steady (+0.00) | +0.00 | question |
-| 19 | why adcb app is not working today | 15 | steady (+0.00) | +0.00 | question |
+| 14 | should i open my own independent account | 15 | steady (+0.00) | +0.00 | question |
+| 15 | which bank is best for salary account in uae | 15 | steady (+0.00) | +0.00 | question |
+| 16 | is this savor card bucketed | 15 | steady (+0.00) | +0.00 | question |
+| 17 | how is tide hyderabad fintech | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 18 | what is visa card in uae | 15 | steady (+0.00) | +0.00 | question |
+| 19 | which bank is best for salary transfer in uae | 15 | steady (+0.00) | +0.00 | question |
 | 20 | why adcb bank is not working | 15 | steady (+0.00) | +0.00 | question |
 
 ### GEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | open banking uae | 41 | cooling (-0.28) | +0.72 | ai-topic |
-| 2 | ai in banking | 26 | rising (+0.16) | -0.05 | ai-topic |
-| 3 | digital banks uae | 23 | steady (-0.14) | +0.12 | ai-topic |
-| 4 | digital dirham | 20 | steady (+0.06) | +0.00 | ai-topic |
-| 5 | fintech uae | 19 | steady (-0.13) | +0.29 | ai-topic |
+| 1 | open banking uae | 60 | cooling (-0.22) | +1.58 | ai-topic |
+| 2 | digital banks uae | 34 | rising (+0.27) | -0.07 | ai-topic |
+| 3 | neobank uae | 23 | rising (+0.24) | -0.21 | ai-topic |
+| 4 | digital dirham | 19 | steady (+0.06) | +0.00 | ai-topic |
+| 5 | ai in banking | 18 | steady (+0.05) | -0.06 | ai-topic |
 | 6 | embedded finance mena | 16 | steady (+0.01) | +0.00 | ai-topic |
 | 7 | البنوك الرقمية الإمارات | 16 | steady (+0.01) | +0.00 | ai-topic |
-| 8 | neobank uae | 16 | steady (+0.10) | -0.19 | ai-topic |
-| 9 | best books on ai in banking | 15 | steady (+0.00) | +0.00 | ai-topic |
-| 10 | has fintech become way too api dependent | 15 | steady (+0.00) | +0.00 | ai-topic |
-| 11 | what is the 30 rule in ai and finance | 15 | steady (+0.00) | +0.00 | question, ai-topic |
-| 12 | how is tide hyderabad fintech | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 8 | الدرهم الرقمي | 16 | steady (+0.01) | +0.00 | ai-topic |
+| 9 | bnpl in uae | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 10 | ما هو claude | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 11 | ai in banking news | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 12 | what is the 30 rule in ai and finance | 15 | steady (+0.00) | +0.00 | question, ai-topic |
 | 13 | what's one fintech startup that deserves more attention | 15 | steady (+0.00) | +0.00 | ai-topic |
-| 14 | courses for ai in banking | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 14 | how is tide hyderabad fintech | 15 | steady (+0.00) | +0.00 | question, ai-topic |
 | 15 | ai in banking and finance | 15 | steady (+0.00) | +0.00 | ai-topic |
-| 16 | top ai in banking for digital platforms | 15 | steady (+0.00) | +0.00 | ai-topic |
-| 17 | what is ai in banking | 15 | steady (+0.00) | +0.00 | question, ai-topic |
-| 18 | ما هو claude | 15 | steady (+0.00) | +0.00 | question, ai-topic |
+| 16 | courses for ai in banking | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 17 | top ai in banking for digital platforms | 15 | steady (+0.00) | +0.00 | ai-topic |
+| 18 | what is ai in banking | 15 | steady (+0.00) | +0.00 | question, ai-topic |
 | 19 | best ai banking app | 15 | steady (+0.00) | +0.00 | ai-topic |
 | 20 | ai in banking sector | 15 | steady (+0.00) | +0.00 | ai-topic |
 
 #### Deep dive — top 5 picks (week)
 
+- **adcb bank issue** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+  - Evidence: 2026-08-08: rising related query for 'adcb bank' in AE | 2026-08-08: rising related query for 'adcb' in AE
 - **adcb bank near me** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
   - Evidence: 2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en]
-- **adcb** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **open banking uae** (geo, seo) — Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **islamic banking uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **wealth management uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **fixed deposit uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **adcb** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 
 ## This month
 
@@ -106,85 +107,86 @@ Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, 
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | adcb bank near me | 100 | cooling (-0.26) | +1.93 | — |
-| 2 | wealth management uae | 70 | steady (+0.02) | +0.90 | — |
-| 3 | islamic banking uae | 61 | steady (+0.08) | +0.35 | — |
-| 4 | fixed deposit uae | 55 | cooling (-0.66) | +1.33 | — |
-| 5 | adcb | 50 | steady (-0.12) | +0.29 | — |
-| 6 | car loan uae | 44 | cooling (-0.65) | +1.15 | — |
-| 7 | credit card uae | 44 | steady (+0.10) | +0.06 | — |
-| 8 | digital banks uae | 43 | steady (+0.07) | +0.12 | ai-topic |
-| 9 | what is an iban number | 43 | steady (+0.01) | +0.43 | question |
-| 10 | remittance uae to india | 40 | rising (+0.42) | -0.31 | — |
-| 11 | how to check credit score in uae | 31 | steady (-0.08) | +0.12 | question |
-| 12 | open banking uae | 30 | cooling (-0.46) | +0.72 | ai-topic |
-| 13 | الدرهم الرقمي | 28 | steady (+0.12) | +0.00 | ai-topic |
-| 14 | evaluate adcb on current and savings | 26 | steady (+0.10) | +0.00 | — |
-| 15 | best savings account uae | 25 | rising (+0.39) | -0.59 | — |
-| 16 | adcb banking issues | 25 | steady (+0.09) | +0.00 | — |
-| 17 | evaluate adcb on fees and charges | 24 | steady (+0.08) | +0.00 | — |
-| 18 | ai in banking | 22 | steady (+0.08) | -0.05 | ai-topic |
-| 19 | بطاقة ائتمان الإمارات | 22 | steady (-0.02) | -0.13 | — |
-| 20 | evaluate adcb on accounts | 21 | steady (+0.04) | +0.00 | — |
+| 1 | adcb bank issue | 100 | steady (+0.03) | +20753.16 | — |
+| 2 | adcb bank near me | 62 | cooling (-0.24) | +1.79 | — |
+| 3 | open banking uae | 50 | cooling (-0.35) | +1.58 | ai-topic |
+| 4 | islamic banking uae | 47 | steady (+0.14) | +0.42 | — |
+| 5 | fixed deposit uae | 37 | cooling (-0.63) | +1.31 | — |
+| 6 | adcb | 33 | steady (-0.04) | +0.21 | — |
+| 7 | what is an iban number | 31 | steady (-0.05) | +0.61 | question |
+| 8 | car loan uae | 27 | cooling (-0.63) | +1.13 | — |
+| 9 | credit card uae | 26 | steady (-0.02) | +0.20 | — |
+| 10 | best savings account uae | 25 | steady (+0.13) | -0.26 | — |
+| 11 | digital banks uae | 25 | rising (+0.17) | -0.07 | ai-topic |
+| 12 | remittance uae to india | 23 | rising (+0.36) | -0.31 | — |
+| 13 | oracle bans ai-generated code from openjdk | 21 | cooling (-0.16) | +0.59 | — |
+| 14 | how to check credit score in uae | 19 | steady (+0.02) | -0.04 | question |
+| 15 | الدرهم الرقمي | 18 | steady (+0.13) | +0.00 | ai-topic |
+| 16 | adcb banking issues | 16 | steady (+0.09) | +0.00 | — |
+| 17 | adcb bank | 16 | steady (-0.08) | +0.25 | — |
+| 18 | التمويل العقاري الإمارات | 16 | steady (-0.09) | +0.29 | breakout |
+| 19 | evaluate adcb on digital banking and app | 16 | cooling (-0.25) | +0.59 | — |
+| 20 | ai in banking | 15 | steady (+0.07) | -0.06 | ai-topic |
 
 ### AEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | what is an iban number | 43 | steady (+0.01) | +0.43 | question |
-| 2 | how to check credit score in uae | 31 | steady (-0.08) | +0.12 | question |
-| 3 | how to open a bank account in uae | 18 | cooling (-0.44) | +0.40 | question |
-| 4 | كيف أحول أموال من الإمارات إلى الهند | 17 | steady (+0.00) | +0.00 | question |
-| 5 | تحويل أموال من الإمارات | 17 | steady (+0.00) | +0.00 | question |
-| 6 | what is the 30 rule in ai and finance | 17 | steady (+0.00) | +0.00 | question, ai-topic |
-| 7 | how is tide hyderabad fintech | 17 | steady (+0.00) | +0.00 | question, ai-topic |
-| 8 | is this savor card bucketed | 17 | steady (+0.00) | +0.00 | question |
-| 9 | which bank is best for salary account in uae | 17 | steady (+0.00) | +0.00 | question |
-| 10 | recommendations/suggestions on credit card i should apply for next | 17 | steady (+0.00) | +0.00 | question |
-| 11 | ambani took my money and i can't do anything | 17 | steady (+0.00) | +0.00 | question |
-| 12 | what credit card to get next for the bonus/benefits | 17 | steady (+0.00) | +0.00 | question |
-| 13 | which credit card is best | 17 | steady (+0.00) | +0.00 | question |
-| 14 | should i sell my car | 17 | steady (-0.00) | +0.00 | question |
-| 15 | should i open my own independent account | 17 | steady (+0.00) | +0.00 | question |
-| 16 | how do i get my deposit | 17 | steady (+0.00) | +0.00 | question |
-| 17 | 20 years old what credit card to get | 17 | steady (+0.00) | +0.00 | question |
-| 18 | which bank is best for salary transfer in uae | 17 | steady (+0.00) | +0.00 | question |
-| 19 | why adcb app is not working today | 17 | steady (+0.00) | +0.00 | question |
-| 20 | why adcb bank is not working | 17 | steady (+0.00) | +0.00 | question |
+| 1 | what is an iban number | 31 | steady (-0.05) | +0.61 | question |
+| 2 | how to check credit score in uae | 19 | steady (+0.02) | -0.04 | question |
+| 3 | تحويل أموال من الإمارات | 11 | steady (+0.00) | +0.00 | question |
+| 4 | which bank is best for salary account in uae | 11 | steady (+0.00) | +0.00 | question |
+| 5 | how to open a bank account in uae | 11 | cooling (-0.42) | +0.35 | question |
+| 6 | what is the 30 rule in ai and finance | 11 | steady (+0.00) | +0.00 | question, ai-topic |
+| 7 | how is tide hyderabad fintech | 11 | steady (+0.00) | +0.00 | question, ai-topic |
+| 8 | is this savor card bucketed | 11 | steady (+0.00) | +0.00 | question |
+| 9 | كيف أحول أموال من الإمارات إلى الهند | 11 | steady (+0.00) | +0.00 | question |
+| 10 | recommendations/suggestions on credit card i should apply for next | 11 | steady (+0.00) | +0.00 | question |
+| 11 | ambani took my money and i can't do anything | 11 | steady (+0.00) | +0.00 | question |
+| 12 | what credit card to get next for the bonus/benefits | 11 | steady (+0.00) | +0.00 | question |
+| 13 | which credit card is best | 11 | steady (+0.00) | +0.00 | question |
+| 14 | should i sell my car | 11 | steady (-0.00) | +0.00 | question |
+| 15 | should i open my own independent account | 11 | steady (+0.00) | +0.00 | question |
+| 16 | how do i get my deposit | 11 | steady (+0.00) | +0.00 | question |
+| 17 | 20 years old what credit card to get | 11 | steady (+0.00) | +0.00 | question |
+| 18 | which bank is best for salary transfer in uae | 11 | steady (+0.00) | +0.00 | question |
+| 19 | why adcb app is not working today | 11 | steady (+0.00) | +0.00 | question |
+| 20 | why adcb bank is not working | 11 | steady (+0.00) | +0.00 | question |
 
 ### GEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | digital banks uae | 43 | steady (+0.07) | +0.12 | ai-topic |
-| 2 | open banking uae | 30 | cooling (-0.46) | +0.72 | ai-topic |
-| 3 | الدرهم الرقمي | 28 | steady (+0.12) | +0.00 | ai-topic |
-| 4 | ai in banking | 22 | steady (+0.08) | -0.05 | ai-topic |
-| 5 | digital dirham | 20 | steady (+0.04) | +0.00 | ai-topic |
-| 6 | fintech uae | 20 | cooling (-0.15) | +0.29 | ai-topic |
-| 7 | embedded finance mena | 19 | steady (+0.02) | +0.00 | ai-topic |
-| 8 | البنوك الرقمية الإمارات | 19 | steady (+0.02) | +0.00 | ai-topic |
-| 9 | neobank uae | 18 | steady (+0.10) | -0.19 | ai-topic |
-| 10 | ما هو claude code | 17 | steady (-0.00) | +0.00 | question, ai-topic |
-| 11 | has fintech become way too api dependent | 17 | steady (+0.00) | +0.00 | ai-topic |
-| 12 | how is tide hyderabad fintech | 17 | steady (+0.00) | +0.00 | question, ai-topic |
-| 13 | what is the 30 rule in ai and finance | 17 | steady (+0.00) | +0.00 | question, ai-topic |
-| 14 | what's one fintech startup that deserves more attention | 17 | steady (+0.00) | +0.00 | ai-topic |
-| 15 | courses for ai in banking | 17 | steady (+0.00) | +0.00 | ai-topic |
-| 16 | top ai in banking for digital platforms | 17 | steady (+0.00) | +0.00 | ai-topic |
-| 17 | what is ai in banking | 17 | steady (-0.00) | +0.00 | question, ai-topic |
-| 18 | ما هو claude | 17 | steady (-0.00) | +0.00 | question, ai-topic |
-| 19 | ai in banking and finance | 17 | steady (+0.00) | +0.00 | ai-topic |
-| 20 | ai in banking sector | 17 | steady (-0.00) | +0.00 | ai-topic |
+| 1 | open banking uae | 50 | cooling (-0.35) | +1.58 | ai-topic |
+| 2 | digital banks uae | 25 | rising (+0.17) | -0.07 | ai-topic |
+| 3 | الدرهم الرقمي | 18 | steady (+0.13) | +0.00 | ai-topic |
+| 4 | ai in banking | 15 | steady (+0.07) | -0.06 | ai-topic |
+| 5 | digital dirham | 13 | steady (+0.04) | +0.00 | ai-topic |
+| 6 | neobank uae | 12 | steady (+0.13) | -0.21 | ai-topic |
+| 7 | البنوك الرقمية الإمارات | 12 | steady (+0.01) | +0.00 | ai-topic |
+| 8 | embedded finance mena | 11 | steady (+0.01) | +0.00 | ai-topic |
+| 9 | best books on ai in banking | 11 | steady (+0.00) | +0.00 | ai-topic |
+| 10 | has fintech become way too api dependent | 11 | steady (+0.00) | +0.00 | ai-topic |
+| 11 | what is the 30 rule in ai and finance | 11 | steady (+0.00) | +0.00 | question, ai-topic |
+| 12 | how is tide hyderabad fintech | 11 | steady (+0.00) | +0.00 | question, ai-topic |
+| 13 | what's one fintech startup that deserves more attention | 11 | steady (+0.00) | +0.00 | ai-topic |
+| 14 | courses for ai in banking | 11 | steady (+0.00) | +0.00 | ai-topic |
+| 15 | ai in banking and finance | 11 | steady (+0.00) | +0.00 | ai-topic |
+| 16 | top ai in banking for digital platforms | 11 | steady (+0.00) | +0.00 | ai-topic |
+| 17 | what is ai in banking | 11 | steady (-0.00) | +0.00 | question, ai-topic |
+| 18 | ما هو claude | 11 | steady (-0.00) | +0.00 | question, ai-topic |
+| 19 | best ai banking app | 11 | steady (-0.00) | +0.00 | ai-topic |
+| 20 | ai in banking sector | 11 | steady (-0.00) | +0.00 | ai-topic |
 
 #### Deep dive — top 5 picks (month)
 
+- **adcb bank issue** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+  - Evidence: 2026-08-08: rising related query for 'adcb bank' in AE | 2026-08-08: rising related query for 'adcb' in AE
 - **adcb bank near me** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
   - Evidence: 2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en]
-- **wealth management uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **open banking uae** (geo, seo) — Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you. Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **islamic banking uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **fixed deposit uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
-- **adcb** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 
 ## This quarter
 
@@ -192,90 +194,91 @@ Generated 2026-08-08 (UTC) · market: UAE-first · GCC & Levant · regions: AE, 
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | fixed deposit uae | 100 | rising (+2.15) | +1.33 | — |
-| 2 | car loan uae | 85 | rising (+1.52) | +1.15 | — |
-| 3 | personal loan uae | 81 | rising (+1.75) | +0.68 | — |
-| 4 | adcb bank near me | 66 | rising (+0.28) | +1.93 | — |
-| 5 | what is an iban number | 53 | rising (+0.56) | +0.43 | question |
-| 6 | credit card uae | 52 | rising (+0.59) | +0.06 | — |
-| 7 | fintech uae | 50 | rising (+0.51) | +0.29 | ai-topic |
-| 8 | adcb | 47 | steady (+0.02) | +0.29 | — |
-| 9 | wealth management uae | 46 | steady (-0.12) | +0.90 | — |
-| 10 | islamic banking uae | 45 | steady (+0.01) | +0.35 | — |
-| 11 | how to open a bank account in uae | 44 | steady (-0.10) | +0.40 | question |
-| 12 | how to check credit score in uae | 43 | steady (+0.07) | +0.12 | question |
-| 13 | business bank account uae | 40 | steady (-0.11) | +0.03 | — |
-| 14 | قرض شخصي الإمارات | 38 | rising (+0.28) | -0.45 | — |
-| 15 | قرض سيارة الإمارات | 38 | rising (+0.24) | -0.46 | — |
-| 16 | remittance uae to india | 38 | rising (+0.19) | -0.31 | — |
-| 17 | best savings bank uae | 37 | steady (+0.00) | +0.00 | — |
-| 18 | adcb bank near me branch | 37 | steady (+0.00) | +0.00 | — |
-| 19 | adcb bank swift code | 37 | steady (+0.00) | +0.00 | — |
-| 20 | adcb com updates online banking login | 37 | steady (+0.00) | +0.00 | — |
+| 1 | fixed deposit uae | 100 | rising (+2.11) | +1.31 | — |
+| 2 | car loan uae | 86 | rising (+1.47) | +1.13 | — |
+| 3 | personal loan uae | 83 | rising (+1.70) | +0.68 | — |
+| 4 | adcb bank issue | 72 | steady (+0.08) | +20753.16 | — |
+| 5 | adcb bank near me | 67 | rising (+0.17) | +1.79 | — |
+| 6 | what is an iban number | 67 | rising (+0.90) | +0.61 | question |
+| 7 | evaluate adcb on digital banking and app | 66 | rising (+0.94) | +0.59 | — |
+| 8 | credit card uae | 65 | rising (+0.91) | +0.20 | — |
+| 9 | oracle bans ai-generated code from openjdk | 62 | rising (+0.70) | +0.59 | — |
+| 10 | open banking uae | 61 | steady (-0.04) | +1.58 | ai-topic |
+| 11 | التمويل العقاري الإمارات | 59 | rising (+0.70) | +0.29 | breakout |
+| 12 | islamic banking uae | 54 | steady (+0.09) | +0.42 | — |
+| 13 | how to open a bank account in uae | 48 | cooling (-0.21) | +0.35 | question |
+| 14 | adcb | 48 | cooling (-0.21) | +0.21 | — |
+| 15 | قرض شخصي الإمارات | 45 | rising (+0.28) | -0.45 | — |
+| 16 | قرض سيارة الإمارات | 45 | rising (+0.26) | -0.45 | — |
+| 17 | remittance uae to india | 44 | rising (+0.19) | -0.31 | — |
+| 18 | adcb bank | 44 | steady (-0.13) | +0.25 | — |
+| 19 | ai in banking | 44 | steady (+0.02) | -0.06 | ai-topic |
+| 20 | credit score for credit card uae | 44 | steady (+0.00) | +0.00 | — |
 
 ### AEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | what is an iban number | 53 | rising (+0.56) | +0.43 | question |
-| 2 | how to open a bank account in uae | 44 | steady (-0.10) | +0.40 | question |
-| 3 | how to check credit score in uae | 43 | steady (+0.07) | +0.12 | question |
-| 4 | تحويل أموال من الإمارات | 37 | steady (+0.00) | +0.00 | question |
-| 5 | which bank is best for salary account in uae | 37 | steady (+0.00) | +0.00 | question |
-| 6 | what is the 30 rule in ai and finance | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 7 | how is tide hyderabad fintech | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 8 | is this savor card bucketed | 37 | steady (+0.00) | +0.00 | question |
-| 9 | كيف أحول أموال من الإمارات إلى الهند | 37 | steady (+0.00) | +0.00 | question |
-| 10 | recommendations/suggestions on credit card i should apply for next | 37 | steady (+0.00) | +0.00 | question |
-| 11 | ambani took my money and i can't do anything | 37 | steady (+0.00) | +0.00 | question |
-| 12 | what credit card to get next for the bonus/benefits | 37 | steady (+0.00) | +0.00 | question |
-| 13 | which credit card is best | 37 | steady (+0.00) | +0.00 | question |
-| 14 | should i sell my car | 37 | steady (+0.00) | +0.00 | question |
-| 15 | should i open my own independent account | 37 | steady (+0.00) | +0.00 | question |
-| 16 | how do i get my deposit | 37 | steady (+0.00) | +0.00 | question |
-| 17 | 20 years old what credit card to get | 37 | steady (+0.00) | +0.00 | question |
-| 18 | which bank is best for salary transfer in uae | 37 | steady (+0.00) | +0.00 | question |
-| 19 | why adcb app is not working today | 37 | steady (+0.00) | +0.00 | question |
-| 20 | why adcb bank is not working | 37 | steady (+0.00) | +0.00 | question |
+| 1 | what is an iban number | 67 | rising (+0.90) | +0.61 | question |
+| 2 | how to open a bank account in uae | 48 | cooling (-0.21) | +0.35 | question |
+| 3 | تحويل أموال من الإمارات | 44 | steady (+0.00) | +0.00 | question |
+| 4 | which bank is best for salary account in uae | 44 | steady (+0.00) | +0.00 | question |
+| 5 | recommendations/suggestions on credit card i should apply for next | 44 | steady (+0.00) | +0.00 | question |
+| 6 | what is the 30 rule in ai and finance | 44 | steady (+0.00) | +0.00 | question, ai-topic |
+| 7 | how is tide hyderabad fintech | 44 | steady (+0.00) | +0.00 | question, ai-topic |
+| 8 | is this savor card bucketed | 44 | steady (+0.00) | +0.00 | question |
+| 9 | كيف أحول أموال من الإمارات إلى الهند | 44 | steady (+0.00) | +0.00 | question |
+| 10 | what credit card to get next for the bonus/benefits | 44 | steady (+0.00) | +0.00 | question |
+| 11 | ambani took my money and i can't do anything | 44 | steady (+0.00) | +0.00 | question |
+| 12 | why do people suggest getting the fidelity credit card | 44 | steady (+0.00) | +0.00 | question |
+| 13 | which credit card is best | 44 | steady (+0.00) | +0.00 | question |
+| 14 | should i sell my car | 44 | steady (+0.00) | +0.00 | question |
+| 15 | should i open my own independent account | 44 | steady (+0.00) | +0.00 | question |
+| 16 | how do i get my deposit | 44 | steady (+0.00) | +0.00 | question |
+| 17 | 20 years old what credit card to get | 44 | steady (+0.00) | +0.00 | question |
+| 18 | which bank is best for salary transfer in uae | 44 | steady (+0.00) | +0.00 | question |
+| 19 | why adcb app is not working today | 44 | steady (+0.00) | +0.00 | question |
+| 20 | why adcb bank is not working | 44 | steady (+0.00) | +0.00 | question |
 
 ### GEO — top 20
 
 | # | Keyword / query | Score | Predicted momentum | Velocity (z) | Signals |
 |---|-----------------|-------|--------------------|--------------|---------|
-| 1 | fintech uae | 50 | rising (+0.51) | +0.29 | ai-topic |
-| 2 | digital dirham | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 3 | الدرهم الرقمي | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 4 | البنوك الرقمية الإمارات | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 5 | embedded finance mena | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 6 | has fintech become way too api dependent | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 7 | ما هو claude code | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 8 | ai in banking industry | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 9 | best ai bank in the world | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 10 | digital bank uae business | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 11 | digital dirham wallet | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 12 | how is tide hyderabad fintech | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 13 | what is the 30 rule in ai and finance | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 14 | what's one fintech startup that deserves more attention | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 15 | courses for ai in banking | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 16 | top ai in banking for digital platforms | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 17 | what is ai in banking | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 18 | ما هو claude | 37 | steady (+0.00) | +0.00 | question, ai-topic |
-| 19 | ai in banking and finance | 37 | steady (+0.00) | +0.00 | ai-topic |
-| 20 | ai in banking sector | 37 | steady (+0.00) | +0.00 | ai-topic |
+| 1 | open banking uae | 61 | steady (-0.04) | +1.58 | ai-topic |
+| 2 | ai in banking | 44 | steady (+0.02) | -0.06 | ai-topic |
+| 3 | digital dirham | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 4 | الدرهم الرقمي | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 5 | البنوك الرقمية الإمارات | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 6 | embedded finance mena | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 7 | best books on ai in banking | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 8 | ai in banking industry | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 9 | best ai bank in the world | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 10 | has fintech become way too api dependent | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 11 | what is the 30 rule in ai and finance | 44 | steady (+0.00) | +0.00 | question, ai-topic |
+| 12 | how is tide hyderabad fintech | 44 | steady (+0.00) | +0.00 | question, ai-topic |
+| 13 | what's one fintech startup that deserves more attention | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 14 | courses for ai in banking | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 15 | ai in banking and finance | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 16 | top ai in banking for digital platforms | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 17 | what is ai in banking | 44 | steady (+0.00) | +0.00 | question, ai-topic |
+| 18 | ما هو claude | 44 | steady (+0.00) | +0.00 | question, ai-topic |
+| 19 | best ai banking app | 44 | steady (+0.00) | +0.00 | ai-topic |
+| 20 | ai in banking sector | 44 | steady (+0.00) | +0.00 | ai-topic |
 
 #### Deep dive — top 5 picks (quarter)
 
 - **fixed deposit uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **car loan uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
 - **personal loan uae** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+- **adcb bank issue** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
+  - Evidence: 2026-08-08: rising related query for 'adcb bank' in AE | 2026-08-08: rising related query for 'adcb' in AE
 - **adcb bank near me** (seo) — Create/refresh a dedicated page targeting this query; interlink from related pages.
   - Evidence: 2026-08-08: rising related query for 'adcb' in OM | 2026-08-08: suggestion for 'adcb bank' [AE/en]
-- **what is an iban number** (aeo, seo) — Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets. Create/refresh a dedicated page targeting this query; interlink from related pages.
 
 ## Newly discovered queries & topics (related to your universe)
 
 - kimi k3 (discovery score 4129300)
-- adcb com updates (discovery score 3466550)
+- adcb com updates (discovery score 3465050)
 - kimi k3 ai (discovery score 2120500)
 - claude ai (discovery score 1673700)
 - kimi ai (discovery score 1229550)
