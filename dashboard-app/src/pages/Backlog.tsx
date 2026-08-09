@@ -18,7 +18,8 @@ export default function Backlog() {
                 <FileText size={17} aria-hidden />
               </div>
               <div className="min-w-0">
-                <div className="text-[14.5px] font-bold leading-snug">{g.prompt}</div>
+                <div className="text-[14.5px] font-bold leading-snug" dir="auto">{g.prompt}</div>
+                {g.promptEn && <div className="mt-0.5 text-[12.5px] italic text-ink2">"{g.promptEn}"</div>}
                 <div className="mt-1.5 text-[12.5px] leading-relaxed text-ink2">
                   currently cited: {g.domains.join(", ")}
                 </div>

@@ -17,6 +17,7 @@ from trendpulse.entities import (competitor_matcher, rolled_up_split,
 from trendpulse.gaps import citation_gaps, citation_summary
 from trendpulse.keywords import CHANNELS, channels_for, excluded_keywords
 from trendpulse.seasonality import upcoming_events
+from trendpulse.translate import glosses
 from trendpulse.storage import Store
 
 log = logging.getLogger(__name__)
@@ -53,10 +54,23 @@ def build_payload(store: Store, cfg: dict) -> dict:
                 items = store.recent_discoveries(kw, days=30, limit=2)
                 evidence[kw] = [ctx[:140] for _d, ctx, _s in items if ctx]
 
+    # English glosses for Arabic keywords/prompts, so the whole team can read
+    # the lists. Cached in the DB; at most one network call per novel string.
+    arabic_texts = [row["keyword"] for h in focus_data.values()
+                    for rows in h.values() for row in rows]
+    gap_rows = citation_gaps(store, cfg, days=30, limit=12)
+    arabic_texts += [g["prompt"] for g in gap_rows]
+    gloss = glosses(store, arabic_texts)
+    for h in focus_data.values():
+        for rows in h.values():
+            for row in rows:
+                if row["keyword"] in gloss:
+                    row["en"] = gloss[row["keyword"]]
+
     split = rolled_up_split(store, cfg, days=7)
     visibility = rolled_up_visibility(store, cfg, days=7)
     summary = citation_summary(store, cfg, days=30)
-    gaps = citation_gaps(store, cfg, days=30, limit=12)
+    gaps = gap_rows
     events = upcoming_events(cfg, _date.today(), within_days=120)
 
     brand_sov = next((s for _e, k, _c, s in visibility if k == "brand"), None)
@@ -97,7 +111,8 @@ def build_payload(store: Store, cfg: dict) -> dict:
         "citations": [
             {"domain": d, "count": c, "share": round(share, 1), "role": r}
             for d, c, share, r in summary[:14]],
-        "gaps": [{"prompt": g["prompt"], "domains": g["domains"][:5],
+        "gaps": [{"prompt": g["prompt"], "promptEn": gloss.get(g["prompt"]),
+                  "domains": g["domains"][:5],
                   "models": g["models"][:5]} for g in gaps],
         "focus": focus_data,
         "evidence": evidence,

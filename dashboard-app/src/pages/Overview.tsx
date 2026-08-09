@@ -65,7 +65,8 @@ export default function Overview() {
               {p.channels.map((c) => <Badge key={c} tone="chip">{CHANNEL_LABEL[c]?.name ?? c.toUpperCase()}</Badge>)}
               <MomentumBadge delta={p.delta} velocity={p.velocity} />
             </div>
-            <div className="text-[15.5px] font-bold leading-snug">{p.keyword}</div>
+            <div className="text-[15.5px] font-bold leading-snug" dir="auto">{p.keyword}</div>
+            {p.en && <div className="text-[12.5px] italic text-ink2">"{p.en}"</div>}
             <div className="mt-2 text-[13px] leading-relaxed text-ink2">
               {p.channels.includes("geo")
                 ? "Publish a definitive, citable explainer so AI engines reference the bank."
