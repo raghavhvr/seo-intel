@@ -256,7 +256,9 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
             lines.append("")
 
     # --- Brand share-of-voice: AI answers (Profound) + community chatter ---
-    visibility = store.entity_visibility(days=7)
+    from trendpulse.entities import rolled_up_visibility
+
+    visibility = rolled_up_visibility(store, cfg, days=7)
     if visibility:
         lines.append("## Brand share of voice (last 7 days)")
         lines.append("")

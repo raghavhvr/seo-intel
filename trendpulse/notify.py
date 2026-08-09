@@ -44,7 +44,8 @@ def build_alert_text(cfg: dict, store: Store, report_path: str) -> str | None:
             direction = "rising" if delta > 0.15 else ("cooling" if delta < -0.15 else "steady")
             lines.append(f"• {kw} — {direction} ({delta:+.2f}), score {score:.0f}")
 
-    visibility = store.entity_visibility(days=7)
+    from trendpulse.entities import rolled_up_visibility
+    visibility = rolled_up_visibility(store, cfg, days=7)
     brand = next((row for row in visibility if row[1] == "brand"), None)
     if brand:
         lines.append(f"\nAI share of voice (7d): *{brand[0]}* {brand[3]:.1f}%")

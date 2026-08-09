@@ -12,7 +12,8 @@ from datetime import date as _date
 from datetime import datetime, timezone
 from pathlib import Path
 
-from trendpulse.entities import competitor_matcher
+from trendpulse.entities import (competitor_matcher, rolled_up_split,
+                                 rolled_up_visibility)
 from trendpulse.gaps import citation_gaps, citation_summary
 from trendpulse.keywords import CHANNELS, channels_for, excluded_keywords
 from trendpulse.seasonality import upcoming_events
@@ -52,8 +53,8 @@ def build_payload(store: Store, cfg: dict) -> dict:
                 items = store.recent_discoveries(kw, days=30, limit=2)
                 evidence[kw] = [ctx[:140] for _d, ctx, _s in items if ctx]
 
-    split = store.entity_mention_split(days=7)
-    visibility = store.entity_visibility(days=7)
+    split = rolled_up_split(store, cfg, days=7)
+    visibility = rolled_up_visibility(store, cfg, days=7)
     summary = citation_summary(store, cfg, days=30)
     gaps = citation_gaps(store, cfg, days=30, limit=12)
     events = upcoming_events(cfg, _date.today(), within_days=120)
