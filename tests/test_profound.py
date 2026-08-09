@@ -81,10 +81,11 @@ def test_profound_end_to_end(monkeypatch):
     assert metrics[("adcbcom", "ai_visibility")] == ("2026-08-07", 61.0)
     assert metrics[("emirates nbd", "ai_visibility")][1] == 80.0
 
+    # canonicalized: 'adcb.com' (visibility asset) and 'ADCB' (answer mention)
+    # are one entity now
     kinds = {(m.entity, m.kind) for m in mentions}
-    assert ("adcb.com", "brand") in kinds
-    assert ("Emirates NBD", "competitor") in kinds
-    assert ("ADCB", "brand") in kinds  # from answer mentions
+    assert kinds == {("ADCB", "brand"), ("Emirates NBD", "competitor"),
+                     ("FAB", "competitor")}
 
     # both cursor pages consumed; model objects render as their names
     assert calls["answers"] == [None, "cursor-2"]

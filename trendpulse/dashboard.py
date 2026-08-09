@@ -18,7 +18,8 @@ from datetime import date as _date
 from datetime import datetime, timezone
 from pathlib import Path
 
-from trendpulse.entities import competitor_matcher
+from trendpulse.entities import (competitor_matcher, rolled_up_split,
+                                 rolled_up_visibility)
 from trendpulse.gaps import citation_gaps, citation_summary
 from trendpulse.keywords import CHANNELS, channels_for, excluded_keywords
 from trendpulse.report import ACTIONS
@@ -280,8 +281,8 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
         return [r for r in rows if r[0] not in excluded][:limit]
     generated = datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
 
-    split = store.entity_mention_split(days=7)
-    visibility = store.entity_visibility(days=7)
+    split = rolled_up_split(store, cfg, days=7)
+    visibility = rolled_up_visibility(store, cfg, days=7)
     summary = citation_summary(store, cfg, days=30)
     gaps = citation_gaps(store, cfg, days=30, limit=8)
     events = upcoming_events(cfg, _date.today(), within_days=90)

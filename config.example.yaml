@@ -63,7 +63,6 @@ entities:
   brand: ["ADCB", "Abu Dhabi Commercial Bank", "بنك أبوظبي التجاري"]
   competitors:
     - "Emirates NBD"
-    - "First Abu Dhabi Bank"
     - "FAB"
     - "Dubai Islamic Bank"
     - "Mashreq"
@@ -72,6 +71,8 @@ entities:
     - "HSBC UAE"
     - "Wio"
     - "Liv"
+    - "ADIB"
+    - "Emirates Islamic"
 
 # Terms that mark a keyword as GEO-relevant (AI-assistant territory)
 geo_terms:
@@ -237,6 +238,8 @@ competitor_domains:
   - "hsbc.ae"
   - "wio.io"
   - "liv.me"
+  - "adib.ae"
+  - "emiratesislamic.ae"
 
 # Morning briefing + breakout alerts. Set SLACK_WEBHOOK_URL and/or
 # TEAMS_WEBHOOK_URL as repo secrets; missing webhooks are skipped silently.

@@ -94,3 +94,67 @@ def test_word_boundaries_prevent_false_positives(tmp_path):
                        source="reddit", context="", score=1.0)]
     assert scan_discoveries(CFG, store, discs) == 0  # "fabulous" must not match "FAB"
     store.close()
+
+
+def test_canonicalizer_merges_aliases():
+    from trendpulse.entities import canonicalizer
+
+    canon = canonicalizer({"entities": {
+        "brand": ["ADCB", "Abu Dhabi Commercial Bank", "بنك أبوظبي التجاري"],
+        "competitors": ["Emirates NBD", "FAB", "ADIB", "Sarwa"]}})
+    # brand family -> one display name
+    assert canon("ADCB") == ("ADCB", "brand")
+    assert canon("Abu Dhabi Commercial Bank") == ("ADCB", "brand")
+    assert canon("بنك أبوظبي التجاري") == ("ADCB", "brand")
+    # FAB family, including forms only Profound emits
+    assert canon("First Abu Dhabi Bank") == ("FAB", "competitor")
+    assert canon("FAB Bank") == ("FAB", "competitor")
+    assert canon("بنك أبوظبي الأول") == ("FAB", "competitor")
+    # adjacent Abu Dhabi banks must NOT collapse into each other
+    assert canon("Abu Dhabi Islamic Bank") == ("ADIB", "competitor")
+    assert canon("ENBD") == ("Emirates NBD", "competitor")
+    # unknown names pass through so auto-discovered entities still show
+    assert canon("Ruya Bank")[0] == "Ruya Bank"
+    assert canon("Sarwa") == ("Sarwa", "competitor")
+
+
+def test_one_sighting_one_mention_after_canonicalization(tmp_path):
+    """'First Abu Dhabi Bank' used to match both the 'FAB' and the
+    'First Abu Dhabi Bank' config entries -> two rows for one sighting."""
+    store = Store(tmp_path / "t.db")
+    cfg = {"entities": {"brand": ["ADCB", "Abu Dhabi Commercial Bank"],
+                        "competitors": ["Emirates NBD", "FAB"]}}
+    n = scan_discoveries(cfg, store, [Discovery(
+        date="2026-08-09", keyword="first abu dhabi bank launches app",
+        source="news", context="x", score=1.0)])
+    assert n == 1
+    n2 = scan_discoveries(cfg, store, [Discovery(
+        date="2026-08-09", keyword="abu dhabi commercial bank results",
+        source="news", context="y", score=1.0)])
+    assert n2 == 1
+    split = store.entity_mention_split(days=7)
+    assert {(e, k) for e, k, _a, _c in split} == {("FAB", "competitor"), ("ADCB", "brand")}
+    store.close()
+
+
+def test_rolled_up_split_merges_history(tmp_path):
+    """Historical rows written under surface forms merge at read time."""
+    from trendpulse.entities import rolled_up_split
+    from trendpulse.types import EntityMention
+
+    store = Store(tmp_path / "t.db")
+    rows = [("ADCB", "brand", "profound:ChatGPT"),
+            ("Abu Dhabi Commercial Bank", "brand", "reddit"),
+            ("بنك أبوظبي التجاري", "brand", "profound:Gemini"),
+            ("FAB", "competitor", "profound:ChatGPT"),
+            ("First Abu Dhabi Bank", "competitor", "google_news"),
+            ("FAB Bank", "competitor", "profound:Perplexity")]
+    store.upsert_entity_mentions([EntityMention(
+        date="2026-08-09", entity=e, kind=k, source=s, context=f"c{i}")
+        for i, (e, k, s) in enumerate(rows)])
+    cfg = {"entities": {"brand": ["ADCB", "Abu Dhabi Commercial Bank"],
+                        "competitors": ["FAB"]}}
+    split = rolled_up_split(store, cfg, days=7)
+    assert [(e, k, ai + com) for e, k, ai, com in split] == [
+        ("ADCB", "brand", 3.0), ("FAB", "competitor", 3.0)]
+    store.close()

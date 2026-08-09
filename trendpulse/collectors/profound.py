@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 import requests
 
 from trendpulse.collectors.base import Collector, today
-from trendpulse.entities import is_brand_mention
+from trendpulse.entities import canonicalizer, is_brand_mention
 from trendpulse.keywords import normalize
 from trendpulse.types import Citation, Discovery, EntityMention, Observation
 
@@ -50,6 +50,7 @@ class ProfoundCollector(Collector):
         self.api_key = os.environ.get("PROFOUND_API_KEY", "")
         pcfg = cfg.get("profound", {})
         self.category_id = os.environ.get("PROFOUND_CATEGORY_ID") or pcfg.get("category_id")
+        self._canon = canonicalizer(cfg)  # one bank, one name across sources
         self.category_name = pcfg.get("category_name", "banking and finance")
         self.asset = os.environ.get("PROFOUND_ASSET") or pcfg.get("asset", "adcb.com")
 
@@ -138,9 +139,11 @@ class ProfoundCollector(Collector):
                 obs.append(Observation(date=date, keyword=normalize(name),
                                        source=self.name, metric="ai_visibility",
                                        value=float(vis)))
-            kind = "brand" if is_brand_mention(name, self.asset) else "competitor"
+            display, kind = self._canon(name)
+            if is_brand_mention(name, self.asset):
+                kind = "brand"
             mentions.append(EntityMention(
-                date=date, entity=name, kind=kind, source="profound",
+                date=date, entity=display, kind=kind, source="profound",
                 context="AI share of voice (banking & finance)",
                 metric="share_of_voice", value=float(sov or 0)))
         return obs, mentions
@@ -190,9 +193,11 @@ class ProfoundCollector(Collector):
                     score=80.0,  # real questions AI engines answer — top AEO/GEO material
                 ))
             for brand in row.get("mentions") or []:
-                kind = "brand" if is_brand_mention(str(brand), self.asset) else "competitor"
+                display, kind = self._canon(str(brand))
+                if is_brand_mention(str(brand), self.asset):
+                    kind = "brand"
                 mentions.append(EntityMention(
-                    date=date, entity=str(brand), kind=kind,
+                    date=date, entity=display, kind=kind,
                     source=f"profound:{model}",
                     context=f"prompt: {prompt[:120]}", value=1.0))
             for url in row.get("citations") or []:
