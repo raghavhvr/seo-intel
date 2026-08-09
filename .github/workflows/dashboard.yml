@@ -1,9 +1,9 @@
 name: Rebuild dashboard on design changes
 
-# Design iterations shouldn't wait for the ~40-minute daily data run: when the
-# dashboard generator (or the config that feeds it) changes on main, re-render
-# the page from the data already committed and push it. GitHub Pages picks the
-# commit up within a couple of minutes.
+# Design iterations shouldn't wait for the ~40-minute daily data run. When the
+# web app, the single-file dashboard generator, or the config changes on main,
+# rebuild the published page from the data already committed. GitHub Pages
+# picks the commit up within a couple of minutes.
 #
 # No retrigger loop: this workflow's own commit touches docs/ and reports/
 # only, which never match the paths filter below.
@@ -12,7 +12,9 @@ on:
   push:
     branches: [main]
     paths:
+      - "dashboard-app/**"
       - "trendpulse/dashboard.py"
+      - "trendpulse/export.py"
       - "config.yaml"
 
 permissions:
@@ -33,11 +35,24 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: dashboard-app/package-lock.json
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Re-render dashboard from committed data
+      - name: Re-render single-file dashboard + data.json from committed data
         run: python -m trendpulse dashboard --config config.yaml
+
+      - name: Build web app into docs/
+        run: |
+          cd dashboard-app
+          npm ci
+          rm -rf ../docs/assets
+          npm run build
 
       - name: Commit the refreshed page
         run: |
@@ -48,6 +63,6 @@ jobs:
             echo "dashboard unchanged"
             exit 0
           fi
-          git commit -m "chore: re-render dashboard"
+          git commit -m "chore: rebuild dashboard app"
           git pull --rebase origin main
           git push
