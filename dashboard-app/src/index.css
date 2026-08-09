@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/* Semantic tokens — light is the committed look; dark steps from the same
+   validated palette (never an inversion). */
+:root {
+  color-scheme: light;
+  --bg: #f2f1ee;
+  --surface: #ffffff;
+  --surface-2: #efedea;
+  --border: #e2e0db;
+  --border-soft: #f0efec;
+  --ink: #171715;
+  --ink-2: #52514e;
+  --accent: #17559c;
+  --series-you: #2a78d6;
+  --series-you-2: #a7c8ef;
+  --series-other: #8a8984;
+  --series-other-2: #d0cec8;
+  --good: #0c6b4a;
+  --warn: #a53c12;
+  --hero-a: #101d33;
+  --hero-b: #1a3a63;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #141413;
+    --surface: #1e1e1c;
+    --surface-2: #262624;
+    --border: #34332f;
+    --border-soft: #2b2a27;
+    --ink: #f5f4f0;
+    --ink-2: #b7b5ad;
+    --accent: #6aa4e8;
+    --series-you: #3987e5;
+    --series-you-2: #234a75;
+    --series-other: #97958e;
+    --series-other-2: #45443f;
+    --good: #4cc793;
+    --warn: #e88b5f;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-line: var(--border);
+  --color-linesoft: var(--border-soft);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink-2);
+  --color-accent: var(--accent);
+  --color-you: var(--series-you);
+  --color-you2: var(--series-you-2);
+  --color-other: var(--series-other);
+  --color-other2: var(--series-other-2);
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.tnum { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

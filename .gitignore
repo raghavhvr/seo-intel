@@ -8,3 +8,6 @@ dist/
 config.local.yaml
 trendpulse.egg-info/
 data_imports/
+
+# dashboard app
+dashboard-app/node_modules/

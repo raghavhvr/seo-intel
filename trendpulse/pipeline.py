@@ -138,10 +138,15 @@ def run_report(cfg: dict, models: dict[str, HorizonModel] | None = None) -> Path
     if models is None:
         models = load_models(cfg)
     path = generate_report(store, cfg, universe, models)
-    # Non-technical companion to the markdown report; docs/index.html doubles
-    # as a GitHub Pages site (Settings -> Pages -> main branch, /docs folder).
+    # Two companion surfaces: reports/dashboard.html is the single-file page
+    # (email-able, works from disk); docs/data.json feeds the React app that
+    # GitHub Pages serves from docs/ — the app itself is built by
+    # .github/workflows/dashboard.yml and only its DATA changes daily.
+    from trendpulse.export import export_data
+
     out_dir = Path(cfg["reports"]["output_dir"])
-    generate_dashboard(store, cfg, out_dir, extra_paths=[Path("docs/index.html")])
+    generate_dashboard(store, cfg, out_dir)
+    export_data(store, cfg, [Path("docs/data.json")])
     store.close()
     return path
 
@@ -152,10 +157,13 @@ def run_dashboard(cfg: dict) -> Path:
     instead of waiting for the next full daily run."""
     from trendpulse.dashboard import generate_dashboard
 
+    from trendpulse.export import export_data
+
     store = Store(db_path(cfg))
     try:
-        return generate_dashboard(store, cfg, Path(cfg["reports"]["output_dir"]),
-                                  extra_paths=[Path("docs/index.html")])
+        path = generate_dashboard(store, cfg, Path(cfg["reports"]["output_dir"]))
+        export_data(store, cfg, [Path("docs/data.json")])
+        return path
     finally:
         store.close()
 

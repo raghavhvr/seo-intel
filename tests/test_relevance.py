@@ -218,3 +218,33 @@ def test_a_silent_series_does_not_dilute_its_own_source():
     attention, breadth = blended_attention(series, index)
     assert float(attention.iloc[-1]) > 0
     assert breadth.iloc[-1] == 1.0
+
+
+def test_export_payload_shape(tmp_path):
+    """The web app's only data source: keys, exclude filtering, competitor
+    flags all present."""
+    import json
+
+    from trendpulse.export import build_payload
+
+    store = Store(str(tmp_path / "e.db"))
+    store.save_score("2026-08-09", "credit card uae", "week", "seo", 90.0, 0.5, 1.0)
+    store.save_score("2026-08-09", "neobank uae", "week", "seo", 99.0, 0.5, 1.0)
+    store.save_score("2026-08-09", "mashreq neo account", "week", "seo", 80.0, 0.5, 1.0)
+    cfg = {"project": "T", "market": "M",
+           "seeds": {"seo": ["credit card uae"], "aeo": [], "geo": []},
+           "entities": {"brand": ["ADCB"], "competitors": ["Mashreq"]},
+           "model": {"horizons": {"week": 7}},
+           "keywords": {"max_universe": 10, "max_new_per_day": 5,
+                        "exclude": ["neobank uae"]},
+           "brand_domains": ["adcb.com"], "competitor_domains": []}
+    payload = build_payload(store, cfg)
+    json.dumps(payload)  # must be serializable
+    week_seo = payload["focus"]["week"]["seo"]
+    kws = [r["keyword"] for r in week_seo]
+    assert "credit card uae" in kws and "neobank uae" not in kws
+    flags = {r["keyword"]: r["competitor"] for r in week_seo}
+    assert flags["mashreq neo account"] is True
+    assert flags["credit card uae"] is False
+    assert payload["meta"]["scoreDate"] == "2026-08-09"
+    store.close()
