@@ -248,3 +248,34 @@ def test_export_payload_shape(tmp_path):
     assert flags["credit card uae"] is False
     assert payload["meta"]["scoreDate"] == "2026-08-09"
     store.close()
+
+
+def test_glosses_curated_cached_and_fetched(tmp_path, monkeypatch):
+    """Arabic keywords get English glosses: curated seeds instantly, novel
+    strings once via the endpoint then forever from the DB cache; non-Arabic
+    strings and failures never break anything."""
+    from trendpulse import translate
+
+    store = Store(str(tmp_path / "g.db"))
+    calls: list[str] = []
+
+    def fake_fetch(text):
+        calls.append(text)
+        return "car insurance in the uae" if "تأمين" in text else None
+
+    monkeypatch.setattr(translate, "_fetch", fake_fetch)
+    texts = ["قرض شخصي الإمارات",        # curated
+             "تأمين السيارات في الإمارات",  # novel -> fetched + cached
+             "credit card uae",           # not Arabic -> skipped
+             "كلمة غامضة جدا هنا"]         # fetch fails -> silently missing
+    out = translate.glosses(store, texts)
+    assert out["قرض شخصي الإمارات"] == "personal loan uae"
+    assert out["تأمين السيارات في الإمارات"] == "car insurance in the uae"
+    assert "credit card uae" not in out
+    assert len(calls) == 2  # only the two novel Arabic strings hit the network
+
+    calls.clear()
+    out2 = translate.glosses(store, ["تأمين السيارات في الإمارات"])
+    assert out2["تأمين السيارات في الإمارات"] == "car insurance in the uae"
+    assert calls == []  # served from the DB cache, no network
+    store.close()

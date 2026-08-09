@@ -70,8 +70,9 @@ export default function Focus() {
                   <tr key={r.keyword} className="border-b border-linesoft last:border-0">
                     <td className="tnum py-2.5 pr-3 text-ink2">{i + 1}</td>
                     <td className="py-2.5 pr-3">
-                      {r.keyword}{" "}
+                      <span dir="auto">{r.keyword}</span>{" "}
                       {r.competitor && <Badge tone="comp" title="Competitor-branded territory: contest with comparison content, not a dedicated page">competitor</Badge>}
+                      {r.en && <div className="mt-0.5 text-[12px] italic text-ink2">"{r.en}"</div>}
                     </td>
                     <td className="py-2.5 pr-3">
                       <span className="mr-2 inline-block h-2 rounded-full bg-you align-middle" style={{ width: Math.max(r.score, 3) * 0.5 }} aria-hidden />

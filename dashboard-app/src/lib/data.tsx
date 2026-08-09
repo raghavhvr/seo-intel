@@ -7,6 +7,7 @@ export interface FocusRow {
   velocity: number;
   competitor: boolean;
   channels: string[];
+  en?: string;
 }
 export interface Payload {
   meta: {
@@ -20,7 +21,7 @@ export interface Payload {
   };
   shareOfVoice: { entity: string; kind: string; ai: number; community: number }[];
   citations: { domain: string; count: number; share: number; role: string }[];
-  gaps: { prompt: string; domains: string[]; models: string[] }[];
+  gaps: { prompt: string; promptEn?: string | null; domains: string[]; models: string[] }[];
   focus: Record<string, Record<string, FocusRow[]>>;
   evidence: Record<string, string[]>;
   events: {

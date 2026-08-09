@@ -54,6 +54,10 @@ CREATE TABLE IF NOT EXISTS entities (
     value   REAL NOT NULL DEFAULT 1,
     PRIMARY KEY (date, entity, source, context, metric)
 );
+CREATE TABLE IF NOT EXISTS translations (
+    keyword TEXT PRIMARY KEY,
+    en      TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS citations (
     date    TEXT NOT NULL,
     url     TEXT NOT NULL,
@@ -204,6 +208,17 @@ class Store:
             (f"-{days} days",),
         )
         return cur.fetchall()
+
+    def get_translation(self, keyword: str) -> str | None:
+        row = self.conn.execute(
+            "SELECT en FROM translations WHERE keyword = ?", (keyword,)).fetchone()
+        return row[0] if row else None
+
+    def set_translation(self, keyword: str, en: str) -> None:
+        self.conn.execute(
+            "INSERT OR REPLACE INTO translations (keyword, en) VALUES (?, ?)",
+            (keyword, en))
+        self.conn.commit()
 
     def delete_scores(self, date: str) -> int:
         """Clear one day's scores before re-scoring: a keyword dropped from

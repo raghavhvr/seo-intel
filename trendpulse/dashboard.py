@@ -25,6 +25,7 @@ from trendpulse.keywords import CHANNELS, channels_for, excluded_keywords
 from trendpulse.report import ACTIONS
 from trendpulse.seasonality import upcoming_events
 from trendpulse.storage import Store
+from trendpulse.translate import glosses
 
 log = logging.getLogger(__name__)
 
@@ -219,7 +220,7 @@ def _momentum_badge(delta: float, velocity: float) -> str:
     return ""
 
 
-def _focus_table(rows, is_competitor_term) -> str:
+def _focus_table(rows, is_competitor_term, gloss=None) -> str:
     if not rows:
         return '<p class="chnote">No signals yet — check back tomorrow.</p>'
     body = []
@@ -227,9 +228,13 @@ def _focus_table(rows, is_competitor_term) -> str:
         comp = (' <span class="badge b-comp" title="Competitor-branded territory: '
                 'contest with comparison content, not a dedicated page">competitor'
                 "</span>") if is_competitor_term(keyword) else ""
+        en = (gloss or {}).get(keyword)
+        en_html = (f'<div style="font-size:12px;color:#52514e;font-style:italic">'
+                   f'&ldquo;{_esc(en)}&rdquo;</div>') if en else ""
         body.append(
             f'<tr><td class="num">{rank}</td>'
-            f"<td>{_esc(keyword)}{comp} {_momentum_badge(delta, vel)}</td>"
+            f"<td><span dir=\"auto\">{_esc(keyword)}</span>{comp} "
+            f"{_momentum_badge(delta, vel)}{en_html}</td>"
             f'<td class="num"><span class="scorebar" style="width:{max(score, 3) * 0.5:.0f}px"></span>'
             f"{score:.0f}</td></tr>")
     return ("<table><tr><th>#</th><th>Query / topic</th><th>Priority</th></tr>"
@@ -272,6 +277,7 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
     score_date = (cur.fetchone() or [None])[0]
     is_competitor_term = competitor_matcher(cfg)
     excluded = excluded_keywords(cfg)
+    gloss: dict[str, str] = {}
 
     def scores(horizon: str, channel: str, limit: int = 8):
         """latest_scores minus the team's exclude list — scores persist from
@@ -365,7 +371,10 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
                      "for each is the fastest way into those answers.</p>")
         items = []
         for gap in gaps:
-            items.append(f"<li><strong>{_esc(gap['prompt'])}</strong><br>"
+            en = gloss.get(gap["prompt"])
+            en_html = (f'<div style="font-size:12.5px;color:#52514e;font-style:italic">'
+                       f'&ldquo;{_esc(en)}&rdquo;</div>') if en else ""
+            items.append(f"<li><strong dir=\"auto\">{_esc(gap['prompt'])}</strong>{en_html}<br>"
                          f'<span class="who">currently cited: '
                          f"{_esc(', '.join(gap['domains'][:4]))} &middot; asked on "
                          f"{_esc(', '.join(gap['models'][:4]))}</span></li>")
@@ -395,7 +404,7 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
                     f'<div class="card"><div class="chhead"><h3>{abbr}</h3>'
                     f'<span class="sub">{subtitle}</span></div>'
                     f'<p class="chnote">{blurb}</p>'
-                    f'{_focus_table(rows, is_competitor_term)}</div>')
+                    f'{_focus_table(rows, is_competitor_term, gloss)}</div>')
             parts.append("</div></div>")
 
     # --- regional moments -------------------------------------------------
