@@ -207,11 +207,14 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
 
     from trendpulse.keywords import is_relevant, universe_tokens
 
+    from trendpulse.keywords import excluded_keywords, normalize
+
     tokens = universe_tokens(universe)
+    excluded = excluded_keywords(cfg)
     new_this_week = [
         (kw, s) for kw, s in sorted(store.discovered_keywords(limit=400),
                                     key=lambda kv: kv[1], reverse=True)
-        if is_relevant(kw, tokens, cfg)
+        if normalize(kw) not in excluded and is_relevant(kw, tokens, cfg)
     ][:15]
     if new_this_week:
         lines.append("## Newly discovered queries & topics (related to your universe)")

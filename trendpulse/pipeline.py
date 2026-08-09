@@ -5,7 +5,8 @@ from pathlib import Path
 
 from trendpulse.collectors import enabled_collectors
 from trendpulse.config import db_path
-from trendpulse.keywords import (is_relevant, keyword_universe, normalize,
+from trendpulse.keywords import (excluded_keywords, is_relevant,
+                                 keyword_universe, normalize,
                                  universe_tokens, valid_candidate)
 from trendpulse.model import HorizonModel, load_models, train_all
 from trendpulse.report import generate_report
@@ -62,13 +63,18 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
 
     cap = int(cfg["keywords"]["max_new_per_day"])
     known = set(universe) | set(store.observed_keywords())
-    tokens = universe_tokens(known)
+    # Vouching vocabulary comes from the CLEAN universe, not from every
+    # keyword ever observed: historical strays still in the observations
+    # table ('flux1 schnell') would otherwise keep vouching for their own
+    # kind long after the universe gate evicted them.
+    tokens = universe_tokens(universe)
+    excluded = excluded_keywords(cfg)
     added = 0
     for disc in sorted(new_discoveries, key=lambda d: d.score, reverse=True):
         if added >= cap:
             break
         kw = normalize(disc.keyword)
-        if not valid_candidate(kw) or kw in known:
+        if not valid_candidate(kw) or kw in known or kw in excluded:
             continue
         if not is_relevant(kw, tokens, cfg):
             continue
