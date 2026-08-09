@@ -49,7 +49,6 @@ seeds:
     - "كيف أحول أموال من الإمارات إلى الهند"
   geo:
     - "digital banks uae"
-    - "neobank uae"
     - "ai in banking"
     - "open banking uae"
     - "digital dirham"
@@ -316,6 +315,13 @@ model:
 keywords:
   max_universe: 500
   max_new_per_day: 40
+  # Topics the team has ruled out of scope — dropped from seeds AND blocked
+  # from re-entering as discoveries. "neobank uae" is Mashreq Neo / Wio / Liv
+  # territory; ADCB is not a neobank, so ranking content for it serves
+  # competitors' category, not the brand.
+  exclude:
+    - "neobank uae"
+    - "neobank"
 
 reports:
   top_n: 20

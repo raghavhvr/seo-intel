@@ -63,6 +63,37 @@ def test_relevance_gate():
     assert not is_relevant("flux1 schnell", tokens, GEO_CFG)
     assert not is_relevant("kimi ai", tokens, GEO_CFG)     # bare 'ai' can't vouch
     assert not is_relevant("claude", tokens, GEO_CFG)
+    # Long phrases need >= 2 known tokens: one shared word ('money') put whole
+    # Reddit thread titles on the AEO focus list.
+    assert not is_relevant("ambani took my money and i cant do anything",
+                           tokens | {"money"}, GEO_CFG)
+    assert is_relevant("best credit card for online shopping in uae now",
+                       tokens, GEO_CFG)  # long but plainly on-topic
+
+
+def test_exclude_list_blocks_seeds_and_discoveries(tmp_path):
+    """`keywords.exclude` is the team's veto: 'neobank uae' is Mashreq/Wio/Liv
+    territory, so it must not appear even though it was once a seed and its
+    vocabulary overlaps the universe."""
+    from trendpulse.keywords import keyword_universe
+    from trendpulse.types import Discovery
+
+    cfg = {"seeds": {"seo": ["credit card uae"], "aeo": [],
+                     "geo": ["neobank uae", "digital banks uae"]},
+           "keywords": {"max_universe": 50, "max_new_per_day": 10,
+                        "exclude": ["neobank uae", "neobank"]}}
+    store = Store(tmp_path / "x.db")
+    store.upsert_discoveries([
+        Discovery(date="2026-08-09", keyword="neobank uae",
+                  source="autocomplete", score=99.0),
+        Discovery(date="2026-08-09", keyword="best credit card uae",
+                  source="autocomplete", score=5.0),
+    ])
+    universe = keyword_universe(cfg, store)
+    assert "neobank uae" not in universe          # seed AND discovery both blocked
+    assert "digital banks uae" in universe
+    assert "best credit card uae" in universe
+    store.close()
 
 
 def test_universe_admits_only_seed_relevant_discoveries(tmp_path):
