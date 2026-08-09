@@ -83,7 +83,7 @@ def build_payload(store: Store, cfg: dict) -> dict:
 
     mae: dict[str, float] = {}
     for _t, horizon, _n, value, note in store.model_runs(limit=12):  # newest first
-        if note == "ok" and value is not None and horizon not in mae:
+        if note and note.startswith("ok") and value is not None and horizon not in mae:
             mae[horizon] = round(value, 4)
 
     return {
