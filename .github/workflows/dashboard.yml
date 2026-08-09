@@ -9,6 +9,7 @@ name: Rebuild dashboard on design changes
 # only, which never match the paths filter below.
 
 on:
+  workflow_dispatch:        # manual re-run after a failed rebuild
   push:
     branches: [main]
     paths:
@@ -58,7 +59,9 @@ jobs:
         run: |
           git config user.name "trendpulse-bot"
           git config user.email "trendpulse-bot@users.noreply.github.com"
-          git add docs/ reports/dashboard.html
+          # data/ too: rendering caches new Arabic->English glosses in the
+          # translations table, and an unstaged DB makes the rebase refuse.
+          git add docs/ reports/dashboard.html data/
           if git diff --cached --quiet; then
             echo "dashboard unchanged"
             exit 0
