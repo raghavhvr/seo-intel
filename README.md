@@ -113,7 +113,9 @@ python -m trendpulse demo            # offline end-to-end run on synthetic data
 python -m trendpulse run-daily       # import dumps + live ingest + train + report
 ```
 
-Individual stages: `python -m trendpulse import` (GSC/GA4 dumps) / `ingest` / `train` / `report` / `notify`. Add `-v` for debug logs.
+Individual stages: `python -m trendpulse import` (GSC/GA4 dumps) / `ingest` / `train` / `report` / `dashboard` (re-render the HTML page only) / `notify`. Add `-v` for debug logs.
+
+The non-technical companion dashboard is written to `reports/dashboard.html` and `docs/index.html` on every run; enable GitHub Pages (Settings → Pages → `main` / `/docs`) to serve it as a live URL. Design/config merges re-render it within ~2 minutes via `.github/workflows/dashboard.yml`; data refreshes on the daily run.
 
 ### Secrets (never in the workflow file)
 
@@ -152,7 +154,8 @@ After merging to your default branch the cron runs automatically. New keywords d
 
 - **New source**: subclass `Collector` in `trendpulse/collectors/`, return `Observation`/`Discovery` objects, register it in `collectors/__init__.py`. Collectors must never raise — log and degrade gracefully so one flaky API never kills a daily run.
 - **Slack/email delivery**: post `reports/latest.md` from the workflow.
-- **Guardrails**: `keywords.max_universe` and `keywords.max_new_per_day` cap universe growth.
+- **Guardrails**: `keywords.max_universe` and `keywords.max_new_per_day` cap universe growth. `keywords.exclude` is the team's veto list — topics ruled out of scope (e.g. `neobank uae` for a bank that isn't one) are dropped from seeds, blocked as discoveries, and hidden from the dashboard immediately.
+- **Competitor-branded queries** (`mashreq neo account`, `enbd credit card`) are detected via the entity alias table: they never headline the dashboard's opportunity cards, carry a `competitor` badge / `competitor-brand` signal, and their suggested action switches to comparison content or monitor-only.
 - **Curating Wikipedia mappings**: run `python -m trendpulse ingest -v` and grep for `rejected as off-topic`. If a rejected keyword has a genuinely matching article, add it under `wikipedia.articles` (per-language or flat) — curated entries bypass the gate. Verify the title returns data first: `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia.org/all-access/all-agents/<Title>/daily/2026010100/2026020100`. Skip articles averaging under ~30 views/day; at that volume the series is Poisson noise, not trend signal.
 
   Editing that map is safe to iterate on: every `ingest` re-checks the stored Wikipedia history against the current gate and config and deletes rows whose article no longer qualifies, so corrections apply retroactively instead of waiting ~60 days for the old backfill to age out. Removals are logged with the offending article, and a keyword regenerates its history on the next run once it has a mapping. Only Wikipedia rows are ever touched.
@@ -167,6 +170,7 @@ After merging to your default branch the cron runs automatically. New keywords d
 - NASA EONET is quiet in the Gulf for months at a time — zero events is normal, and the collector contributes nothing until an event fires (then it injects the mapped keyword angles with the event as evidence).
 - Scores are directional decision-support, not traffic forecasts. Validate big bets against Search Console before committing serious resources.
 - Check each source's terms of service for your usage volume.
+- **This repository is the datastore.** If the repo is public, everything the pipeline commits is public too: the SQLite DB (including query-level GSC impressions/clicks and GA4 session counts extracted from your private exports), the Profound-derived observations/citations, the reports and the dashboard. For client data, keep the repo private and host the dashboard behind authentication (e.g. Cloudflare Pages + Access) — GitHub Pages sites are public even from private repos.
 
 ## Development
 
