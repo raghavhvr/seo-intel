@@ -60,8 +60,13 @@ def train_horizon(store: Store, cfg: dict, universe: dict[str, str | None],
         early_stopping=True, random_state=42,
     )
     estimator.fit(X.iloc[train_idx], y.iloc[train_idx])
-    mae = float(mean_absolute_error(y.iloc[test_idx], estimator.predict(X.iloc[test_idx]))) \
-        if len(test_idx) else None
+    mae = baseline = None
+    if len(test_idx):
+        y_test = y.iloc[test_idx]
+        mae = float(mean_absolute_error(y_test, estimator.predict(X.iloc[test_idx])))
+        # Honesty check: MAE of always predicting "no change". A model that
+        # doesn't clearly beat this number is adding nothing over momentum.
+        baseline = float(y_test.abs().mean())
 
     # Final model refit on 100% of history — it ships to production.
     final = HistGradientBoostingRegressor(
@@ -73,10 +78,12 @@ def train_horizon(store: Store, cfg: dict, universe: dict[str, str | None],
     model = HorizonModel(horizon=horizon, horizon_days=horizon_days,
                          estimator=final, n_samples=len(X), mae=mae)
     joblib.dump({"model": model, "features": FEATURES}, _model_path(cfg, horizon))
+    note = "ok" if baseline is None else f"ok · naive-baseline MAE={baseline:.4f}"
     store.log_model_run(datetime.now(timezone.utc).isoformat(), horizon,
-                        len(X), mae, "ok")
-    log.info("[%s] trained on %d samples, holdout MAE=%.4f", horizon, len(X),
-             mae if mae is not None else float("nan"))
+                        len(X), mae, note)
+    log.info("[%s] trained on %d samples, holdout MAE=%.4f (naive baseline %.4f)",
+             horizon, len(X), mae if mae is not None else float("nan"),
+             baseline if baseline is not None else float("nan"))
     return model
 
 
