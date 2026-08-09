@@ -18,8 +18,9 @@ from datetime import date as _date
 from datetime import datetime, timezone
 from pathlib import Path
 
+from trendpulse.entities import competitor_matcher
 from trendpulse.gaps import citation_gaps, citation_summary
-from trendpulse.keywords import CHANNELS, channels_for
+from trendpulse.keywords import CHANNELS, channels_for, excluded_keywords
 from trendpulse.report import ACTIONS
 from trendpulse.seasonality import upcoming_events
 from trendpulse.storage import Store
@@ -97,6 +98,7 @@ h2 { font-size: 21px; letter-spacing: -0.015em; margin: 0 0 4px; }
 .b-rising { background: #e2f4ec; color: #0c6b4a; }
 .b-cooling { background: #efedea; color: #52514e; }
 .b-ch { background: #f0eef7; color: #4a3aa7; margin-left: 0; margin-right: 6px; }
+.b-comp { background: #f4e9ec; color: #8f2d4e; }
 .opps { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
         gap: 12px; margin-top: 12px; }
 .opp { background: #fff; border: 1px solid #e2e0db; border-left: 4px solid #2a78d6;
@@ -216,26 +218,34 @@ def _momentum_badge(delta: float, velocity: float) -> str:
     return ""
 
 
-def _focus_table(rows) -> str:
+def _focus_table(rows, is_competitor_term) -> str:
     if not rows:
         return '<p class="chnote">No signals yet — check back tomorrow.</p>'
     body = []
     for rank, (keyword, score, delta, vel) in enumerate(rows, 1):
+        comp = (' <span class="badge b-comp" title="Competitor-branded territory: '
+                'contest with comparison content, not a dedicated page">competitor'
+                "</span>") if is_competitor_term(keyword) else ""
         body.append(
             f'<tr><td class="num">{rank}</td>'
-            f"<td>{_esc(keyword)} {_momentum_badge(delta, vel)}</td>"
+            f"<td>{_esc(keyword)}{comp} {_momentum_badge(delta, vel)}</td>"
             f'<td class="num"><span class="scorebar" style="width:{max(score, 3) * 0.5:.0f}px"></span>'
             f"{score:.0f}</td></tr>")
     return ("<table><tr><th>#</th><th>Query / topic</th><th>Priority</th></tr>"
             + "".join(body) + "</table>")
 
 
-def _top_opportunities(store: Store, cfg: dict, score_date: str, limit: int = 3) -> str:
+def _top_opportunities(store: Store, cfg: dict, scores,
+                       is_competitor_term, limit: int = 3) -> str:
     """The 'do these first' cards: best week-horizon picks across channels,
-    each with the evidence that produced it and the channel-fit action."""
+    each with the evidence that produced it and the channel-fit action.
+    Competitor-branded terms never headline — 'create a page' for someone
+    else's brand is not an opportunity."""
     best: dict[str, tuple[float, float, float, str]] = {}
     for channel in CHANNELS:
-        for kw, score, delta, vel in store.latest_scores(score_date, "week", channel, limit=6):
+        for kw, score, delta, vel in scores("week", channel, limit=6):
+            if is_competitor_term(kw):
+                continue
             if kw not in best or score > best[kw][0]:
                 best[kw] = (score, delta, vel, channel)
     picks = sorted(best.items(), key=lambda kv: kv[1][0], reverse=True)[:limit]
@@ -259,6 +269,15 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
                        extra_paths: list[Path] | None = None) -> Path:
     cur = store.conn.execute("SELECT MAX(date) FROM scores")
     score_date = (cur.fetchone() or [None])[0]
+    is_competitor_term = competitor_matcher(cfg)
+    excluded = excluded_keywords(cfg)
+
+    def scores(horizon: str, channel: str, limit: int = 8):
+        """latest_scores minus the team's exclude list — scores persist from
+        the last data run, so a keyword vetoed in config must disappear from
+        the page immediately, not after the next 40-minute pipeline run."""
+        rows = store.latest_scores(score_date, horizon, channel, limit=limit + len(excluded))
+        return [r for r in rows if r[0] not in excluded][:limit]
     generated = datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
 
     split = store.entity_mention_split(days=7)
@@ -312,7 +331,7 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
         parts.append("<h2>This week&rsquo;s top opportunities</h2>")
         parts.append('<p class="note">The strongest signals right now, with the evidence '
                      "behind them and the play to run.</p>")
-        parts.append(_top_opportunities(store, cfg, score_date))
+        parts.append(_top_opportunities(store, cfg, scores, is_competitor_term))
 
     # --- share of voice ---------------------------------------------------
     if split:
@@ -370,11 +389,12 @@ def generate_dashboard(store: Store, cfg: dict, out_dir: Path,
             parts.append(f'<div class="panel{on}" id="panel-{horizon}"><div class="cols">')
             for channel in CHANNELS:
                 abbr, subtitle, blurb = CHANNEL_META[channel]
-                rows = store.latest_scores(score_date, horizon, channel, limit=8)
+                rows = scores(horizon, channel, limit=8)
                 parts.append(
                     f'<div class="card"><div class="chhead"><h3>{abbr}</h3>'
                     f'<span class="sub">{subtitle}</span></div>'
-                    f'<p class="chnote">{blurb}</p>{_focus_table(rows)}</div>')
+                    f'<p class="chnote">{blurb}</p>'
+                    f'{_focus_table(rows, is_competitor_term)}</div>')
             parts.append("</div></div>")
 
     # --- regional moments -------------------------------------------------

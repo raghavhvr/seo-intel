@@ -22,10 +22,15 @@ ACTIONS = {
     "seo": "Create/refresh a dedicated page targeting this query; interlink from related pages.",
     "aeo": "Add a concise 40–60 word direct answer; mark up with FAQPage/HowTo schema; target voice/featured snippets.",
     "geo": "Publish a definitive, stat-backed explainer with clear entity references, citations-friendly formatting, and up-to-date facts so AI engines cite you.",
+    "competitor": "Competitor-branded territory — don't build a page for their "
+                  "brand. If worth contesting, use comparison content "
+                  "('X vs ADCB', switching guides) or paid; otherwise monitor only.",
 }
 
 
-def _action(channels: set[str], breakout: bool) -> str:
+def _action(channels: set[str], breakout: bool, competitor: bool = False) -> str:
+    if competitor:
+        return ACTIONS["competitor"]
     parts = []
     if "geo" in channels:
         parts.append(ACTIONS["geo"])
@@ -92,6 +97,9 @@ def _write_csv(path: Path, rows: list[dict]) -> None:
 
 def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
                     models: dict[str, HorizonModel]) -> Path:
+    from trendpulse.entities import competitor_matcher
+
+    is_competitor_term = competitor_matcher(cfg)
     scored = score_keywords(store, cfg, universe, models)
     out_dir = Path(cfg["reports"]["output_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -155,6 +163,7 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
             for rank, (_, row) in enumerate(subset.iterrows(), 1):
                 delta = float(row[delta_col])
                 direction = "rising" if delta > 0.15 else ("cooling" if delta < -0.15 else "steady")
+                competitor = is_competitor_term(row["keyword"])
                 signals = []
                 if row["breakout"]:
                     signals.append("breakout")
@@ -162,6 +171,8 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
                     signals.append("question")
                 if row["ch_geo"]:
                     signals.append("ai-topic")
+                if competitor:
+                    signals.append("competitor-brand")
                 sig = ", ".join(signals) or "—"
                 lines.append(
                     f"| {rank} | {row['keyword']} | {row[score_col]:.0f} | "
@@ -174,7 +185,7 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
                     "velocity_z": round(float(row["velocity_z"]), 3),
                     "breakout": bool(row["breakout"]),
                     "evidence": _evidence(store, row["keyword"]),
-                    "suggested_action": _action(set(row["channels"]), bool(row["breakout"])),
+                    "suggested_action": _action(set(row["channels"]), bool(row["breakout"]), competitor),
                 })
                 store.save_score(date, row["keyword"], horizon, channel,
                                  float(row[score_col]), delta, float(row["velocity_z"]))
@@ -186,8 +197,9 @@ def generate_report(store: Store, cfg: dict, universe: dict[str, str | None],
         lines.append(f"#### Deep dive — top {len(top_overall)} picks ({horizon})")
         lines.append("")
         for _, row in top_overall.iterrows():
-            lines.append(f"- **{row['keyword']}** ({', '.join(row['channels'])}) — "
-                         f"{_action(set(row['channels']), bool(row['breakout']))}")
+            action = _action(set(row["channels"]), bool(row["breakout"]),
+                             is_competitor_term(row["keyword"]))
+            lines.append(f"- **{row['keyword']}** ({', '.join(row['channels'])}) — {action}")
             evidence = _evidence(store, row["keyword"])
             if evidence:
                 lines.append(f"  - Evidence: {evidence}")

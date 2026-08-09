@@ -30,6 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
         "import": "Import offline GSC/GA4 dumps from data_imports/",
         "train": "Retrain the trend models on all collected history",
         "report": "Regenerate weekly/monthly/quarterly focus reports",
+        "dashboard": "Re-render the HTML dashboard from existing data (no ingest/train)",
         "notify": "Send breakout alerts + briefing to Slack/Teams webhooks",
         "run-daily": "import + ingest + train + report + notify (the scheduled daily job)",
     }
@@ -68,6 +69,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Models trained: {active}")
     elif args.command == "report":
         print(f"Report written to {pipeline.run_report(cfg)}")
+    elif args.command == "dashboard":
+        print(f"Dashboard written to {pipeline.run_dashboard(cfg)}")
     elif args.command == "notify":
         sent = pipeline.run_notify(cfg)
         print("Alert sent." if sent else "Nothing sent (no webhooks or nothing to alert).")

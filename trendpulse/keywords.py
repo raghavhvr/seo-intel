@@ -110,9 +110,26 @@ def is_relevant(keyword: str, tokens: set[str], cfg: dict) -> bool:
     schnell', an image-generation model, at the top of a bank's SEO focus
     list. An AI topic earns its place the same way everything else does: by
     overlapping the banking vocabulary ('ai in banking' does; 'kimi ai' does
-    not)."""
+    not).
+
+    Long phrases need more evidence: a Reddit thread title like 'ambani took
+    my money and i can't do anything' shares exactly one word ('money') with
+    the universe, which is how it reached the AEO focus list. Five or more
+    meaningful tokens require at least two of them to be known vocabulary —
+    short keywords keep the single-token bar so 'dirham rate' still passes."""
     toks = {t for t in keyword.split() if t not in STOPWORDS}
-    return bool(toks & tokens)
+    overlap = len(toks & tokens)
+    if len(toks) >= 5:
+        return overlap >= 2
+    return overlap >= 1
+
+
+def excluded_keywords(cfg: dict) -> set[str]:
+    """Operator blocklist (`keywords.exclude` in config): topics the team has
+    ruled out of scope — e.g. 'neobank uae' for a bank that isn't one. Applied
+    to seeds and discoveries alike, so a removed seed can't sneak back in as a
+    discovery via shared vocabulary."""
+    return {normalize(k) for k in cfg.get("keywords", {}).get("exclude", []) or []}
 
 
 def keyword_universe(cfg: dict, store: Store) -> dict[str, str | None]:
@@ -129,14 +146,16 @@ def keyword_universe(cfg: dict, store: Store) -> dict[str, str | None]:
     then discoveries by score (collectors cap request volume with
     keywords[:N], so iteration order is the ingestion priority).
     """
-    universe: dict[str, str | None] = dict(seed_keywords(cfg))
+    excluded = excluded_keywords(cfg)
+    universe: dict[str, str | None] = {
+        kw: ch for kw, ch in seed_keywords(cfg).items() if kw not in excluded}
     tokens = universe_tokens(universe)
     cap = int(cfg["keywords"]["max_universe"])
     for kw, _score in store.discovered_keywords(limit=cap * 3):
         if len(universe) >= cap:
             break
         norm = normalize(kw)
-        if (valid_candidate(norm) and norm not in universe
+        if (valid_candidate(norm) and norm not in universe and norm not in excluded
                 and is_relevant(norm, tokens, cfg)):
             universe[norm] = None
     return universe

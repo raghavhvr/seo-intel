@@ -75,6 +75,19 @@ def test_mention_split_is_ranked_by_total(tmp_path):
     store.close()
 
 
+def test_competitor_matcher_flags_branded_territory():
+    from trendpulse.entities import competitor_matcher
+
+    is_comp = competitor_matcher({"entities": {"competitors":
+                                               ["Emirates NBD", "Mashreq", "FAB", "Wio"]}})
+    assert is_comp("mashreq neo account opening")
+    assert is_comp("emirates nbd balance check")     # multi-word competitor
+    assert is_comp("enbd credit card")               # built-in alias
+    assert not is_comp("credit card uae")
+    assert not is_comp("fabulous savings tips")      # word boundary holds
+    assert not competitor_matcher({})("mashreq neo")  # no config -> no flags
+
+
 def test_word_boundaries_prevent_false_positives(tmp_path):
     store = Store(tmp_path / "t.db")
     discs = [Discovery(date="2026-08-07", keyword="fabulous credit card hacks",

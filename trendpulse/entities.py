@@ -35,6 +35,23 @@ def _expand_aliases(entities: list[str]) -> dict[str, str]:
     return out
 
 
+def competitor_matcher(cfg: dict):
+    """A predicate marking keywords that sit in a competitor's branded
+    territory ('mashreq neo account', 'emirates nbd balance check'). The
+    report and dashboard use it to switch the recommendation from 'create a
+    page' — pointless advice for someone else's brand — to a comparison play,
+    and to keep such terms out of the top-opportunity cards."""
+    import re
+
+    competitors = (cfg.get("entities", {}) or {}).get("competitors", [])
+    if not competitors:
+        return lambda keyword: False
+    expanded = _expand_aliases(competitors)
+    pattern = re.compile("|".join(f"(?:{p})" for p in expanded.values()),
+                         re.IGNORECASE)
+    return lambda keyword: bool(pattern.search(keyword.lower()))
+
+
 def is_brand_mention(name: str, asset: str) -> bool:
     """True when an AI-answer mention refers to the brand asset: the asset
     domain ('adcb.com'), its stem ('adcb'), or the asset's own alias list
