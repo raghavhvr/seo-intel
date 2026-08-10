@@ -33,19 +33,24 @@ export default function Layout() {
       {/* The drawer enters from the left and must exit the same way — it stays
           mounted so both directions travel the same path. */}
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col text-white transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:static lg:visible lg:translate-x-0 ${open ? "visible translate-x-0" : "invisible -translate-x-full"}`}
-        style={{ background: "linear-gradient(170deg, var(--hero-a), var(--hero-b))" }}>
-        <div className="px-5 pb-4 pt-6">
-          <div className="text-[17px] font-bold tracking-tight">TrendPulse</div>
-          <div className="mt-0.5 text-[11.5px] text-white/60">ADCB · Search &amp; AI intelligence</div>
+        style={{ background: "radial-gradient(40rem 18rem at 0% 0%, rgb(57 135 229 / 0.14), transparent 60%), linear-gradient(170deg, var(--hero-a), var(--hero-b))" }}>
+        <div className="px-5 pb-5 pt-7">
+          <div className="display text-[19px] font-semibold">TrendPulse</div>
+          <div className="mt-1 text-[11.5px] tracking-[0.02em] text-white/60">ADCB · Search &amp; AI intelligence</div>
+          {/* the sidebar is always navy, so the hairline keeps the dark-gold tone */}
+          <div className="mt-4 h-px w-10 bg-[#c9a961]" aria-hidden />
         </div>
         <nav className="flex-1 space-y-1 px-3" aria-label="Main">
           {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end} onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `flex min-h-11 items-center gap-3 rounded-lg px-3 text-[13.5px] font-medium transition-colors ${press} ${
-                  isActive ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/8 hover:text-white"}`}>
-              <Icon size={17} strokeWidth={2} aria-hidden />
-              {label}
+                `relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-[13.5px] font-medium transition-colors ${press} ${
+                  isActive ? "bg-white/12 text-white" : "text-white/70 hover:bg-white/8 hover:text-white"}`}>
+              {({ isActive }) => (<>
+                {isActive && <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[#c9a961]" aria-hidden />}
+                <Icon size={17} strokeWidth={2} aria-hidden />
+                {label}
+              </>)}
             </NavLink>
           ))}
         </nav>
@@ -66,7 +71,7 @@ export default function Layout() {
             className={`grid h-11 w-11 cursor-pointer place-items-center rounded-lg hover:bg-surface2 ${press}`}>
             <Menu size={20} />
           </button>
-          <span className="text-[15px] font-bold">TrendPulse</span>
+          <span className="display text-[16px] font-semibold">TrendPulse</span>
         </header>
         <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" id="main">
           {error && (

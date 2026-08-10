@@ -23,19 +23,19 @@ export default function Overview() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold tracking-tight">{meta.project}</h1>
-      <p className="mt-0.5 text-[13px] text-ink2">{meta.market} · data through {meta.scoreDate ?? "—"}</p>
+      <h1 className="display text-[28px] font-semibold">{meta.project}</h1>
+      <p className="mt-1 text-[13px] text-ink2">{meta.market} · data through {meta.scoreDate ?? "—"}</p>
 
       <Reveal className="mt-5 grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
-          <div className="text-3xl font-bold tracking-tight">
+          <div className="tnum text-[32px] font-semibold tracking-[-0.02em]">
             {kpis.shareOfVoice != null ? <><CountUp value={kpis.shareOfVoice} /><span className="text-base font-semibold text-ink2">%</span></> : "—"}
           </div>
           <div className="mt-1 text-[12.5px] leading-snug text-ink2">share of voice when AI assistants &amp; communities discuss UAE banks (7 days)</div>
           {kpis.sovRank && <div className="mt-2 text-xs font-semibold text-ink2">#{kpis.sovRank} of the tracked banks</div>}
         </Card>
         <Card>
-          <div className="text-3xl font-bold tracking-tight">
+          <div className="tnum text-[32px] font-semibold tracking-[-0.02em]">
             {kpis.citationShare != null ? <><CountUp value={kpis.citationShare} /><span className="text-base font-semibold text-ink2">%</span></> : "—"}
           </div>
           <div className="mt-1 text-[12.5px] leading-snug text-ink2">of AI-engine citations for banking prompts go to adcb.com (30 days)</div>
@@ -44,11 +44,11 @@ export default function Overview() {
           )}
         </Card>
         <Card>
-          <div className="text-3xl font-bold tracking-tight"><CountUp value={kpis.keywordsTracked} /></div>
+          <div className="tnum text-[32px] font-semibold tracking-[-0.02em]"><CountUp value={kpis.keywordsTracked} /></div>
           <div className="mt-1 text-[12.5px] leading-snug text-ink2">queries &amp; topics tracked and re-scored every morning</div>
         </Card>
         <Card>
-          <div className="text-3xl font-bold tracking-tight"><CountUp value={kpis.openGaps} /></div>
+          <div className="tnum text-[32px] font-semibold tracking-[-0.02em]"><CountUp value={kpis.openGaps} /></div>
           <div className="mt-1 text-[12.5px] leading-snug text-ink2">AI questions currently answered with competitor sources</div>
           <Link to="/backlog" className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline">
             see the backlog <ArrowRight size={13} aria-hidden />
@@ -60,7 +60,7 @@ export default function Overview() {
         note="The strongest signals right now, with the evidence behind them and the play to run." />
       <Reveal className="grid grid-cols-1 gap-3.5 md:grid-cols-3">
         {picks.map((p) => (
-          <Card key={p.keyword} className="border-l-4" >
+          <Card key={p.keyword} className="border-l-[3px] border-l-brass">
             <div className="mb-1.5 flex flex-wrap gap-1.5">
               {p.channels.map((c) => <Badge key={c} tone="chip">{CHANNEL_LABEL[c]?.name ?? c.toUpperCase()}</Badge>)}
               <MomentumBadge delta={p.delta} velocity={p.velocity} />

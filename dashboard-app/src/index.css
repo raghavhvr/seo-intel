@@ -1,43 +1,60 @@
 @import "tailwindcss";
+@import "@fontsource-variable/fraunces";
 
-/* Semantic tokens — light is the committed look; dark steps from the same
-   validated palette (never an inversion). */
+/* Semantic tokens — light is the committed look; dark is a midnight-navy
+   step from the same validated palette (never an inversion). The display
+   face is a self-hosted variable serif with optical sizing; body copy and
+   numerals stay on the system stack. */
 :root {
   color-scheme: light;
-  --bg: #f2f1ee;
+  --bg: #f4f2ee;
   --surface: #ffffff;
   --surface-2: #efedea;
-  --border: #e2e0db;
+  --border: #e3e1db;
   --border-soft: #f0efec;
   --ink: #171715;
   --ink-2: #52514e;
   --accent: #17559c;
+  --brass: #8a6d3b;
   --series-you: #2a78d6;
   --series-you-2: #a7c8ef;
   --series-other: #8a8984;
   --series-other-2: #d0cec8;
   --good: #0c6b4a;
   --warn: #a53c12;
-  --hero-a: #101d33;
-  --hero-b: #1a3a63;
+  --hero-a: #0c1727;
+  --hero-b: #17345a;
+  --shadow-card:
+    0 1px 2px rgb(16 29 51 / 0.04),
+    0 8px 24px -8px rgb(16 29 51 / 0.08);
+  --card-edge: inset 0 1px 0 rgb(255 255 255 / 0.7);
+  --page-wash: radial-gradient(80rem 24rem at 50% -8rem, rgb(23 85 156 / 0.05), transparent 70%);
 }
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --bg: #141413;
-    --surface: #1e1e1c;
-    --surface-2: #262624;
-    --border: #34332f;
-    --border-soft: #2b2a27;
-    --ink: #f5f4f0;
-    --ink-2: #b7b5ad;
+    --bg: #0f1319;
+    --surface: #171c24;
+    --surface-2: #1f2530;
+    --border: #303845;
+    --border-soft: #262d38;
+    --ink: #f2f3f5;
+    --ink-2: #aab2bf;
     --accent: #6aa4e8;
+    --brass: #c9a961;
     --series-you: #3987e5;
     --series-you-2: #234a75;
     --series-other: #97958e;
     --series-other-2: #45443f;
     --good: #4cc793;
     --warn: #e88b5f;
+    --hero-a: #0a121e;
+    --hero-b: #14283f;
+    --shadow-card:
+      0 1px 2px rgb(0 0 0 / 0.3),
+      0 8px 24px -8px rgb(0 0 0 / 0.4);
+    --card-edge: inset 0 1px 0 rgb(255 255 255 / 0.05);
+    --page-wash: radial-gradient(80rem 24rem at 50% -8rem, rgb(57 135 229 / 0.06), transparent 70%);
   }
 }
 
@@ -50,6 +67,7 @@
   --color-ink: var(--ink);
   --color-ink2: var(--ink-2);
   --color-accent: var(--accent);
+  --color-brass: var(--brass);
   --color-you: var(--series-you);
   --color-you2: var(--series-you-2);
   --color-other: var(--series-other);
@@ -61,11 +79,30 @@
 html, body, #root { height: 100%; }
 body {
   background: var(--bg);
+  background-image: var(--page-wash);
+  background-repeat: no-repeat;
   color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-.tnum { font-variant-numeric: tabular-nums; }
+.tnum { font-variant-numeric: lining-nums tabular-nums; }
+
+/* Editorial display face for wordmark, page and section titles only —
+   optical sizing tunes the letterforms as they grow (§15). */
+.display {
+  font-family: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.015em;
+  font-variation-settings: "SOFT" 40, "WONK" 0;
+}
+
+/* Cards: layered soft shadow + a bright top edge catching the light. */
+.card {
+  box-shadow: var(--shadow-card), var(--card-edge);
+}
+
+::selection { background: var(--hero-b); color: #fff; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Translucent chrome for floating bars: content scrolls underneath, and a
    soft gradient scroll-edge stands in for a hard 1px divider. */
