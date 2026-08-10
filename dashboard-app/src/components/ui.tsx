@@ -1,10 +1,20 @@
 import { useEffect, useRef } from "react";
-import { animate, stagger } from "animejs";
+import { animate, stagger, spring } from "animejs";
 
 const reduced = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Staggered fade-up entrance for a container's direct children (30ms/item). */
+/* Critically damped springs (Apple: damping 1.0), so motion settles without
+   overshoot and settle time emerges from the physics, not a fixed timer.
+   stiffness = (2π / response)², damping = 2·√stiffness. */
+const settle = () => spring({ mass: 1, stiffness: 247, damping: 31.4 }); // response ≈ 0.4s
+const settleSlow = () => spring({ mass: 1, stiffness: 110, damping: 21 }); // response ≈ 0.6s
+
+/** Press feedback on pointer-down (not release) for anything tappable. */
+export const press =
+  "transition-transform duration-100 ease-out active:scale-[0.97]";
+
+/** Staggered fade-up entrance for a container's direct children (35ms/item). */
 export function Reveal({ children, className = "" }: {
   children: React.ReactNode; className?: string;
 }) {
@@ -16,7 +26,7 @@ export function Reveal({ children, className = "" }: {
     kids.forEach((k) => { k.style.opacity = "0"; });
     animate(kids, {
       opacity: [0, 1], translateY: [10, 0],
-      duration: 320, delay: stagger(35), ease: "outCubic",
+      delay: stagger(35), ease: settle(),
     });
   }, []);
   return <div ref={ref} className={className}>{children}</div>;
@@ -33,7 +43,7 @@ export function CountUp({ value, suffix = "" }: { value: number; suffix?: string
     if (reduced()) { el.textContent = fmt(value); return; }
     const obj = { v: 0 };
     animate(obj, {
-      v: value, duration: 700, ease: "outQuart",
+      v: value, ease: settleSlow(),
       onUpdate: () => { el.textContent = fmt(obj.v); },
     });
   }, [value, suffix]);
@@ -102,7 +112,7 @@ export function BarRow({ name, ai, community, total, max, you, unit = "" }: {
     segs.forEach((s, i) => {
       const target = s.dataset.w + "%";
       s.style.width = "0%";
-      animate(s, { width: target, duration: 550, ease: "outCubic", delay: i * 40 });
+      animate(s, { width: target, ease: settle(), delay: i * 40 });
     });
   }, []);
   const dark = you ? "var(--series-you)" : "var(--series-other)";

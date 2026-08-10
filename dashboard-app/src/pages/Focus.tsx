@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useData, CHANNEL_LABEL, HORIZON_LABEL } from "../lib/data";
-import { Badge, Card, Empty, MomentumBadge, SectionHead } from "../components/ui";
+import { Badge, Card, Empty, MomentumBadge, SectionHead, press } from "../components/ui";
 import { Search } from "lucide-react";
 
 export default function Focus() {
@@ -8,14 +8,18 @@ export default function Focus() {
   const [horizon, setHorizon] = useState("week");
   const [channel, setChannel] = useState("seo");
   const [q, setQ] = useState("");
+
+  const rows = useMemo(() => {
+    const all = data?.focus[horizon]?.[channel] ?? [];
+    const needle = q.trim().toLowerCase();
+    return needle
+      ? all.filter((r) => r.keyword.toLowerCase().includes(needle)
+          || (r.en ?? "").toLowerCase().includes(needle))
+      : all;
+  }, [data, horizon, channel, q]);
   if (!data) return null;
 
   const horizons = data.meta.horizons.length ? data.meta.horizons : ["week"];
-  const rows = useMemo(() => {
-    const all = data.focus[horizon]?.[channel] ?? [];
-    const needle = q.trim().toLowerCase();
-    return needle ? all.filter((r) => r.keyword.includes(needle)) : all;
-  }, [data, horizon, channel, q]);
   const meta = CHANNEL_LABEL[channel];
 
   return (
@@ -26,7 +30,7 @@ export default function Focus() {
       <div className="mb-3 flex flex-wrap items-center gap-2" role="tablist" aria-label="Horizon">
         {horizons.map((h) => (
           <button key={h} role="tab" aria-selected={h === horizon} onClick={() => setHorizon(h)}
-            className={`min-h-11 cursor-pointer rounded-full border px-4.5 text-[13.5px] font-semibold transition-colors ${
+            className={`min-h-11 cursor-pointer rounded-full border px-4.5 text-[13.5px] font-semibold transition-colors ${press} ${
               h === horizon ? "border-accent bg-accent text-white" : "border-line bg-surface text-ink2 hover:bg-surface2"}`}>
             {HORIZON_LABEL[h] ?? h}
           </button>
@@ -34,7 +38,7 @@ export default function Focus() {
         <span className="mx-1 hidden h-6 w-px bg-line sm:block" aria-hidden />
         {data.meta.channels.map((c) => (
           <button key={c} onClick={() => setChannel(c)} aria-pressed={c === channel}
-            className={`min-h-11 cursor-pointer rounded-full border px-4.5 text-[13.5px] font-semibold transition-colors ${
+            className={`min-h-11 cursor-pointer rounded-full border px-4.5 text-[13.5px] font-semibold transition-colors ${press} ${
               c === channel ? "border-accent bg-accent text-white" : "border-line bg-surface text-ink2 hover:bg-surface2"}`}>
             {CHANNEL_LABEL[c]?.name ?? c.toUpperCase()}
           </button>
@@ -47,7 +51,9 @@ export default function Focus() {
         </label>
       </div>
 
-      <Card>
+      {/* Keyed on the tab pair so switching cross-fades the new panel in
+          instead of hard-cutting (reduced-motion turns the fade off). */}
+      <Card key={`${horizon}/${channel}`} className="fade-in">
         <div className="mb-3 flex items-baseline gap-2">
           <h3 className="text-[15px] font-bold">{meta?.name}</h3>
           <span className="text-xs text-ink2">{meta?.sub}</span>
