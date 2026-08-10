@@ -62,14 +62,51 @@ html, body, #root { height: 100%; }
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .tnum { font-variant-numeric: tabular-nums; }
+
+/* Translucent chrome for floating bars: content scrolls underneath, and a
+   soft gradient scroll-edge stands in for a hard 1px divider. */
+.chrome {
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+.chrome::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -10px 0;
+  height: 10px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.07), transparent);
+}
+
+/* Quick cross-fade when a tab swaps the panel's content in place. */
+.fade-in { animation: fade-in 240ms ease-out; }
+@keyframes fade-in { from { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .chrome {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  :root { --border: var(--ink-2); --border-soft: var(--ink-2); }
+  .chrome {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--ink-2);
+  }
+  .chrome::after { display: none; }
 }
