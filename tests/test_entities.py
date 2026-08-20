@@ -1,3 +1,10 @@
+from datetime import date, timedelta
+
+# Relative dates: the read paths under test use rolling 7-day windows, so
+# hardcoded dates turn into time bombs the week after they are written.
+def _d(days_ago: int) -> str:
+    return (date.today() - timedelta(days=days_ago)).isoformat()
+
 from trendpulse.entities import scan_discoveries
 from trendpulse.storage import Store
 from trendpulse.types import Discovery
@@ -8,11 +15,11 @@ CFG = {"entities": {"brand": ["ADCB"], "competitors": ["Emirates NBD", "FAB", "W
 def test_scan_discoveries_finds_mentions(tmp_path):
     store = Store(tmp_path / "t.db")
     discs = [
-        Discovery(date="2026-08-07", keyword="adcb vs emirates nbd savings account",
+        Discovery(date=_d(2), keyword="adcb vs emirates nbd savings account",
                   source="reddit", context="r/dubai thread", score=12.0),
-        Discovery(date="2026-08-07", keyword="first abu dhabi bank launches new app",
+        Discovery(date=_d(2), keyword="first abu dhabi bank launches new app",
                   source="google_news", context="headline", score=5.0),  # FAB alias
-        Discovery(date="2026-08-07", keyword="unrelated weather news",
+        Discovery(date=_d(2), keyword="unrelated weather news",
                   source="google_news", context="", score=1.0),
     ]
     written = scan_discoveries(CFG, store, discs)
@@ -39,12 +46,12 @@ def test_mentions_count_once_regardless_of_discovery_score(tmp_path):
     store = Store(tmp_path / "t.db")
     # history written by the old code: score used as value
     store.upsert_entity_mentions([EntityMention(
-        date="2026-08-07", entity="ADCB", kind="brand", source="google_trends",
+        date=_d(2), entity="ADCB", kind="brand", source="google_trends",
         context="rising related query for 'adcb' in KW", value=282400.0)])
     discs = [
-        Discovery(date="2026-08-08", keyword="emirates nbd rates",
+        Discovery(date=_d(1), keyword="emirates nbd rates",
                   source="google_trends", context="rising", score=161100.0),
-        Discovery(date="2026-08-08", keyword="adcb credit card offer",
+        Discovery(date=_d(1), keyword="adcb credit card offer",
                   source="reddit", context="thread", score=3.0),
     ]
     scan_discoveries(CFG, store, discs)
@@ -67,7 +74,7 @@ def test_mention_split_is_ranked_by_total(tmp_path):
             + [("Emirates NBD", "profound:Gemini")] * 4
             + [("ADNOC", "google_news")])
     store.upsert_entity_mentions([
-        EntityMention(date="2026-08-08", entity=e, kind="competitor", source=s,
+        EntityMention(date=_d(1), entity=e, kind="competitor", source=s,
                       context=f"ctx {i}") for i, (e, s) in enumerate(rows)])
     split = store.entity_mention_split(days=7)
     assert [(e, ai, com) for e, _k, ai, com in split] == [
@@ -90,7 +97,7 @@ def test_competitor_matcher_flags_branded_territory():
 
 def test_word_boundaries_prevent_false_positives(tmp_path):
     store = Store(tmp_path / "t.db")
-    discs = [Discovery(date="2026-08-07", keyword="fabulous credit card hacks",
+    discs = [Discovery(date=_d(2), keyword="fabulous credit card hacks",
                        source="reddit", context="", score=1.0)]
     assert scan_discoveries(CFG, store, discs) == 0  # "fabulous" must not match "FAB"
     store.close()
@@ -125,11 +132,11 @@ def test_one_sighting_one_mention_after_canonicalization(tmp_path):
     cfg = {"entities": {"brand": ["ADCB", "Abu Dhabi Commercial Bank"],
                         "competitors": ["Emirates NBD", "FAB"]}}
     n = scan_discoveries(cfg, store, [Discovery(
-        date="2026-08-09", keyword="first abu dhabi bank launches app",
+        date=_d(0), keyword="first abu dhabi bank launches app",
         source="news", context="x", score=1.0)])
     assert n == 1
     n2 = scan_discoveries(cfg, store, [Discovery(
-        date="2026-08-09", keyword="abu dhabi commercial bank results",
+        date=_d(0), keyword="abu dhabi commercial bank results",
         source="news", context="y", score=1.0)])
     assert n2 == 1
     split = store.entity_mention_split(days=7)
@@ -150,7 +157,7 @@ def test_rolled_up_split_merges_history(tmp_path):
             ("First Abu Dhabi Bank", "competitor", "google_news"),
             ("FAB Bank", "competitor", "profound:Perplexity")]
     store.upsert_entity_mentions([EntityMention(
-        date="2026-08-09", entity=e, kind=k, source=s, context=f"c{i}")
+        date=_d(0), entity=e, kind=k, source=s, context=f"c{i}")
         for i, (e, k, s) in enumerate(rows)])
     cfg = {"entities": {"brand": ["ADCB", "Abu Dhabi Commercial Bank"],
                         "competitors": ["FAB"]}}

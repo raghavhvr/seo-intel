@@ -1,10 +1,47 @@
 from __future__ import annotations
 
+import gzip
 import json
+import shutil
 import sqlite3
 from pathlib import Path
 
 from trendpulse.types import Citation, Discovery, EntityMention, Observation
+
+# The repo commits data/trendpulse.db.gz, never the raw file: GitHub rejects
+# any file over 100 MB and the raw DB crossed that line on 2026-08-17 (three
+# silently failed daily pushes). SQLite full of prompt/URL text compresses
+# ~5x, so the snapshot stays far from the limit. Raw rows older than these
+# windows are pruned each daily run — every dashboard read looks back at most
+# 30 days, and only observations feed model training, so they keep 15 months.
+DEFAULT_RETENTION = {
+    "citations": 60,
+    "discoveries": 90,
+    "entities": 90,
+    "observations": 450,
+}
+
+
+def pack_db(path: str | Path) -> Path:
+    """Write the deterministic gzip snapshot committed to git (<db>.gz).
+
+    The WAL is checkpointed first so the archive is a complete standalone
+    database; mtime=0 in the gzip header means identical DB bytes always
+    produce an identical archive, so an unchanged DB never shows as a diff."""
+    path = Path(path)
+    conn = sqlite3.connect(str(path))
+    conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+    conn.close()
+    gz_path = Path(str(path) + ".gz")
+    with open(path, "rb") as src, open(gz_path, "wb") as raw:
+        with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as gz:
+            shutil.copyfileobj(src, gz)
+    return gz_path
+
+
+def unpack_db(gz_path: str | Path, db_path: str | Path) -> None:
+    with gzip.open(gz_path, "rb") as src, open(db_path, "wb") as dst:
+        shutil.copyfileobj(src, dst)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS observations (
@@ -76,6 +113,11 @@ class Store:
     def __init__(self, path: str | Path):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        # A fresh checkout carries only the compressed snapshot (the raw DB is
+        # gitignored) — inflate it transparently so every entry point works.
+        gz = Path(str(self.path) + ".gz")
+        if not self.path.exists() and gz.exists():
+            unpack_db(gz, self.path)
         self.conn = sqlite3.connect(str(self.path))
         self.conn.execute("PRAGMA journal_mode=WAL")
         self._ensure_schema()
@@ -104,6 +146,29 @@ class Store:
 
     def close(self) -> None:
         self.conn.close()
+
+    def prune(self, retention: dict | None = None) -> int:
+        """Delete rows older than the per-table retention windows and VACUUM.
+
+        Caps the DB (and so the committed .gz snapshot) at a steady state
+        instead of growing forever. Only the four raw-collection tables are
+        eligible; scores/model_runs/translations stay tiny and are kept."""
+        from datetime import datetime, timedelta, timezone
+
+        windows = {**DEFAULT_RETENTION, **(retention or {})}
+        deleted = 0
+        for table, days in windows.items():
+            if table not in DEFAULT_RETENTION or not days:
+                continue
+            cutoff = (datetime.now(timezone.utc)
+                      - timedelta(days=int(days))).strftime("%Y-%m-%d")
+            cur = self.conn.execute(
+                f'DELETE FROM "{table}" WHERE date < ?', (cutoff,))
+            deleted += cur.rowcount
+        self.conn.commit()
+        if deleted:
+            self.conn.execute("VACUUM")
+        return deleted
 
     # -- writes -------------------------------------------------------------
     def upsert_observations(self, obs: list[Observation]) -> int:

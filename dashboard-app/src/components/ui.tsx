@@ -54,7 +54,7 @@ export function Card({ children, className = "" }: {
   children: React.ReactNode; className?: string;
 }) {
   return (
-    <div className={`rounded-2xl border border-line bg-surface p-5 shadow-sm ${className}`}>
+    <div className={`card rounded-2xl border border-line bg-surface p-5 ${className}`}>
       {children}
     </div>
   );
@@ -64,10 +64,10 @@ export function SectionHead({ eyebrow, title, note }: {
   eyebrow: string; title: string; note?: string;
 }) {
   return (
-    <div className="mt-10 mb-3">
-      <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-accent">{eyebrow}</div>
-      <h2 className="text-xl font-bold tracking-tight">{title}</h2>
-      {note && <p className="mt-1 max-w-2xl text-[13.5px] text-ink2">{note}</p>}
+    <div className="mt-11 mb-4">
+      <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-brass">{eyebrow}</div>
+      <h2 className="display mt-0.5 text-[22px] font-semibold">{title}</h2>
+      {note && <p className="mt-1 max-w-2xl text-[13.5px] leading-relaxed text-ink2">{note}</p>}
     </div>
   );
 }

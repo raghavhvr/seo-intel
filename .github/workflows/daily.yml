@@ -46,6 +46,13 @@ jobs:
           TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
         run: python -m trendpulse run-daily --config config.yaml
 
+      # Only the compressed snapshot is committed: the raw DB crossed
+      # GitHub's hard 100 MB file limit on 2026-08-17 and every push was
+      # rejected. Gzip keeps it ~5x smaller, and `trendpulse` inflates
+      # data/trendpulse.db.gz automatically wherever the raw file is absent.
+      - name: Compress the DB snapshot for commit
+        run: python -m trendpulse pack --config config.yaml
+
       - name: Commit fresh data, models and reports
         # Commit FIRST, then rebase, then push. Rebasing before committing
         # fails ("cannot pull with rebase: You have unstaged changes") because
@@ -64,12 +71,14 @@ jobs:
           git commit -m "chore: daily trend ingest + model retrain ($(date -u +%F))"
           for attempt in 1 2 3; do
             if ! git pull --rebase origin "${{ github.ref_name }}"; then
-              # Binary conflict on the SQLite DB: someone pushed an import
+              # Binary conflict on the DB snapshot: someone pushed an import
               # while this run was ingesting. Git can't merge binaries, but
               # SQLite can — resolve to the row-level UNION of both versions
               # so neither the pushed import nor this run's ingest is lost.
-              # (:2 = the upstream/main version during a rebase.)
-              git show :2:data/trendpulse.db > /tmp/remote-trendpulse.db
+              # (:2 = the upstream/main version during a rebase.) The raw
+              # data/trendpulse.db is untracked, so it still holds this run's
+              # rows; merge the remote's rows in, then re-pack the snapshot.
+              git show :2:data/trendpulse.db.gz | gunzip > /tmp/remote-trendpulse.db
               git checkout --theirs -- data/ reports/ docs/
               python - <<'PYEOF'
           import sqlite3
@@ -84,6 +93,7 @@ jobs:
           con.commit()
           print("merged remote DB rows into this run's DB:", tables)
           PYEOF
+              python -m trendpulse pack --config config.yaml
               git add data/ reports/ docs/
               GIT_EDITOR=true git rebase --continue
             fi

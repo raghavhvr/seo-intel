@@ -33,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
         "dashboard": "Re-render the HTML dashboard from existing data (no ingest/train)",
         "notify": "Send breakout alerts + briefing to Slack/Teams webhooks",
         "run-daily": "import + ingest + train + report + notify (the scheduled daily job)",
+        "pack": "Compress the DB to data/trendpulse.db.gz — the snapshot git commits",
     }
     for name, help_text in commands.items():
         _add_common(sub.add_parser(name, help=help_text), suppress=True)
@@ -76,6 +77,10 @@ def main(argv: list[str] | None = None) -> int:
         print("Alert sent." if sent else "Nothing sent (no webhooks or nothing to alert).")
     elif args.command == "run-daily":
         print(f"Report written to {pipeline.run_daily(cfg)}")
+    elif args.command == "pack":
+        from trendpulse.config import db_path
+        from trendpulse.storage import pack_db
+        print(f"Compressed snapshot written to {pack_db(db_path(cfg))}")
     elif args.command == "demo":
         path = pipeline.run_demo(cfg, days=args.days)
         print(f"Demo report written to {path}")
