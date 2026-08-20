@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useData, CHANNEL_LABEL, FocusRow } from "../lib/data";
 import { Badge, BarRow, Card, CountUp, MomentumBadge, Reveal, SectionHead, SplitLegend } from "../components/ui";
+import { Monogram } from "../components/icons";
 import { ArrowRight } from "lucide-react";
 
 export default function Overview() {
@@ -89,7 +90,8 @@ export default function Overview() {
         <SplitLegend />
         {sov.map((r) => (
           <BarRow key={r.entity} name={r.entity} ai={r.ai} community={r.community}
-            total={r.ai + r.community} max={sovMax} you={r.kind === "brand"} />
+            total={r.ai + r.community} max={sovMax} you={r.kind === "brand"}
+            icon={<Monogram name={r.entity} you={r.kind === "brand"} />} />
         ))}
         <Link to="/share-of-voice" className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-accent hover:underline">
           full share-of-voice view <ArrowRight size={14} aria-hidden />

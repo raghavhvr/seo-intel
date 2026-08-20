@@ -1,5 +1,6 @@
 import { useData } from "../lib/data";
 import { BarRow, Card, Empty, SectionHead, SplitLegend } from "../components/ui";
+import { Monogram } from "../components/icons";
 
 export default function ShareOfVoice() {
   const { data } = useData();
@@ -18,7 +19,8 @@ export default function ShareOfVoice() {
             <SplitLegend />
             {rows.map((r) => (
               <BarRow key={r.entity} name={r.entity} ai={r.ai} community={r.community}
-                total={r.ai + r.community} max={max} you={r.kind === "brand"} />
+                total={r.ai + r.community} max={max} you={r.kind === "brand"}
+                icon={<Monogram name={r.entity} you={r.kind === "brand"} />} />
             ))}
           </Card>
           <Card className="mt-4 overflow-x-auto">
@@ -36,7 +38,12 @@ export default function ShareOfVoice() {
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.entity} className={`border-b border-linesoft last:border-0 ${r.kind === "brand" ? "font-semibold" : ""}`}>
-                    <td className="py-2 pr-3">{r.entity}</td>
+                    <td className="py-2 pr-3">
+                      <span className="flex items-center gap-2">
+                        <Monogram name={r.entity} you={r.kind === "brand"} size={18} />
+                        {r.entity}
+                      </span>
+                    </td>
                     <td className="tnum py-2 pr-3">{r.ai.toLocaleString()}</td>
                     <td className="tnum py-2 pr-3">{r.community.toLocaleString()}</td>
                     <td className="tnum py-2 pr-3">{(r.ai + r.community).toLocaleString()}</td>

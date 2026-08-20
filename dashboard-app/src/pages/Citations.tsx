@@ -1,5 +1,6 @@
 import { useData } from "../lib/data";
 import { BarRow, Card, Empty, SectionHead } from "../components/ui";
+import { DomainIcon } from "../components/icons";
 
 export default function Citations() {
   const { data } = useData();
@@ -15,7 +16,7 @@ export default function Citations() {
         <Card>
           {rows.map((r) => (
             <BarRow key={r.domain} name={r.domain} total={r.count} max={max}
-              you={r.role === "own"} />
+              you={r.role === "own"} icon={<DomainIcon domain={r.domain} />} />
           ))}
           <p className="mt-3 border-t border-linesoft pt-3 text-[12.5px] text-ink2">
             Closing the gap: the <a href="#/backlog" className="font-semibold text-accent hover:underline">content backlog</a> lists
