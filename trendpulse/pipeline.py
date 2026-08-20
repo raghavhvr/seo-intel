@@ -107,6 +107,9 @@ def run_ingest(cfg: dict) -> tuple[int, int]:
             seasonal += 1
     log.info("ingest complete: %d observations, %d discoveries, %d new keywords"
              " (%d seasonal)", total_obs, total_disc, added, seasonal)
+    pruned = store.prune(cfg.get("retention"))
+    if pruned:
+        log.info("pruned %d rows outside the retention windows", pruned)
     store.close()
     return total_obs, total_disc
 

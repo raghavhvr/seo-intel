@@ -1,3 +1,10 @@
+from datetime import date, timedelta
+
+# Relative dates: the read paths under test use rolling 7-day windows, so
+# hardcoded dates turn into time bombs the week after they are written.
+def _d(days_ago: int) -> str:
+    return (date.today() - timedelta(days=days_ago)).isoformat()
+
 from trendpulse.gaps import citation_gaps, citation_summary, own_domains
 from trendpulse.notify import build_alert_text, send_alerts
 from trendpulse.storage import Store
@@ -16,15 +23,15 @@ CFG = {
 def _store_with_citations(tmp_path):
     store = Store(tmp_path / "t.db")
     store.upsert_citations([
-        Citation(date="2026-08-07", url="https://www.adcb.com/en/savings/",
+        Citation(date=_d(2), url="https://www.adcb.com/en/savings/",
                  domain="adcb.com", prompt="best savings account uae", model="ChatGPT"),
-        Citation(date="2026-08-07", url="https://www.emiratesnbd.com/en/savings/",
+        Citation(date=_d(2), url="https://www.emiratesnbd.com/en/savings/",
                  domain="emiratesnbd.com", prompt="best savings account uae", model="ChatGPT"),
-        Citation(date="2026-08-07", url="https://wio.io/personal",
+        Citation(date=_d(2), url="https://wio.io/personal",
                  domain="wio.io", prompt="how to open a bank account in uae", model="Gemini"),
-        Citation(date="2026-08-06", url="https://wio.io/personal",
+        Citation(date=_d(3), url="https://wio.io/personal",
                  domain="wio.io", prompt="how to open a bank account in uae", model="ChatGPT"),
-        Citation(date="2026-08-07", url="https://www.emiratesnbd.com/en/cards/",
+        Citation(date=_d(2), url="https://www.emiratesnbd.com/en/cards/",
                  domain="emiratesnbd.com", prompt="best credit card uae", model="Perplexity"),
     ])
     return store
@@ -60,14 +67,14 @@ def test_citation_gaps_exclude_prompts_we_win(tmp_path):
 
 def test_alert_text_contains_breakouts_and_sov(tmp_path):
     store = _store_with_citations(tmp_path)
-    store.save_score("2026-08-07", "bnpl uae", "week", "seo", 97.0, 2.1, 4.2)
-    store.save_score("2026-08-07", "crm software", "week", "seo", 40.0, 0.1, 1.0)
+    store.save_score(_d(2), "bnpl uae", "week", "seo", 97.0, 2.1, 4.2)
+    store.save_score(_d(2), "crm software", "week", "seo", 40.0, 0.1, 1.0)
     store.upsert_entity_mentions([])
     from trendpulse.types import EntityMention
     store.upsert_entity_mentions([
-        EntityMention(date="2026-08-07", entity="ADCB", kind="brand",
+        EntityMention(date=_d(2), entity="ADCB", kind="brand",
                       source="profound", value=3.0),
-        EntityMention(date="2026-08-07", entity="Emirates NBD", kind="competitor",
+        EntityMention(date=_d(2), entity="Emirates NBD", kind="competitor",
                       source="profound", value=7.0),
     ])
     from datetime import datetime, timezone

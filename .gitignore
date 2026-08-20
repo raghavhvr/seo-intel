@@ -11,3 +11,10 @@ data_imports/
 
 # dashboard app
 dashboard-app/node_modules/
+
+# Only the compressed snapshot (data/trendpulse.db.gz) is committed — the raw
+# DB outgrew GitHub's 100 MB per-file limit. `trendpulse` inflates the .gz
+# automatically when the raw file is missing.
+data/trendpulse.db
+data/trendpulse.db-wal
+data/trendpulse.db-shm

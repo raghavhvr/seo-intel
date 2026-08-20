@@ -55,6 +55,13 @@ jobs:
           rm -rf ../docs/assets
           npm run build
 
+      # Rendering may cache new Arabic->English glosses in the DB, and only
+      # the compressed snapshot is committed (raw DB is gitignored). pack is
+      # deterministic, so an untouched DB produces a byte-identical .gz and
+      # the "unchanged" check below still short-circuits.
+      - name: Compress the DB snapshot for commit
+        run: python -m trendpulse pack --config config.yaml
+
       - name: Commit the refreshed page
         run: |
           git config user.name "trendpulse-bot"

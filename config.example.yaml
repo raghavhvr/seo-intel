@@ -331,3 +331,13 @@ reports:
   output_dir: "reports"
 
 data_dir: "data"
+
+# How long raw collected rows live in the DB. Every dashboard/report read
+# looks back 30 days at most, and only observations feed model training —
+# these windows keep the DB (and the committed .gz snapshot) at a steady
+# size instead of growing ~5 MB/day forever. Days; 0 disables pruning.
+retention:
+  citations: 60
+  discoveries: 90
+  entities: 90
+  observations: 450
