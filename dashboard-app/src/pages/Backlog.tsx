@@ -1,5 +1,6 @@
 import { useData } from "../lib/data";
 import { Card, Empty, Reveal, SectionHead } from "../components/ui";
+import { DomainIcon, ModelIcon } from "../components/icons";
 import { FileText } from "lucide-react";
 
 export default function Backlog() {
@@ -20,10 +21,22 @@ export default function Backlog() {
               <div className="min-w-0">
                 <div className="text-[14.5px] font-bold leading-snug" dir="auto">{g.prompt}</div>
                 {g.promptEn && <div className="mt-0.5 text-[12.5px] italic text-ink2">"{g.promptEn}"</div>}
-                <div className="mt-1.5 text-[12.5px] leading-relaxed text-ink2">
-                  currently cited: {g.domains.join(", ")}
+                <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12.5px] leading-relaxed text-ink2">
+                  <span>currently cited:</span>
+                  {g.domains.map((d) => (
+                    <span key={d} className="inline-flex items-center gap-1">
+                      <DomainIcon domain={d} size={13} />{d}
+                    </span>
+                  ))}
                 </div>
-                <div className="mt-0.5 text-[12px] text-ink2">asked on {g.models.join(", ")}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px] text-ink2">
+                  <span>asked on</span>
+                  {g.models.map((m) => (
+                    <span key={m} className="inline-flex items-center gap-1">
+                      <ModelIcon model={m} size={12} />{m}
+                    </span>
+                  ))}
+                </div>
               </div>
             </Card>
           ))}

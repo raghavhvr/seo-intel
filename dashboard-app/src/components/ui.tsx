@@ -100,9 +100,9 @@ export function MomentumBadge({ delta, velocity }: { delta: number; velocity: nu
 }
 
 /** Ranked bar with optional AI/community split. Animates width on mount. */
-export function BarRow({ name, ai, community, total, max, you, unit = "" }: {
+export function BarRow({ name, ai, community, total, max, you, unit = "", icon }: {
   name: string; ai?: number; community?: number; total: number;
-  max: number; you: boolean; unit?: string;
+  max: number; you: boolean; unit?: string; icon?: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -120,8 +120,10 @@ export function BarRow({ name, ai, community, total, max, you, unit = "" }: {
   const hasSplit = ai !== undefined && community !== undefined;
   return (
     <div ref={ref} className="grid grid-cols-[140px_1fr_70px] items-center gap-3 py-1.5 sm:grid-cols-[190px_1fr_84px]">
-      <div className={`truncate text-[13.5px] ${you ? "font-bold" : ""}`} title={name}>
-        {name} {you && <Badge tone="you">you</Badge>}
+      <div className={`flex min-w-0 items-center gap-2 text-[13.5px] ${you ? "font-bold" : ""}`} title={name}>
+        {icon}
+        <span className="truncate">{name}</span>
+        {you && <Badge tone="you">you</Badge>}
       </div>
       <div className="flex h-4 rounded-[5px] bg-surface2" role="img"
         aria-label={`${name}: ${total.toLocaleString()}${unit}`}>

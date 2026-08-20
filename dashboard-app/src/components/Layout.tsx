@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useData } from "../lib/data";
 import { press } from "./ui";
+import { Mark } from "./icons";
 import {
   LayoutDashboard, Megaphone, Quote, Target, ListChecks, CalendarDays, Menu,
 } from "lucide-react";
@@ -35,8 +36,11 @@ export default function Layout() {
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-60 shrink-0 flex-col text-white transition-[transform,visibility] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:static lg:visible lg:translate-x-0 ${open ? "visible translate-x-0" : "invisible -translate-x-full"}`}
         style={{ background: "radial-gradient(40rem 18rem at 0% 0%, rgb(57 135 229 / 0.14), transparent 60%), linear-gradient(170deg, var(--hero-a), var(--hero-b))" }}>
         <div className="px-5 pb-5 pt-7">
-          <div className="display text-[19px] font-semibold">TrendPulse</div>
-          <div className="mt-1 text-[11.5px] tracking-[0.02em] text-white/60">ADCB · Search &amp; AI intelligence</div>
+          <div className="flex items-center gap-2.5">
+            <Mark size={26} />
+            <span className="display text-[19px] font-semibold">TrendPulse</span>
+          </div>
+          <div className="mt-1.5 text-[11.5px] tracking-[0.02em] text-white/60">ADCB · Search &amp; AI intelligence</div>
           {/* the sidebar is always navy, so the hairline keeps the dark-gold tone */}
           <div className="mt-4 h-px w-10 bg-[#c9a961]" aria-hidden />
         </div>
@@ -71,7 +75,10 @@ export default function Layout() {
             className={`grid h-11 w-11 cursor-pointer place-items-center rounded-lg hover:bg-surface2 ${press}`}>
             <Menu size={20} />
           </button>
-          <span className="display text-[16px] font-semibold">TrendPulse</span>
+          <span className="flex items-center gap-2">
+            <Mark size={20} />
+            <span className="display text-[16px] font-semibold">TrendPulse</span>
+          </span>
         </header>
         <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6" id="main">
           {error && (
